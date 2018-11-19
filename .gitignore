@@ -2,3 +2,5 @@
 vendor
 ./vendor
 .json
+.ini
+.lock
