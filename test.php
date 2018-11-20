@@ -19,7 +19,7 @@ $db->bootEloquent();
  */
 $listes_des_souhaits = \mywishlist\models\Liste::select('user_id','titre','description','expiration')->get();
 foreach ($listes_des_souhaits as $liste){
-    echo $liste->no . ':'.$liste->user_id . ':' . $liste->titre . ':' . $liste->description . ':' . $liste->expiration.PHP_EOL;
+    echo $liste->no . ':'.$liste->user_id . ':' . $liste->titre . ':' . $liste->description . ':' . $liste->expiration."<br>";
 }
 
 
