@@ -7,9 +7,19 @@
  */
 require_once __DIR__ . '/vendor/autoload.php';
 
-$listes_des_souhaits = Liste::select('*')->get();
+//$listes_des_souhaits = Liste::select('*')->get();
 
 
 
+/**
+ * Geoffroy
+ * Test: lister les items
+ */
+echo "Test: lister les items"."<br>";
+$res = \mywishlist\models\Item::get();
+foreach ($res as $item){
+    echo $item->id." ".$item->list_id." ".$item->nom." ".
+        $item->descr." ".$item->img." ".$item->url." ".$item->tarif;
+}
 
 ?>
