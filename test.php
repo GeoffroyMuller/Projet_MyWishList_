@@ -26,13 +26,13 @@ foreach ($listes_des_souhaits as $liste){
 /**
  * Test: lister les items
  */
-echo "Test: lister les items"."<br>";
+echo "====Test: lister les items===="."<br>";
 $res = \mywishlist\models\Item::get();
 foreach ($res as $item){
     echo $item->id." ".$item->list_id." ".$item->nom." ".
-        $item->descr." ".$item->img." ".$item->url." ".$item->tarif;
+        $item->descr." ".$item->img." ".$item->url." ".$item->tarif."<br>";
 }
-
+echo "=============================="."<br>";
 
 
 ?>
