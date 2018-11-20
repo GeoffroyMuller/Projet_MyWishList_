@@ -8,10 +8,12 @@
 require_once __DIR__ . '/vendor/autoload.php';
 use Illuminate\Database\Capsule\Manager as DB;
 
+
 $db = new DB();
 $db->addConnection(parse_ini_file('./src/conf/conf.ini'));
 $db->setAsGlobal();
 $db->bootEloquent();
+
 /*
  * Liste les listes de souhaits
  */
@@ -21,8 +23,16 @@ foreach ($listes_des_souhaits as $liste){
 }
 
 
-
-
+/**
+ * Test: lister les items
+ */
+echo "====Test: lister les items===="."<br>";
+$res = \mywishlist\models\Item::get();
+foreach ($res as $item){
+    echo $item->id." ".$item->list_id." ".$item->nom." ".
+        $item->descr." ".$item->img." ".$item->url." ".$item->tarif."<br>";
+}
+echo "=============================="."<br>";
 
 
 ?>
