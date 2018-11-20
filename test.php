@@ -15,22 +15,23 @@ $db->setAsGlobal();
 $db->bootEloquent();
 
 /*
- * Liste les listes de souhaits
+ * Test: Liste les listes de souhaits
  */
+echo "====Test: Lister les listes de souhaits===="."<br>";
 $listes_des_souhaits = \mywishlist\models\Liste::select('user_id','titre','description','expiration')->get();
 foreach ($listes_des_souhaits as $liste){
-    echo $liste->no . ':'.$liste->user_id . ':' . $liste->titre . ':' . $liste->description . ':' . $liste->expiration.PHP_EOL;
+    echo $liste->no . ':'.$liste->user_id . ':' . $liste->titre . ':' . $liste->description . ':' . $liste->expiration."<br>";
 }
 
 
 /**
- * Test: lister les items
+ * Test: Lister les items
  */
-echo "====Test: lister les items===="."<br>";
+echo "====Test: Lister les items===="."<br>";
 $res = \mywishlist\models\Item::get();
 foreach ($res as $item){
-    echo $item->id." ".$item->list_id." ".$item->nom." ".
-        $item->descr." ".$item->img." ".$item->url." ".$item->tarif."<br>";
+    echo $item->id."|".$item->list_id."|".$item->nom."|".
+        $item->descr."|".$item->img."|".$item->url."|".$item->tarif."<br>";
 }
 echo "=============================="."<br>";
 
