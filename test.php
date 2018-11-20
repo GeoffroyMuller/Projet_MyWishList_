@@ -6,13 +6,21 @@
  * Time: 15:32
  */
 require_once __DIR__ . '/vendor/autoload.php';
+use Illuminate\Database\Capsule\Manager as DB;
 
-//$listes_des_souhaits = Liste::select('*')->get();
 
+$db = new DB();
+$db->addConnection(parse_ini_file('./src/conf/conf.ini'));
+$db->setAsGlobal();
+$db->bootEloquent();
+
+$listes_des_souhaits = \mywishlist\models\Liste::select('user_id','titre','description','expiration')->get();
+foreach ($listes_des_souhaits as $liste){
+    echo $liste->no . ':'.$liste->user_id . ':' . $liste->titre . ':' . $liste->description . ':' . $liste->expiration.PHP_EOL;
+}
 
 
 /**
- * Geoffroy
  * Test: lister les items
  */
 echo "Test: lister les items"."<br>";
