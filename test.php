@@ -7,9 +7,12 @@
  */
 require_once __DIR__ . '/vendor/autoload.php';
 
-$listes_des_souhaits = Liste::select('*')->get();
+$listes_des_souhaits = \mywishlist\models\Liste::select('*')->get();
 
-
-
+/**
+ * theo
+ * afficher un item avec l'id
+ */
+$item_recherche = \mywishlist\models\Item::select('*')->where('id','equal','1')->get() ;
 
 ?>
