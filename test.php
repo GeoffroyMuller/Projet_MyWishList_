@@ -13,7 +13,7 @@ $db->addConnection(parse_ini_file('./src/conf/conf.ini'));
 $db->setAsGlobal();
 $db->bootEloquent();
 
-/*
+/**
  * Test: Liste les listes de souhaits
  */
 echo "====Test: Lister les listes de souhaits===="."<br>";
@@ -37,6 +37,10 @@ echo "=============================="."<br>";
 /* *
  * Test: Lister les items
  *
+=======
+/**
+ * Test: Lister les items
+>>>>>>> e94d8fc5a205ecb90260139b371cfd182a6899e2
  */
 echo "====Test: Lister les items===="."<br>";
 $res = \mywishlist\models\Item::get();
