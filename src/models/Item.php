@@ -16,8 +16,8 @@ class Item extends \Illuminate\Database\Eloquent\Model
     protected $primaryKey = 'id';
     public $timestamps = false;
 
-    public function Liste(){
-        return $this->belongsTo('\model\Liste','no') ;
+    public function liste(){
+        return $this->belongsTo('\mywishlist\models\Liste','liste_id') ;
     }
 
 

@@ -25,7 +25,6 @@ echo "=============================="."<br>";
 
 
 /**
-<<<<<<< HEAD
  * theo
  * afficher un item avec l'id
  */
@@ -35,7 +34,9 @@ foreach ($item_recherche as $item){
 }
 echo "=============================="."<br>";
 
-/* * Test: Lister les items
+/* *
+ * Test: Lister les items
+ *
  */
 echo "====Test: Lister les items===="."<br>";
 $res = \mywishlist\models\Item::get();
@@ -44,6 +45,16 @@ foreach ($res as $item){
         $item->descr."|".$item->img."|".$item->url."|".$item->tarif."<br>";
 }
 echo "=============================="."<br>";
+
+$item = \mywishlist\models\Item::where("id","=","1")->first();
+//var_dump($item);
+
+$list = $item->liste()->first();
+//echo "\n===========================";
+//var_dump($list);
+
+$items = $list->items()->get();
+var_dump($items);
 
 
 ?>
