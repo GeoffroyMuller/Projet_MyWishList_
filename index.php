@@ -21,5 +21,10 @@ $app->get('/affichage/afficherListeSouhait', function (){
     echo 'afficherListeSouhait';
 });
 
+$app->get('/affichage/afficherListeItems/:idliste', function (){
+    $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
+    $controlleurAffichage->afficherListeItems($idliste);
+});
+
 $app->run();
 
