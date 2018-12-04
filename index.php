@@ -17,9 +17,9 @@ $app->get('/listes/',function (){
     echo $controlleurAffichage->afficherToutLesItems();
 });
 
-$app->get('/affichage/afficherListeItems/:idliste', function (){
+$app->get('/affichage/afficherListeItems/:idliste', function ($idliste){
     $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
-    $controlleurAffichage->afficherListeItems($idliste);
+    var_dump($controlleurAffichage->afficherListeItems($idliste));
 });
 $app->get('/affichage/afficherItem/:id',function($id){
     $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
