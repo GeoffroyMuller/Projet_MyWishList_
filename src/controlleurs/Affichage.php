@@ -12,10 +12,14 @@ namespace mywishlist\controlleurs;
 class Affichage
 {
     public function afficherItem($id){
-        echo "fonction afficher Item par ID";
-        $res = item::select('id', 'nom', 'descr')
-            ->where('id', '=', $id);
-        echo $res->id + ", " + $res->nom + "," + $res->descr;
+        echo "fonction afficher Item par ID<br>";
+        $resultat="";
+        $res = \mywishlist\models\Item::select('id', 'nom', 'descr')
+            ->where('id', '=', $id)->get();
+        foreach ($res as $item){
+            $resultat=$resultat . $item->id . ', '.$item->nom . ', ' . $item->descr ."<br>";
+        }
+        echo $resultat;
     }
 
 
