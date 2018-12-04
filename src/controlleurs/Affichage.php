@@ -11,6 +11,20 @@ namespace mywishlist\controlleurs;
 
 class Affichage
 {
+    public function afficherItem($id){
+        echo "fonction afficher Item par ID<br>";
+        $resultat="";
+        $res = \mywishlist\models\Item::select('id', 'nom', 'descr')
+            ->where('id', '=', $id)->get();
+        foreach ($res as $item){
+            $resultat=$resultat . 'ID: '.$item->id . '<br>Nom: '.$item->nom . '<br>Description: ' . $item->descr ."<br>";
+        }
+        if ($resultat==""){
+            $resultat="Id incorrect";
+        }
+        echo $resultat;
+    }
+
 
     public function afficherToutLesItems(){
         $resultat="";
