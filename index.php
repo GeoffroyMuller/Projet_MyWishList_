@@ -8,8 +8,11 @@ $db->setAsGlobal();
 $db->bootEloquent();
 $app = new \Slim\Slim ;
 
-
-$app->get('/affichage/afficherToutesLesListes',function (){
+/*
+ * Un seul ECHO partout, le ECHO doit etre dans la methode render de la VUE
+ * href = demander l'url à slim
+ */
+$app->get('/listes/',function (){
     $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
     echo $controlleurAffichage->afficherToutLesItems();
 });
