@@ -17,7 +17,10 @@ class Affichage
         $res = \mywishlist\models\Item::select('id', 'nom', 'descr')
             ->where('id', '=', $id)->get();
         foreach ($res as $item){
-            $resultat=$resultat . $item->id . ', '.$item->nom . ', ' . $item->descr ."<br>";
+            $resultat=$resultat . 'ID: '.$item->id . '<br>Nom: '.$item->nom . '<br>Description: ' . $item->descr ."<br>";
+        }
+        if ($resultat==""){
+            $resultat="Id incorrect";
         }
         echo $resultat;
     }
