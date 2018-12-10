@@ -27,14 +27,20 @@ class Affichage
         }
         return $resultat;
     }
+    /**
+     * affiche les items d'une liste choisie par son id 
+     * @param $idlisteSouhait : id de la liste choisie
+     */
     public function afficherListeItems($idlisteSouhait){
         $resultat = array();
         $liste_de_souhait = \mywishlist\models\Liste::where('no', '=', $idlisteSouhait)->first();
         $ListeItems = $liste_de_souhait->items()->get();
         foreach ($ListeItems as $item){
             //$resultat=$resultat.$Item->id.":".$Item->liste_id.":".$Item->nom.":".$Item->descr.":".$Item->img.":".$Item->url.":".$Item->tarif."<br>";
-            array_push($resultat, $this->afficherItem($item->no));
+            array_push($resultat, $item);
         }
+        $vue = new VueParticipant($resultat, LISTE_ITEMS);
         return $resultat;
     }
+
 }
