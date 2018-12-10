@@ -27,16 +27,19 @@ class Affichage
         $vue = new VueParticipant($res,"ITEM");
         return $vue->render();
     }
-
-
+    /**
+     * affiche les items d'une liste choisie par son id 
+     * @param $idlisteSouhait : id de la liste choisie
+     */
     public function afficherListeItems($idlisteSouhait){
         $resultat = array();
         $liste_de_souhait = \mywishlist\models\Liste::where('no', '=', $idlisteSouhait)->first();
         $ListeItems = $liste_de_souhait->items()->get();
         foreach ($ListeItems as $item){
-            array_push($resultat, $this->afficherItem($item->no));
+            array_push($resultat, $item);
         }
-        $vue = new VueParticipant($resultat,"ITEM");
+        $vue = new VueParticipant($resultat,"LIST_ITEMS");
         return $vue->render();
     }
+
 }
