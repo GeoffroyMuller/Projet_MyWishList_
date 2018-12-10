@@ -17,13 +17,16 @@ class VueParticipant
      */
     public $elements;
 
+    public $selecteur;
+
     /**
      * VueParticipant constructor.
      * @param $tabAffichage
      */
-    public function __construct($tabAffichage)
+    public function __construct($tabAffichage,$selecteur)
     {
         $this->elements = $tabAffichage;
+        $this->selecteur = $selecteur;
     }
 
     /**
@@ -47,7 +50,7 @@ END;
      */
     private function htmlItemsListe()
     {
-        //En tête contenant les informations de la listes actuel
+        //En tête contenant les informations de la listes actuelle
         $html = <<<END
         <p>$this->elements[0]->titre</p>
         <p>$this->elements[0]->description</p>
@@ -82,7 +85,35 @@ END;
             return $html;
         }
 
-        
+        public function render(){
+            switch($this->selecteur){
+                case LIST_VIEW : {
+                    $content = $this->htmlListesDeSouhait();
+                    break;
+                }
+                case LIST_ITEMS : {
+                    $content = $this->htmlItemsListe();
+                    break;
+                }
+                case ITEM :{
+                    $content = $this->htmlItem();
+                }
+            }
+            $html=<<<END
+<!DOCTYPE html>
+<html>
+<head> ... </head>
+<body>
+ ...
+<div class="content">
+$content
+</div>
+</body><html>
+END;
+            return $html;
+        }
+
+
 
 
 }
