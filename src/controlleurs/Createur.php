@@ -18,7 +18,17 @@ class Createur
      * @param $idItem
      *      Id de l'item où il faut ajouter une image
      */
-    public function ajouterImageAItem($file,$idItem){
-
+    public function ajouterImageAItem($file,$idItem)
+    {
+    }
+    public function creerListe($tablist){
+        //$no, $user_id, $titre, $description, $expiration, $token
+        $resliste = new \mywishlist\models\Liste();
+        $resliste->no = $no;
+        $resliste->user_id = $user_id;
+        $resliste->titre = $titre;
+        $resliste->description = $description;
+        $resliste->expiration = $expiration;
+        $resliste->token = $token;
     }
 }
