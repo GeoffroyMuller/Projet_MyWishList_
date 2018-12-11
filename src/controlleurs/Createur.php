@@ -11,5 +11,14 @@ namespace mywishlist\controlleurs;
 
 class Createur
 {
+    /**
+     * Methode permettant d'ajouter une image à un item
+     * @param $file
+     *      Fichier Image
+     * @param $idItem
+     *      Id de l'item où il faut ajouter une image
+     */
+    public function ajouterImageAItem($file,$idItem){
 
+    }
 }

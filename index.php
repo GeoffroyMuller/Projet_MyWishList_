@@ -14,7 +14,7 @@ $app = new \Slim\Slim ;
  */
 $app->get('/listes/',function (){
     $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
-    echo $controlleurAffichage->afficherToutLesItems();
+    echo $controlleurAffichage->afficherLesListesDeSouhaits();
 });
 
 $app->get('/affichage/afficherListeItems/:idliste', function ($idliste){
