@@ -24,6 +24,7 @@ class Createur
         $res = \mywishlist\models\Commentaire::INSERT INTO Commentaire VALUES ($user_id, $no, $message)->get();
         $vue = new VueParticipant($res,"Commentaire");
         return $vue->render();
+        }
 
     /**
      * Methode permettant d'ajouter une image à un item
