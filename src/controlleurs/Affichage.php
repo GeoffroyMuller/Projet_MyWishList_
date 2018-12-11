@@ -9,6 +9,7 @@
 namespace mywishlist\controlleurs;
 
 
+use mywishlist\models\Liste;
 use mywishlist\vue\VueParticipant;
 
 class Affichage
@@ -39,6 +40,15 @@ class Affichage
             array_push($resultat, $item);
         }
         $vue = new VueParticipant($resultat,"LIST_ITEMS");
+        return $vue->render();
+    }
+
+    /**
+     * Méthode permettant l'affichage de toutes les listes de souhait
+     */
+    public function afficherLesListesDeSouhaits(){
+        $resultat = \mywishlist\models\Liste::select('user_id','titre','description','expiration')->get();
+        $vue = new VueParticipant($resultat,"LIST_VIEW");
         return $vue->render();
     }
 
