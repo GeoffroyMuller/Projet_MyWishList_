@@ -11,10 +11,12 @@ namespace mywishlist\controlleurs;
 
 class Createur
 {
-    public function ajouterMessage($user_id, $no, $message){
-        $res = \mywishlist\models\Commentaire::INSERT INTO Commentaire VALUES ($user_id, $no, $message)->get();
-        $vue = new VueParticipant($res,"Commentaire");
+    public function ajouterMessage($user_id, $no, $message)
+    {
+        $res = \mywishlist\models\Commentaire::INSERT INTO Commentaire VALUES($user_id, $no, $message)->get();
+        $vue = new VueParticipant($res, "Commentaire");
         return $vue->render();
+        }
 
     /**
      * Methode permettant d'ajouter une image à un item
