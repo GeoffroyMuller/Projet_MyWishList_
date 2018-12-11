@@ -15,5 +15,15 @@ class Createur
         $res = \mywishlist\models\Commentaire::INSERT INTO Commentaire VALUES ($user_id, $no, $message)->get();
         $vue = new VueParticipant($res,"Commentaire");
         return $vue->render();
+
+    public function creerListe($tablist){
+        //$no, $user_id, $titre, $description, $expiration, $token
+        $resliste = new \mywishlist\models\Liste();
+        $resliste->no = $no;
+        $resliste->user_id = $user_id;
+        $resliste->titre = $titre;
+        $resliste->description = $description;
+        $resliste->expiration = $expiration;
+        $resliste->token = $token;
     }
 }
