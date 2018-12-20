@@ -15,7 +15,7 @@ use mywishlist\vue\VueParticipant;
 class Affichage
 {
 
-    public function itemSListe($noliste){
+    public function itemsListe($noliste){
         echo "====Test: Lister les items d'une liste===="."<br>";
         $res = \mywishlist\models\Liste::where("no","=",$noliste);
         echo $res->titre;
@@ -30,10 +30,8 @@ class Affichage
      *      Code html de la vue
      */
     public function afficherItem($id){
-
-        $res = \mywishlist\models\Item::select('id', 'nom', 'descr')
-            ->where('id', '=', $id)->get();
-        $vue = new VueParticipant($res,"ITEM");
+        $res = \mywishlist\models\Item::where('id', '=', $id)->first();
+        $vue = new VueParticipant($res,'ITEM');
         return $vue->render();
     }
     /**

@@ -50,12 +50,12 @@ body{
     color: rgb(0);
     /*line-height: 1.3;*/
 }
-
 /*DEBUT TOPBAR*/
 
 .topbar-container{
     z-index: 4;
     position: fixed;    
+    top : 0;
     left: 0;
     right: 0;
     background : radial-gradient( rgb(40, 35, 35),rgb(0, 0, 0));
@@ -136,9 +136,9 @@ div#slider figure img{
 /*DEBUT HEADER CARD*/
 .header-card{
     color: rgb(65, 65, 65);
-    font-size: 48px;
+    font-size: 2.2em;
     margin-top : 100px;
-    margin-left : 274px;
+    margin-left: 25%;
 }
 
 .header-card hr{
@@ -150,7 +150,7 @@ div#slider figure img{
 
 /*DEBUT CARTE*/
 .card{
-    margin-left: 500px;
+    margin-left: 35%;
     margin-top : 78px;
     width : 30%;
     overflow: hidden;
@@ -168,7 +168,7 @@ div#slider figure img{
 
 .card header p{
     font-size: 26px;
-    padding-left : 60px;
+    padding-left : 10%;
     padding-top : 20px;
 }
 
@@ -180,7 +180,7 @@ div#slider figure img{
 
 .card article{
     margin-top : 42px;
-    margin-left : 36px;
+    margin-left : 5%;
     font-size: 18px;
     max-height: 150px;
     overflow: scroll;
@@ -210,48 +210,108 @@ div#slider figure img{
 }
 /*FIN CARTE*/
 
-/* Carte d'un item*/
+/*Page Item*/
 
-.conteneur-item{
-    margin-left: 250px;
+.composantItem{
+    margin-top : 20px;
+    margin-left : 25%;
+    width : 50%;
 }
 
-.card-item{
-    display: inline-block;
-    margin-right: 150px;
-    margin-top : 78px;
-    width : 30%;
-    overflow: hidden;
+.titre-item{
+    margin-top : 6%;
 }
 
-.card-item article{
-    margin-top : 42px;
-    margin-left : 36px;
-    font-size: 18px;
-    max-height: 150px;
-    overflow: scroll;
+.item-image{
+    float : left;
+    max-width : 250px;
+    height: auto;
 }
 
-.card-item header{
-    position : relative;
+.titre-description-item{
+    font-size : 2em;
+    padding-left : 29%;
 }
 
-.card-item header img{
-    position : absolute;
-    top : 0;
-    left: 0;
-}
-
-.card-item header p{
-    font-size: 26px;
-    padding-left : 60px;
+.description-item{
     padding-top : 20px;
+    padding-left : 32%;
+    text-align: justify;
 }
 
-.item-picture{
-    width: 80px;
-    height: 50px;
+.titre-description-item + hr{
+    margin-left : 14%;
+    width : 36%;
 }
+
+.titre-status-item{
+    clear : left;
+    padding-top : 10px;
+    font-size: 2em;
+    padding-left : 10px;
+}
+
+hr{
+    position : absolute;
+    width : 40%;
+}
+
+.status-item{
+    margin-top: 20px;
+    padding-left : 20px;
+    font-size: 1.8em;
+}
+
+.rouge{
+    color : #940600;
+}
+
+.vert{
+    color : #009409;
+}
+
+.titre-form-reserve{
+    padding-top: 20px;
+    font-size: 2em;
+    padding-left : 10px;
+    
+}
+
+.form-reserve label{
+    display: block;
+    padding-bottom : 10px;
+}
+
+.form-nom,.form-message{
+  margin-top : 20px;  
+  margin-left : 30%;
+}
+
+#nomParticipantInput{
+    font-size : 1.4em;
+    width : 50%;
+}
+
+#nomParticipantInput,#messageInput{
+    border : 1px solid black;
+    border-radius: 6px;
+}
+
+#messageInput{
+    font-size: 1.1em;
+    width : 50%;
+
+}
+
+.form-submit{
+    margin-top: 10px;
+    margin-left : 42%;
+    font-size : 1.3em;
+    color : white;
+    background-color : #424242;
+    border : 0;
+}
+
 
 
 
@@ -302,6 +362,10 @@ div#slider figure img{
        display: none;
    }
    /*FIN HEADER DE LA PAGE CARROUSEL*/
+
+   /*Composant HomePage*/
+
+   /*Composant Item*/
 
     
 }

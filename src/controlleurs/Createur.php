@@ -9,6 +9,8 @@
 namespace mywishlist\controlleurs;
 
 
+use mywishlist\vue\VueParticipant;
+
 class Createur
 {
     /**
@@ -19,6 +21,7 @@ class Createur
      *      Id de la liste
      * @param $message
      *      message a ajouter
+     * @return String
      */
     public function ajouterMessage($user_id, $no, $message){
         $res = \mywishlist\models\Commentaire::INSERT INTO Commentaire VALUES ($user_id, $no, $message)->get();
@@ -27,33 +30,69 @@ class Createur
         }
 
     /**
-     * Methode permettant d'ajouter une image à un item
+     * Methode permettant d'ajouter/modifier une image appartenant à un item
      * @param $file
      *      Fichier Image
      * @param $idItem
      *      Id de l'item où il faut ajouter une image
      */
-    public function ajouterImageAItem($file,$idItem){
+    public function modifierImageItem($file,$idItem){
         //On récupére le nom du fichier
-        $fileName = $file['name'];
+        $nomDufichierDossierPermanent = $this->recupererNbImageDossier()+1;
         //On récupére l'item et on update le nom de l'image
         $item = \mywishlist\models\Liste::where('id', '=',$idItem);
-        if($item->img == null){
-            $item->img = $fileName;
-            $item->save();
-            if(file_exists('/img/'.$fileName)){
-                move_uploaded_file($fileName,'/img');
-            }else{
+
+        if($item->img == null) {
+            //On déplace le fichier dans le répertoire définitif avec un nom différent pour éviter les caractére spéciaux
+            if (!(move_uploaded_file($file['tmp_name'], '/img' .$nomDufichierDossierPermanent ))) {
                 /*
-                 * To do exception fichier existe déja
+                 * Throw une erreur
                  */
             }
         }else{
-            /*
-             * TO do Exception car l'item à déja une image
-             */
+            //L'item à déja une image et on souhaite juste la mettre à jour
+            $this->supprimerFichierImage($item->img);
         }
+        $item->img = $nomDufichierDossierPermanent;
+        $item->save();
 
+        $vue = new VueParticipant($item,"ITEM");
+        $vue->render();
+    }
+
+    /**
+     * Méthode permettant de compter le nombre d'image dans le dossier /img. Cette méthode est utilisé pour donner un nom aux image envoyé par l'utilisateur
+     * @return int
+     *      Le nombre de fichier trouver dans le répertoire /img
+     */
+    private function recupererNbImageDossier(){
+        return count(glob("/img*.*"));
+    }
+
+    /**
+     * Methode permettant de supprimer un fichier image du dossier permanent /img/
+     * @param $nomImage
+     *      Nom de l'image à supprimer
+     */
+    private function supprimerFichierImage($nomImage){
+        if(file_exists('/img/'.$nomImage)){
+            unlink('/img/'.$nomImage);
+        }
+    }
+
+    /**
+     * Methode permettant de supprimer une image lier à un item
+     * @param $idItem
+     *      Id de l'item
+     */
+    public function supprimerImageItem($idItem){
+        $item =\mywishlist\models\Liste::where('id', '=',$idItem);
+        $this->supprimerFichierImage($item->img);
+        $item->img = null;
+        $item->save();
+
+        $vue = new VueParticipant($item, 'ITEM');
+        $vue->render();
     }
 
     public function creerListe($tablist){

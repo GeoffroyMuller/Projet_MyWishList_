@@ -98,13 +98,51 @@ END;
      * Génére le code html correspondant à l'affichage d'un Item
      */
         private function htmlItem(){
-
+            $nom = $this->elements->nom;
+            $description = $this->elements->descr;
+            $nomImage = $this->elements->img;
             $html = <<<END
             
-            <p>$this->elements[0]->nom</p>
-            <p>$this->elements[0]->descr</p>
-            <img src="web/img/$this->elements[0]->img">
-            <p>$this->elements[0]->tarif</p>
+            <div class="container">
+        <header class="header-card titre-item">
+            <h1>$nom</h1>
+            <hr>
+        </header>
+
+        <!--Component-->
+        <div class="composantItem">
+            <img class="item-image" src="/img/$nomImage">
+            <h2 class="titre-description-item">Description</h2>
+            <hr>
+            <p class="description-item">
+                $description
+            </p>
+            <h2 class="titre-status-item">Status</h2>
+            <hr>
+            <p class="status-item rouge">
+                Non reservé ! (WIP)
+            </p>
+            <h2 class="titre-form-reserve">Reserver cet item !</h2>
+            <hr>
+
+            <form class="form-reserve" action="#" method="POST">
+                <div class="form-nom">
+                    <label for="nomParticipantInput">Votre nom :</label>
+                    <input type="text" name="nomParticipant" id="nomParticipantInput" placeholder="Votre nom" inputmode="text" required>
+                </div>
+                <div class="form-message">
+                    <label for="messageInput">Ajouter un message (optionel) :</label>
+                    <textarea name="message" id="messageInput" rows="10" cols="40" placeholder="Votre message"></textarea>
+                </div>
+
+                <input class="form-submit" type="submit" value="Reserver">
+
+            </form>
+
+
+
+        </div>
+    </div>
 END;
             return $html;
         }
@@ -113,14 +151,27 @@ END;
             switch($this->selecteur){
                 case 'LIST_VIEW' :
                     $content = $this->htmlListesDeSouhait();
+                    $homepage = <<<END
+            <div id="slider">
+                <figure>
+                    <img src="../../img/pic1_carousel.png">
+                    <img src="../../img/pic2_carousel.png">
+                    <img src="../../img/pic3_carousel.png">
+                    <img src="../../img/pic1_carousel.png">
+                 </figure>
+            </div>
+END;
+
                     break;
 
                 case 'LIST_ITEMS' :
                     $content = $this->htmlItemsListe();
+                    $homepage="";
                     break;
 
                 case 'ITEM' :
                     $content = $this->htmlItem();
+                    $homepage="";
                     break;
             }
             $html=<<<END
@@ -148,20 +199,12 @@ END;
             </div>
 
             <!--Head-->
-            <div id="slider">
-                <figure>
-                    <img src="../../img/pic1_carousel.png">
-                    <img src="../../img/pic2_carousel.png">
-                    <img src="../../img/pic3_carousel.png">
-                    <img src="../../img/pic1_carousel.png">
-                 </figure>
-            </div>
-<div class="content">
-$content
-</div>
+            $homepage
+            $content
+
 </body><html>
 END;
-            return $html;
+            echo $html;
         }
 
 
