@@ -64,24 +64,34 @@ END;
      */
     private function htmlItemsListe()
     {
+
         //En tête contenant les informations de la listes actuelle
         $html = <<<END
-        <p>$this->elements[0]->titre</p>
-        <p>$this->elements[0]->description</p>
-        <p>$this->elements[0]->expiration</p>
-END;
-        //On génére le code html pour chaque item
-        for ($i=1; $i<sizeof($this->elements);$i++) {
-            $html = <<<END
-            
-            <p>$this->elements[i]->nom</p>
-            <p>$this->elements[i]->descr</p>
-            <img src="../../img/$this->elements[i]->img">
-            <p>$this->elements[i]->tarif</p>
+           <!--Content-->
+    <header class="header-card">
+        <h1>Titre de la liste</h1>
+        <hr>
+    </header>
+<div class="conteneur-item">
 END;
 
+        foreach ($this->elements as $element){
+            $html = <<<END
+             <div class="card-item">
+        <header>
+            <img class="item-picture" src="../../img/$element->img">
+            <p>$element->nom</p>
+            <hr>
+        </header>
+        <p class="card_exp">Prix : $element->tarif</p>
+        <article>
+            <p>$element->descr</p>
+        </article>
+        <a href="#"><button class="card-button" type="button"> Réserver l'item !</button></a>
+    </div>
+END;
         }
-        return $html;
+        return $html."</div>";
     }
 
     /**

@@ -25,8 +25,27 @@ class Createur
      * @param $idItem
      *      Id de l'item où il faut ajouter une image
      */
-    public function ajouterImageAItem($file,$idItem)
-    {
+    public function ajouterImageAItem($file,$idItem){
+        //On récupére le nom du fichier
+        $fileName = $file['name'];
+        //On récupére l'item et on update le nom de l'image
+        $item = \mywishlist\models\Liste::where('id', '=',$idItem);
+        if($item->img == null){
+            $item->img = $fileName;
+            $item->save();
+            if(file_exists('/img/'.$fileName)){
+                move_uploaded_file($fileName,'/img');
+            }else{
+                /*
+                 * To do exception fichier existe déja
+                 */
+            }
+        }else{
+            /*
+             * TO do Exception car l'item à déja une image
+             */
+        }
+
     }
 
     public function creerListe($tablist){

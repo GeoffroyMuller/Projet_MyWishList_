@@ -17,14 +17,25 @@ $app->get('/listes/',function (){
     echo $controlleurAffichage->afficherLesListesDeSouhaits();
 });
 
-$app->get('/affichage/afficherListeItems/:idliste', function ($idliste){
+$app->get('/afficherListeItems/:id', function ($id){
     $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
-    var_dump($controlleurAffichage->afficherListeItems($idliste));
+    echo $controlleurAffichage->afficherListeItems($id);
 });
-$app->get('/affichage/afficherItem/:id',function($id){
+$app->get('/afficherItem/:id',function($id){
     $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
     echo $controlleurAffichage->afficherItem($id);
 
+});
+
+$app->get('/ajouterImage/:id',function($id){
+    if(!empty($_FILES['image'])){
+        $controlleurCreateur = new \mywishlist\controlleurs\Createur();
+        $controlleurCreateur->ajouterImageAItem($_FILES['image'],$id);
+        $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
+        $controlleurAffichage->afficherItem($id);
+    }else{
+        //$controlleurAffichage->afficherErreur('Aucune image trouvée')
+    }
 });
 
 $app->run();

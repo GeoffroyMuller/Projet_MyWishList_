@@ -210,6 +210,50 @@ div#slider figure img{
 }
 /*FIN CARTE*/
 
+/* Carte d'un item*/
+
+.conteneur-item{
+    margin-left: 250px;
+}
+
+.card-item{
+    display: inline-block;
+    margin-right: 150px;
+    margin-top : 78px;
+    width : 30%;
+    overflow: hidden;
+}
+
+.card-item article{
+    margin-top : 42px;
+    margin-left : 36px;
+    font-size: 18px;
+    max-height: 150px;
+    overflow: scroll;
+}
+
+.card-item header{
+    position : relative;
+}
+
+.card-item header img{
+    position : absolute;
+    top : 0;
+    left: 0;
+}
+
+.card-item header p{
+    font-size: 26px;
+    padding-left : 60px;
+    padding-top : 20px;
+}
+
+.item-picture{
+    width: 80px;
+    height: 50px;
+}
+
+
 
 
 /*Faire les medias querries pour le phone*/
