@@ -98,10 +98,13 @@ END;
      * Génére le code html correspondant à l'affichage d'un Item
      */
         private function htmlItem(){
-            $nom = $this->elements->nom;
-            $description = $this->elements->descr;
-            $nomImage = $this->elements->img;
-            $html = <<<END
+            $html="";
+            try{
+                $nom = $this->elements->nom;
+                $description = $this->elements->descr;
+                $nomImage = $this->elements->img;
+
+                $html = <<<END
             
             <div class="container">
         <header class="header-card titre-item">
@@ -144,6 +147,18 @@ END;
         </div>
     </div>
 END;
+            }catch(\ErrorException $exception){
+                $html = <<<END
+<header class="header-card titre-item">
+            <h1>ERREUR : L'item demandé n'existe pas</h1>
+            <hr>
+        </header>
+END;
+
+
+            }
+
+
             return $html;
         }
 
