@@ -11,10 +11,18 @@ namespace mywishlist\controlleurs;
 
 class Createur
 {
-    public function ajouterMessage($user_id, $no, $message)
-    {
-        $res = \mywishlist\models\Commentaire::INSERT INTO Commentaire VALUES($user_id, $no, $message)->get();
-        $vue = new VueParticipant($res, "Commentaire");
+    /**
+     * Methode permettant d'ajouter un message à une liste
+     * @param $user_id
+     *      id de l'utilisateur
+     * @param $no
+     *      Id de la liste
+     * @param $message
+     *      message a ajouter
+     */
+    public function ajouterMessage($user_id, $no, $message){
+        $res = \mywishlist\models\Commentaire::INSERT INTO Commentaire VALUES ($user_id, $no, $message)->get();
+        $vue = new VueParticipant($res,"Commentaire");
         return $vue->render();
         }
 

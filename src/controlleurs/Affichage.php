@@ -14,6 +14,14 @@ use mywishlist\vue\VueParticipant;
 
 class Affichage
 {
+
+    public function itemSListe($noliste){
+        echo "====Test: Lister les items d'une liste===="."<br>";
+        $res = \mywishlist\models\Liste::where("no","=",$noliste);
+        echo $res->titre;
+        echo "=============================="."<br>";
+    }
+
     /**
      * Méthode affichant un item
      * @param $id
@@ -51,5 +59,6 @@ class Affichage
         $vue = new VueParticipant($resultat,"LIST_VIEW");
         return $vue->render();
     }
+
 
 }
