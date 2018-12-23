@@ -9,6 +9,8 @@
 namespace mywishlist\controlleurs;
 
 
+use mywishlist\models\Item;
+use mywishlist\models\Liste;
 use mywishlist\vue\VueParticipant;
 
 class Createur
@@ -23,11 +25,11 @@ class Createur
      *      message a ajouter
      * @return String
      */
-    public function ajouterMessage($user_id, $no, $message){
+    /*public function ajouterMessage($user_id, $no, $message){
         $res = \mywishlist\models\Commentaire::INSERT INTO Commentaire VALUES ($user_id, $no, $message)->get();
         $vue = new VueParticipant($res,"Commentaire");
         return $vue->render();
-        }
+        }*/
 
     /**
      * Methode permettant d'ajouter/modifier une image appartenant à un item
@@ -36,28 +38,27 @@ class Createur
      * @param $idItem
      *      Id de l'item où il faut ajouter une image
      */
-    public function modifierImageItem($file,$idItem){
+    private function modifierImageItem($file,$idItem){
         //On récupére le nom du fichier
-        $nomDufichierDossierPermanent = $this->recupererNbImageDossier()+1;
+        $nomDufichierDossierPermanent = ($this->recupererNbImageDossier()+1).strrchr($file['name'],'.');
         //On récupére l'item et on update le nom de l'image
-        $item = \mywishlist\models\Liste::where('id', '=',$idItem);
+        $item = \mywishlist\models\Item::where('id','=',$idItem)->first();
+        $item->id = $idItem;
+        $path = $_SERVER["DOCUMENT_ROOT"];
 
-        if($item->img == null) {
+
             //On déplace le fichier dans le répertoire définitif avec un nom différent pour éviter les caractére spéciaux
-            if (!(move_uploaded_file($file['tmp_name'], '/img' .$nomDufichierDossierPermanent ))) {
+          if (!(move_uploaded_file($file['tmp_name'], "$path/img/".$nomDufichierDossierPermanent ))) {
                 /*
                  * Throw une erreur
                  */
             }
-        }else{
+        if(!is_null($item->img)){
             //L'item à déja une image et on souhaite juste la mettre à jour
             $this->supprimerFichierImage($item->img);
         }
         $item->img = $nomDufichierDossierPermanent;
         $item->save();
-
-        $vue = new VueParticipant($item,"ITEM");
-        $vue->render();
     }
 
     /**
@@ -66,7 +67,8 @@ class Createur
      *      Le nombre de fichier trouver dans le répertoire /img
      */
     private function recupererNbImageDossier(){
-        return count(glob("/img*.*"));
+        $path = $_SERVER["DOCUMENT_ROOT"];
+        return count(glob("$path/img/*.*"));
     }
 
     /**
@@ -86,7 +88,7 @@ class Createur
      *      Id de l'item
      */
     public function supprimerImageItem($idItem){
-        $item =\mywishlist\models\Liste::where('id', '=',$idItem);
+        $item =\mywishlist\models\Liste::where('id', '=',$idItem)->first();
         $this->supprimerFichierImage($item->img);
         $item->img = null;
         $item->save();
@@ -95,7 +97,31 @@ class Createur
         $vue->render();
     }
 
-    public function creerListe($tablist){
+    /**
+     * Méthode permettant de modifier un item, tout les paramétres on au préalable été vérifier et nettoyé
+     * @param $nom
+     *      Nouveau nom de l'item
+     * @param $descr
+     *      Nouvelle description de l'item
+     * @param $image
+     *      Nouvelle image de l'item
+     */
+    public function modifierItem($nom,$descr,$image,$id){
+        $item = \mywishlist\models\Item::where('id','=',$id)->first();
+        $item->nom = $nom;
+        $item->descr = $descr;
+        $item->save();
+        if(!is_null($image)){
+            $this->modifierImageItem($image,$id);
+        }
+
+
+        $app = \Slim\Slim::getInstance();
+        $app->redirect($app->urlFor("afficherItem",["id"=>$id]));
+
+    }
+
+    /*public function creerListe($tablist){
         //$no, $user_id, $titre, $description, $expiration, $token
         $resliste = new \mywishlist\models\Liste();
         $resliste->no = $no;
@@ -104,5 +130,5 @@ class Createur
         $resliste->description = $description;
         $resliste->expiration = $expiration;
         $resliste->token = $token;
-    }
+    }*/
 }

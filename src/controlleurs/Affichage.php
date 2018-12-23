@@ -9,6 +9,7 @@
 namespace mywishlist\controlleurs;
 
 
+use mywishlist\models\Item;
 use mywishlist\models\Liste;
 use mywishlist\vue\VueParticipant;
 
@@ -53,9 +54,19 @@ class Affichage
      * Méthode permettant l'affichage de toutes les listes de souhait
      */
     public function afficherLesListesDeSouhaits(){
-        $resultat = \mywishlist\models\Liste::select('user_id','titre','description','expiration')->get();
+        $resultat = \mywishlist\models\Liste::select('no','user_id','titre','description','expiration')->get();
         $vue = new VueParticipant($resultat,"LIST_VIEW");
         return $vue->render();
+    }
+
+    /**
+     * Méthode permettant l'affichage de la page de modification de l'item souhaité
+     * @param $id
+     */
+    public function afficherItemModification($id){
+        $item = \mywishlist\models\Item::where('id','=',$id)->first();
+        $vue = new VueParticipant($item,'ITEM_MODIFICATION');
+        $vue->render();
     }
 
 

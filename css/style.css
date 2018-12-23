@@ -71,6 +71,10 @@ body{
    
 }
 
+span{
+    color : #FFD200;
+}
+
 .menu{
     float: right;
     margin-right: 39px;
@@ -135,6 +139,7 @@ div#slider figure img{
 
 /*DEBUT HEADER CARD*/
 .header-card{
+    position : relative;
     color: rgb(65, 65, 65);
     font-size: 2.2em;
     margin-top : 100px;
@@ -143,7 +148,7 @@ div#slider figure img{
 
 .header-card hr{
     position: absolute;
-    width: 50%;
+    width: 67%;
     margin-top : 10px;
 }
 /*FIN HEADER CARD*/
@@ -310,6 +315,37 @@ hr{
     color : white;
     background-color : #424242;
     border : 0;
+}
+
+/*Item modification*/
+#titre-item-modification-input{
+    color: rgb(65, 65, 65);
+    font-size: 39.6px;
+    padding-left : 10px;
+}
+
+.label-nom-item{
+    font-size : .5em;
+    vertical-align:middle;
+}
+
+.description-item-modification{
+ resize: none;
+ font-family: sans-serif;
+}
+
+.item-image-modification{
+    display: block;
+}
+
+.modification-submit{
+    float: right;
+    margin-top : 5px;
+}
+
+.item-image img{
+    max-width : 250px;
+    height: auto;
 }
 
 

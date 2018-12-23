@@ -19,6 +19,8 @@ class VueParticipant
 
     public $selecteur;
 
+    public $app;
+
     /**
      * VueParticipant constructor.
      * @param $tabAffichage
@@ -27,6 +29,7 @@ class VueParticipant
     {
         $this->elements = $tabAffichage;
         $this->selecteur = $selecteur;
+        $this->app = \Slim\Slim::getInstance();
     }
 
     /**
@@ -41,6 +44,7 @@ class VueParticipant
             </header>
 END;
         foreach ($this->elements as $element){
+            $lienVersItems = $this->app->urlFor("afficherItemsListe",["id"=>$element->no]);
             $html=$html.<<<END
             <div class="card">
                 <header>
@@ -52,7 +56,7 @@ END;
                 <article>
                     <p>$element->description</p>
                 </article>
-                <a href="#"><button class="card-button" type="button"> Voir les items !</button></a>
+                <a href="$lienVersItems"><button class="card-button" type="button"> Voir les items !</button></a>
             </div>
 END;
         }
@@ -100,9 +104,12 @@ END;
         private function htmlItem(){
             $html="";
             try{
+                $id = $this->elements->id;
                 $nom = $this->elements->nom;
                 $description = $this->elements->descr;
                 $nomImage = $this->elements->img;
+                $urlButton=$this->app->urlFor("modifierItem",['id'=>$id]);
+
 
                 $html = <<<END
             
@@ -110,6 +117,9 @@ END;
         <header class="header-card titre-item">
             <h1>$nom</h1>
             <hr>
+             <div class="item-modifier-bouton">
+                <a href="$urlButton"><button>Modifier l'item</button></a>
+            </div>
         </header>
 
         <!--Component-->
@@ -162,7 +172,54 @@ END;
             return $html;
         }
 
+        private function htmlItemModification(){
+            $nom = $this->elements->nom;
+            $descr= $this->elements->descr;
+            $id = $this->elements->id;
+            $tarif = $this->elements->tarif;
+            $nomImage = $this->elements->img;
+
+            $urlSubmit = $this->app->urlFor('application-modification',['id'=>$id]);
+
+            $html = <<<END
+<div class="container">
+        <form enctype="multipart/form-data" class="form-modification-item" action="$urlSubmit" method="POST" >
+            <header class="header-card titre-item">
+                <label class="label-nom-item" for="titre-item-modification-input">Nom de l'item :</label>
+                <input type="text" name="titre-item-modification" id="titre-item-modification-input" inputmode="text"
+                    value="$nom">
+                <hr>
+            </header>
+
+            <!--Component-->
+            <div class="composantItem">
+                <div class="container-image-item item-image">
+                    <img src="/img/$nomImage">
+                    <label for="item-image-modification">Modifier l'image de l'item :</label>
+                    <input type="file" name="itemImageModification" id="item-image-modification"  accept="image/png, image/jpeg, image/jpg">
+
+                </div>
+                <h2 class="titre-description-item">Editer la Description</h2>
+                <hr>
+                <div class="description-item">
+                    <textarea class="description-item-modification" name="description-item-modification" id="description-item-modification-input"
+                        rows="20" cols="85">
+$descr</textarea>
+                    <input class="modification-submit" type="submit" value="Enregistrer les modifications">
+                </div>
+
+
+
+        </form>
+        </div>
+    </div>
+END;
+
+            return $html;
+}
+
         public function render(){
+            $homepage="";
             switch($this->selecteur){
                 case 'LIST_VIEW' :
                     $content = $this->htmlListesDeSouhait();
@@ -181,14 +238,17 @@ END;
 
                 case 'LIST_ITEMS' :
                     $content = $this->htmlItemsListe();
-                    $homepage="";
                     break;
 
                 case 'ITEM' :
                     $content = $this->htmlItem();
-                    $homepage="";
+                    break;
+
+                case 'ITEM_MODIFICATION':
+                    $content = $this->htmlItemModification();
                     break;
             }
+            $urlTopBarListes = $this->app->urlFor("listes");
             $html=<<<END
         <!DOCTYPE html>
         <html lang="fr">
@@ -202,11 +262,11 @@ END;
 
             <div class="topbar-container">
 
-                    <h1 class="titleTB">WishList</h1>
+                    <h1 class="titleTB"><span>Wish</span>List</h1>
                     
                     <div class="menu">
                         <ul>
-                            <li><a href="#">Les WishLists</a><hr class="menu_separator"></li>
+                            <li><a href="$urlTopBarListes">Les <span>Wish</span>Lists</a><hr class="menu_separator"></li>
                             <li><a href="#">Mes Listes</a><hr class="menu_separator"></li>
                             <li class="user"><a href="#">Vous n'êtes pas connecté !</a></li>
                         </ul>
