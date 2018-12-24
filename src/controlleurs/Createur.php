@@ -32,7 +32,7 @@ class Createur
         }*/
 
     /**
-     * Methode permettant d'ajouter/modifier une image appartenant à un item
+     * Methode permettant d'ajouter/modifier l'image principale appartenant à un item
      * @param $file
      *      Fichier Image
      * @param $idItem
@@ -62,6 +62,18 @@ class Createur
     }
 
     /**
+     * Méthode permettant de renommer les images envoyé par l'utilisateur et les déplaces dans un dossier permanent
+     * @param $files
+     * @return $noms
+     */
+    public function uploadImage($file){
+        $path = $_SERVER["DOCUMENT_ROOT"];
+        $noms[]=$generationNom= ($this->recupererNbImageDossier()+1).strrchr($file['name'],'.');
+        move_uploaded_file($file['tmp_name'], "$path/img/".$generationNom);
+        return $noms;
+    }
+
+    /**
      * Méthode permettant de compter le nombre d'image dans le dossier /img. Cette méthode est utilisé pour donner un nom aux image envoyé par l'utilisateur
      * @return int
      *      Le nombre de fichier trouver dans le répertoire /img
@@ -87,15 +99,31 @@ class Createur
      * @param $idItem
      *      Id de l'item
      */
-    public function supprimerImageItem($idItem){
-        $item =\mywishlist\models\Liste::where('id', '=',$idItem)->first();
-        $this->supprimerFichierImage($item->img);
-        $item->img = null;
-        $item->save();
-
-        $vue = new VueParticipant($item, 'ITEM');
-        $vue->render();
+    public function supprimerImageItem($images){
+        foreach($images as $value){
+            $imageBD = \mywishlist\models\Image::where('id','=',$value)->first();
+            $imageBD->idItem=null;
+            $imageBD->save();
+        }
     }
+
+    /**
+     * Méthode permettant l'ajout d'images selectionnées à un item
+     * @param $images
+     *      Les images choisi par l'utilisateur par l'intermédiaire d'une checkbox
+     * @param $id
+     */
+    public function ajouterImageItem($id,$image,$nom=null){
+            $imageBD = new \mywishlist\models\Image();
+            if(is_null($nom)){
+                $imageBD->nom = \mywishlist\models\Image::where('id','=',$image)->first()->nom;
+            }else{
+                $imageBD->nom = $nom;
+            }
+            $imageBD->idItem=$id;
+            $imageBD->save();
+
+}
 
     /**
      * Méthode permettant de modifier un item, tout les paramétres on au préalable été vérifier et nettoyé

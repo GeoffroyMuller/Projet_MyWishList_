@@ -68,34 +68,33 @@ END;
      */
     private function htmlItemsListe()
     {
-
+        $liste = $this->elements['liste'];
         //En tête contenant les informations de la listes actuelle
         $html = <<<END
            <!--Content-->
     <header class="header-card">
-        <h1>Titre de la liste</h1>
+        <h1>$liste->titre</h1>
         <hr>
     </header>
-<div class="conteneur-item">
 END;
 
-        foreach ($this->elements as $element){
-            $html = <<<END
-             <div class="card-item">
-        <header>
-            <img class="item-picture" src="../../img/$element->img">
-            <p>$element->nom</p>
-            <hr>
-        </header>
-        <p class="card_exp">Prix : $element->tarif</p>
-        <article>
-            <p>$element->descr</p>
-        </article>
-        <a href="#"><button class="card-button" type="button"> Réserver l'item !</button></a>
-    </div>
+        foreach ($this->elements['items'] as $element){
+            $url = $this->app->urlFor("afficherItem",['id'=>$element->id]);
+            $html = $html.<<<END
+            <div class="card-item-liste">
+            <header>
+                <p>$element->nom - $element->tarif €</p>
+                <hr>
+            </header>
+            <article>
+                <img class="item-card-image" src="/img/$element->img">
+                <p class="description-card-item">$element->descr</p>
+            </article>
+            <a href="$url"><button class="card-button" type="button"> Voir l'item !</button></a>
+        </div>
 END;
         }
-        return $html."</div>";
+        return '<div class="container-items-liste">'.$html.'</div>';
     }
 
     /**
@@ -104,33 +103,50 @@ END;
         private function htmlItem(){
             $html="";
             try{
-                $id = $this->elements->id;
-                $nom = $this->elements->nom;
-                $description = $this->elements->descr;
-                $nomImage = $this->elements->img;
+                $id = $this->elements['item']->id;
+                $nom = $this->elements['item']->nom;
+                $description = $this->elements['item']->descr;
+                $nomImage = $this->elements['item']->img;
                 $urlButton=$this->app->urlFor("modifierItem",['id'=>$id]);
 
 
                 $html = <<<END
             
-            <div class="container">
+        <div class="container">
         <header class="header-card titre-item">
             <h1>$nom</h1>
             <hr>
-             <div class="item-modifier-bouton">
+            <div class="item-modifier-bouton">
                 <a href="$urlButton"><button>Modifier l'item</button></a>
             </div>
         </header>
 
         <!--Component-->
-        <div class="composantItem">
+                <div class="composantItem">
             <img class="item-image" src="/img/$nomImage">
             <h2 class="titre-description-item">Description</h2>
             <hr>
             <p class="description-item">
                 $description
             </p>
-            <h2 class="titre-status-item">Status</h2>
+            <h2 class="titre-images-item">Images</h2>
+            <hr>
+
+
+            <div class="images-item">
+END;
+                if(!is_null($this->elements['images'][0])){
+                    foreach ($this->elements['images'] as $image){
+                        $html=$html.<<<END
+ <div class="image">
+                    <img src="/img/$image->nom">
+                </div>
+END;
+                    }
+                }
+
+                $html=$html.<<<END
+ <h2 class="titre-status-item">Status</h2>
             <hr>
             <p class="status-item rouge">
                 Non reservé ! (WIP)
@@ -156,8 +172,11 @@ END;
 
         </div>
     </div>
+
 END;
+
             }catch(\ErrorException $exception){
+                echo $exception;
                 $html = <<<END
 <header class="header-card titre-item">
             <h1>ERREUR : L'item demandé n'existe pas</h1>
@@ -173,11 +192,12 @@ END;
         }
 
         private function htmlItemModification(){
-            $nom = $this->elements->nom;
-            $descr= $this->elements->descr;
-            $id = $this->elements->id;
-            $tarif = $this->elements->tarif;
-            $nomImage = $this->elements->img;
+            $nom = $this->elements['item']->nom;
+            $descr= $this->elements['item']->descr;
+            $id = $this->elements['item']->id;
+            $tarif = $this->elements['item']->tarif;
+            $nomImage = $this->elements['item']->img;
+            $urlModifierImage = $this->app->urlFor('modifierImageItem',['id'=>$id]);
 
             $urlSubmit = $this->app->urlFor('application-modification',['id'=>$id]);
 
@@ -194,7 +214,7 @@ END;
             <!--Component-->
             <div class="composantItem">
                 <div class="container-image-item item-image">
-                    <img src="/img/$nomImage">
+                    <img  class="image-principale" src="/img/$nomImage">
                     <label for="item-image-modification">Modifier l'image de l'item :</label>
                     <input type="file" name="itemImageModification" id="item-image-modification"  accept="image/png, image/jpeg, image/jpg">
 
@@ -205,6 +225,28 @@ END;
                     <textarea class="description-item-modification" name="description-item-modification" id="description-item-modification-input"
                         rows="20" cols="85">
 $descr</textarea>
+                    <h2 class="titre-images-item">Images</h2>
+                    <a href="$urlModifierImage">Modifier les images</a>
+
+                    <hr>
+                    
+
+
+                    <div class="images-item">
+END;
+            if(!is_null($this->elements['images'][0])) {
+                foreach ($this->elements['images'] as $image) {
+                    $html = $html . <<<END
+                <div class="image">
+                            <img src="/img/$image->nom">
+                            <a href="#"><button>Supprimer</button></a>
+                        </div>
+                
+END;
+                }
+            }
+            $html=$html.<<<END
+                    </div>
                     <input class="modification-submit" type="submit" value="Enregistrer les modifications">
                 </div>
 
@@ -218,8 +260,79 @@ END;
             return $html;
 }
 
+    /**
+     * Génére le code html correspondant à la page de modificatioon des images d'un item
+     */
+        private function htmlImageModification(){
+            $item = $this->elements['item'];
+            $imageUtilisees = $this->elements['imagesUtilise'];
+            $imageProposees = $this->elements['imageProposees'];
+            $i=0;
+            $urlSubmit = $this->app->urlFor('appModifIMage',['id'=>$item->id]);
+
+            $html=<<<END
+    <div class="container">
+     <form enctype="multipart/form-data" class="form-modification-item" action="$urlSubmit" method="POST">
+        <header class="header-card titre-item">
+            <h1>$item->nom</h1>
+            <hr>
+        </header>
+        <!--Component-->
+        <div class="composantItem">
+            <h2 class="titre-images-item">Images - Actuellement utilisées</h2>
+            <hr>
+<div class="images-item">
+END;
+            //Images utilisees ($image contient le nom de l'image directement)
+            foreach($imageUtilisees as $image){
+                $html=$html.<<<END
+ <div class="image">
+                    <img class="image-modification" src="/img/$image->nom">
+                    <input id="input-supp$i" type="checkbox" name="del[]" value="$image->id" />
+                    <label class="label-supp" for="input-supp$i">Supprimer</label>
+                </div>
+END;
+                $i++;
+            }
+            $html=$html.<<<END
+ <h2 class="titre-images-item">Images - Proposées</h2>
+                <hr>
+<div class="images-item">
+END;
+
+            //Images proposées ($image contient le nom de l'image directement)
+            foreach ($imageProposees as $image){
+                $html=$html.<<<END
+ <div class="image">
+                        <img class="image-modification" src="/img/$image->nom">
+                        <input id="input-supp$i" type="checkbox" name="add[]" value="$image->id" />
+                        <label class="label-supp" for="input-supp$i">Ajouter</label>
+                    </div>
+END;
+                $i++;
+            }
+
+            $html=$html.<<<END
+ </div>
+                <label for="item-image-modification">Importer des images :</label>
+                <input type="file" id="item-image-modification" name="nouvellesImagesItem" accept="image/png, image/jpeg, image/jpg">
+                <input class="form-submit-images" type="submit" value="Enregistrer les modifications">
+
+                </form>
+
+
+
+            </div>
+        </div>
+
+END;
+
+return $html;
+        }
+
         public function render(){
             $homepage="";
+            $content="";
             switch($this->selecteur){
                 case 'LIST_VIEW' :
                     $content = $this->htmlListesDeSouhait();
@@ -245,7 +358,11 @@ END;
                     break;
 
                 case 'ITEM_MODIFICATION':
-                    $content = $this->htmlItemModification();
+                $content = $this->htmlItemModification();
+                break;
+
+                case 'IMAGE_MODIFICATION':
+                    $content = $this->htmlImageModification();
                     break;
             }
             $urlTopBarListes = $this->app->urlFor("listes");
@@ -277,7 +394,7 @@ END;
             $homepage
             $content
 
-</body><html>
+</body></html>
 END;
             echo $html;
         }

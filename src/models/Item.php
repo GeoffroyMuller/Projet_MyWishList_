@@ -20,5 +20,9 @@ class Item extends \Illuminate\Database\Eloquent\Model
         return $this->belongsTo('\mywishlist\models\Liste','liste_id') ;
     }
 
+    public function images(){
+        return $this->hasMany('\mywishlist\models\Image','idItem') ;
+    }
+
 
 }

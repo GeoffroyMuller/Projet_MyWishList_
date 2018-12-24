@@ -31,7 +31,16 @@ class Affichage
      *      Code html de la vue
      */
     public function afficherItem($id){
-        $res = \mywishlist\models\Item::where('id', '=', $id)->first();
+        $res['item'] = \mywishlist\models\Item::where('id', '=', $id)->first();
+        $images = $res['item']->images()->get();
+        if(count($images) == 0){
+            $res['images'][]=null;
+        }else{
+            foreach($images as $image) {
+                $res['images'][] = $image;
+            }
+        }
+
         $vue = new VueParticipant($res,'ITEM');
         return $vue->render();
     }
@@ -42,9 +51,10 @@ class Affichage
     public function afficherListeItems($idlisteSouhait){
         $resultat = array();
         $liste_de_souhait = \mywishlist\models\Liste::where('no', '=', $idlisteSouhait)->first();
+        $resultat['liste'] = $liste_de_souhait;
         $ListeItems = $liste_de_souhait->items()->get();
         foreach ($ListeItems as $item){
-            array_push($resultat, $item);
+            $resultat['items'][]=$item;
         }
         $vue = new VueParticipant($resultat,"LIST_ITEMS");
         return $vue->render();
@@ -64,10 +74,55 @@ class Affichage
      * @param $id
      */
     public function afficherItemModification($id){
-        $item = \mywishlist\models\Item::where('id','=',$id)->first();
-        $vue = new VueParticipant($item,'ITEM_MODIFICATION');
+        $res['item'] = \mywishlist\models\Item::where('id', '=', $id)->first();
+        $images = $res['item']->images()->get();
+        if(count($images) == 0){
+            $res['images'][]=null;
+        }else{
+            foreach($images as $image) {
+                $res['images'][] = $image;
+            }
+        }
+
+
+
+        $vue = new VueParticipant($res,'ITEM_MODIFICATION');
         $vue->render();
     }
 
+    /**
+     * Méthode permettant d'afficher la page de modification des images d'un item
+     * @param $id
+     *      Id de l'item
+     */
+    public function afficherImageModification($id){
+        $item = \mywishlist\models\Item::where('id','=',$id)->first();
+        $res['item']=$item;
+
+        //On récupére les images de l'item
+        $images = $item->images()->get();
+
+        if(count($images)==0){
+            $res['imagesUtilise'][]=null;
+        }else{
+            foreach ($images as $image){
+                $res['imagesUtilise'][] = $image;
+                $comp[] = $image->nom;
+            }
+        }
+
+        $images = \mywishlist\models\Image::all();
+
+
+
+        foreach ($images as $image){
+            if(!in_array($image->nom,$comp)){
+                $res['imageProposees'][] = $image;
+            }
+        }
+
+        $vue = new VueParticipant($res,'IMAGE_MODIFICATION');
+        $vue->render();
+    }
 
 }

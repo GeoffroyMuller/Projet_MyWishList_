@@ -40,11 +40,15 @@ $app->get('/afficherListeItems/:id', function ($id){
 })->name("afficherItemsListe");
 
 
+/**
+ * Url permettant l'affichage d'un item
+ */
 $app->get('/afficherItem/:id',function($id){
     $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
     $controlleurAffichage->afficherItem($id);
 
 })->name("afficherItem");
+
 
 $app->post('/modifierImage/:id',function($id){
     if(!empty($_FILES['image'])){
@@ -57,7 +61,7 @@ $app->post('/modifierImage/:id',function($id){
              */
         }else{
             $controlleurCreateur = new \mywishlist\controlleurs\Createur();
-            $controlleurCreateur->modifierImageItem($_FILES['image'],$id);
+           // $controlleurCreateur->modifierImageItem($_FILES['image'],$id);
             $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
             $controlleurAffichage->afficherItem($id);
         }
@@ -78,6 +82,10 @@ $app->get('/modifierItem/:id',function($id){
 
 })->name("modifierItem");
 
+
+/**
+ * Url permettant d'appliquer les modifications d'un item
+ */
 $app->post('/applicationDesModificationsItem/:id', function($id){
    $controlleurCreateur = new mywishlist\controlleurs\Createur();
    //Vérification des données entrée par l'utilisateur
@@ -112,6 +120,56 @@ $app->post('/applicationDesModificationsItem/:id', function($id){
    $controlleurCreateur->modifierItem($nom,$descr,$image,$id);
 
 })->name("application-modification");
+
+/**
+ * Url permettant d'afficher la page de modification des images d'un item
+ */
+$app->get('/modifierLesimages/:id', function($id){
+    /**
+     * To do verifier les droits
+     */
+    $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
+    $controlleurAffichage->afficherImageModification($id);
+})->name('modifierImageItem');
+
+/**
+ * Url permettant l'application des modifications relative aux images d'un item
+ */
+$app->post('/applicationModificationImages/:id', function($id){
+
+    $controlleurCreateur = new mywishlist\controlleurs\Createur();
+    if(isset($_POST['del'])){
+        $controlleurCreateur->supprimerImageItem($_POST['del']);
+    }
+
+    if(isset($_POST['add'])){
+        foreach ($_POST['add'] as $img){
+            $controlleurCreateur->ajouterImageItem($id,$img);
+        }
+    }
+
+    if(isset($_FILES['nouvellesImagesItem']) && !empty($_FILES['nouvellesImagesItem']['name'])){
+
+
+        //On vérifie que le fichier est bien une image
+        $extensions = array('.png','.jpeg','.gif','.jpg');
+        $extension = strrchr($_FILES['nouvellesImagesItem']['name'],'.');
+        if(!in_array($extension,$extensions)){
+            $image=null;
+        }else{
+            $image=$_FILES['nouvellesImagesItem'];
+        }
+        $nomImagesUpload = $controlleurCreateur->uploadImage($image);
+        //On ajoute les images upload à l'item
+        foreach ($nomImagesUpload as $nom){
+            $controlleurCreateur->ajouterImageItem($id,null,$nom);
+        }
+    }
+
+    $redirect = \Slim\Slim::getInstance();
+    $redirect->redirect($redirect->urlFor("modifierImageItem",["id"=>$id]));
+})->name('appModifIMage');
+
 
 
 

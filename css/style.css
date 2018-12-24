@@ -142,8 +142,8 @@ div#slider figure img{
     position : relative;
     color: rgb(65, 65, 65);
     font-size: 2.2em;
-    margin-top : 100px;
-    margin-left: 25%;
+    margin-top : 120px;
+    margin-left: 23%;
 }
 
 .header-card hr{
@@ -188,7 +188,7 @@ div#slider figure img{
     margin-left : 5%;
     font-size: 18px;
     max-height: 150px;
-    overflow: scroll;
+    overflow:auto;
 }
 
 .card-button{
@@ -250,10 +250,41 @@ div#slider figure img{
 }
 
 .titre-status-item{
-    clear : left;
     padding-top : 10px;
     font-size: 2em;
     padding-left : 10px;
+}
+
+.titre-images-item{
+    clear: left;
+    padding-top : 10px;
+    font-size: 2em;
+    padding-left : 10px;
+}
+
+.images-item{
+    margin-top : 20px;
+}
+
+.images-item .image{
+    display : inline-block;
+    margin-bottom : 20px;
+    margin-right : 20px;
+}
+
+.images-item .image a{
+        text-decoration: none;
+        
+}
+
+.images-item .image button{
+    display: block;
+    font-size: .6em;
+}
+
+.images-item img:hover{
+    transform: scale(2,2);
+    transition: transform .5s;
 }
 
 hr{
@@ -320,7 +351,7 @@ hr{
 /*Item modification*/
 #titre-item-modification-input{
     color: rgb(65, 65, 65);
-    font-size: 39.6px;
+    font-size: .8em;
     padding-left : 10px;
 }
 
@@ -343,11 +374,89 @@ hr{
     margin-top : 5px;
 }
 
-.item-image img{
+.images-item img{
+    width : auto;
+    height: 250px;
+    /*
     max-width : 250px;
+    height: auto;*/
+    z-index : 9;
+}
+
+.label-images{
+    padding-left : 10px;
+}
+
+
+.titre-images-item + hr{
+    width : 34%;
+}
+
+.bouton-modifierImage button{
+    margin-top : 10px;
+    margin-left : 10px;
+}
+
+.image-principale{
+    max-width: 250px;
     height: auto;
 }
 
+/*Liste des items d'une liste*/
+
+.container-items-liste{
+    margin : 50px 20% 0 20%;
+}
+
+.card-item-liste{
+     display: inline-block;
+     width : 47%;
+     height: 150px;
+     margin-top : 50px;
+     margin-right : 25px;
+     margin-bottom : 100px;
+ }
+
+
+ .card-item-liste header p + hr{
+     width : 480px;
+ }
+
+ .item-card-image{
+     float: left;
+    max-width : 150px;
+    height: auto;
+    margin-right: 20px;
+ }
+
+ .description-card-item{
+     margin-top : 20px;
+     text-align: justify;
+     overflow:auto;
+     height: 150px;
+     padding-right: 10px;
+ }
+
+ /*Modification Image*/
+
+ .image-modification{
+    display : block;
+    width : auto !important;
+    height: 120px !important;
+ }
+.form-submit-images{
+    display : block;
+    margin-top : 10px;
+}
+
+#input-supp{
+    margin : 5px 0 0 0;
+}
+
+
+.label-supp{
+    font-size : .9em;
+}
 
 
 
