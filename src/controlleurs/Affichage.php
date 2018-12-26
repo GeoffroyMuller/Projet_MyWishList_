@@ -103,7 +103,7 @@ class Affichage
         $images = $item->images()->get();
 
         if(count($images)==0){
-            $res['imagesUtilise'][]=null;
+            $res['imagesUtilise']=null;
         }else{
             foreach ($images as $image){
                 $res['imagesUtilise'][] = $image;
@@ -116,13 +116,35 @@ class Affichage
 
 
         foreach ($images as $image){
-            if(!in_array($image->nom,$comp)){
+            if(isset($comp)){
+                if(!in_array($image->nom,$comp)){
+                    $res['imageProposees'][] = $image;
+                }
+            }else{
                 $res['imageProposees'][] = $image;
             }
+
         }
 
         $vue = new VueParticipant($res,'IMAGE_MODIFICATION');
         $vue->render();
     }
+
+    /**
+     * Méthode permettant d'afficher la page d'inscirption
+     */
+    public function afficherInscription(){
+        $vue = new \mywishlist\vue\VueParticipant(null,'INSCRIPTION');
+        $vue->render();
+    }
+
+    /**
+     * Méthode permettant d'afficher la page de connexion
+     */
+    public function afficherConnexion(){
+        $vue = new \mywishlist\vue\VueParticipant(null,'CONNEXION');
+        $vue->render();
+    }
+
 
 }

@@ -458,6 +458,40 @@ hr{
     font-size : .9em;
 }
 
+/*Page d'identification*/
+
+.form-identification{
+    margin-top : 40px;
+    margin-left : 35%;
+    width : 18.7%;
+}
+
+.form-identification input{
+    display: block;
+    font-size : 1.8em;
+    border: 1px solid black;
+}
+
+.form-identification a{
+    float : right;
+    margin-top : 6px;
+}
+
+#username{
+    margin-bottom: 20px;
+}
+
+#username, #password{
+    border-radius: 10px;
+    padding-left : 10px;
+}
+
+#submit-identification{
+    clear: right;
+    margin : auto;
+    margin-top : 31px;
+}
+
 
 
 

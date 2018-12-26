@@ -100,17 +100,17 @@ END;
     /**
      * Génére le code html correspondant à l'affichage d'un Item
      */
-        private function htmlItem(){
-            $html="";
-            try{
-                $id = $this->elements['item']->id;
-                $nom = $this->elements['item']->nom;
-                $description = $this->elements['item']->descr;
-                $nomImage = $this->elements['item']->img;
-                $urlButton=$this->app->urlFor("modifierItem",['id'=>$id]);
+    private function htmlItem(){
+        $html="";
+        try{
+            $id = $this->elements['item']->id;
+            $nom = $this->elements['item']->nom;
+            $description = $this->elements['item']->descr;
+            $nomImage = $this->elements['item']->img;
+            $urlButton=$this->app->urlFor("modifierItem",['id'=>$id]);
 
 
-                $html = <<<END
+            $html = <<<END
             
         <div class="container">
         <header class="header-card titre-item">
@@ -135,17 +135,17 @@ END;
 
             <div class="images-item">
 END;
-                if(!is_null($this->elements['images'][0])){
-                    foreach ($this->elements['images'] as $image){
-                        $html=$html.<<<END
+            if(!is_null($this->elements['images'][0])){
+                foreach ($this->elements['images'] as $image){
+                    $html=$html.<<<END
  <div class="image">
                     <img src="/img/$image->nom">
                 </div>
 END;
-                    }
                 }
+            }
 
-                $html=$html.<<<END
+            $html=$html.<<<END
  <h2 class="titre-status-item">Status</h2>
             <hr>
             <p class="status-item rouge">
@@ -175,9 +175,9 @@ END;
 
 END;
 
-            }catch(\ErrorException $exception){
-                echo $exception;
-                $html = <<<END
+        }catch(\ErrorException $exception){
+            echo $exception;
+            $html = <<<END
 <header class="header-card titre-item">
             <h1>ERREUR : L'item demandé n'existe pas</h1>
             <hr>
@@ -185,23 +185,23 @@ END;
 END;
 
 
-            }
-
-
-            return $html;
         }
 
-        private function htmlItemModification(){
-            $nom = $this->elements['item']->nom;
-            $descr= $this->elements['item']->descr;
-            $id = $this->elements['item']->id;
-            $tarif = $this->elements['item']->tarif;
-            $nomImage = $this->elements['item']->img;
-            $urlModifierImage = $this->app->urlFor('modifierImageItem',['id'=>$id]);
 
-            $urlSubmit = $this->app->urlFor('application-modification',['id'=>$id]);
+        return $html;
+    }
 
-            $html = <<<END
+    private function htmlItemModification(){
+        $nom = $this->elements['item']->nom;
+        $descr= $this->elements['item']->descr;
+        $id = $this->elements['item']->id;
+        $tarif = $this->elements['item']->tarif;
+        $nomImage = $this->elements['item']->img;
+        $urlModifierImage = $this->app->urlFor('modifierImageItem',['id'=>$id]);
+
+        $urlSubmit = $this->app->urlFor('application-modification',['id'=>$id]);
+
+        $html = <<<END
 <div class="container">
         <form enctype="multipart/form-data" class="form-modification-item" action="$urlSubmit" method="POST" >
             <header class="header-card titre-item">
@@ -234,18 +234,18 @@ $descr</textarea>
 
                     <div class="images-item">
 END;
-            if(!is_null($this->elements['images'][0])) {
-                foreach ($this->elements['images'] as $image) {
-                    $html = $html . <<<END
+        if(!is_null($this->elements['images'][0])) {
+            foreach ($this->elements['images'] as $image) {
+                $html = $html . <<<END
                 <div class="image">
                             <img src="/img/$image->nom">
                             <a href="#"><button>Supprimer</button></a>
                         </div>
                 
 END;
-                }
             }
-            $html=$html.<<<END
+        }
+        $html=$html.<<<END
                     </div>
                     <input class="modification-submit" type="submit" value="Enregistrer les modifications">
                 </div>
@@ -257,20 +257,20 @@ END;
     </div>
 END;
 
-            return $html;
-}
+        return $html;
+    }
 
     /**
      * Génére le code html correspondant à la page de modificatioon des images d'un item
      */
-        private function htmlImageModification(){
-            $item = $this->elements['item'];
-            $imageUtilisees = $this->elements['imagesUtilise'];
-            $imageProposees = $this->elements['imageProposees'];
-            $i=0;
-            $urlSubmit = $this->app->urlFor('appModifIMage',['id'=>$item->id]);
+    private function htmlImageModification(){
+        $item = $this->elements['item'];
+        $imageUtilisees = $this->elements['imagesUtilise'];
+        $imageProposees = $this->elements['imageProposees'];
+        $i=0;
+        $urlSubmit = $this->app->urlFor('appModifIMage',['id'=>$item->id]);
 
-            $html=<<<END
+        $html=<<<END
     <div class="container">
      <form enctype="multipart/form-data" class="form-modification-item" action="$urlSubmit" method="POST">
         <header class="header-card titre-item">
@@ -283,7 +283,8 @@ END;
             <hr>
 <div class="images-item">
 END;
-            //Images utilisees ($image contient le nom de l'image directement)
+        //Images utilisees ($image contient le nom de l'image directement)
+        if(!is_null($imageUtilisees)){
             foreach($imageUtilisees as $image){
                 $html=$html.<<<END
  <div class="image">
@@ -294,25 +295,26 @@ END;
 END;
                 $i++;
             }
-            $html=$html.<<<END
+        }
+        $html=$html.<<<END
  <h2 class="titre-images-item">Images - Proposées</h2>
                 <hr>
 <div class="images-item">
 END;
 
-            //Images proposées ($image contient le nom de l'image directement)
-            foreach ($imageProposees as $image){
-                $html=$html.<<<END
+        //Images proposées ($image contient le nom de l'image directement)
+        foreach ($imageProposees as $image){
+            $html=$html.<<<END
  <div class="image">
                         <img class="image-modification" src="/img/$image->nom">
                         <input id="input-supp$i" type="checkbox" name="add[]" value="$image->id" />
                         <label class="label-supp" for="input-supp$i">Ajouter</label>
                     </div>
 END;
-                $i++;
-            }
+            $i++;
+        }
 
-            $html=$html.<<<END
+        $html=$html.<<<END
  </div>
                 <label for="item-image-modification">Importer des images :</label>
                 <input type="file" id="item-image-modification" name="nouvellesImagesItem" accept="image/png, image/jpeg, image/jpg">
@@ -327,16 +329,95 @@ END;
 
 END;
 
-return $html;
+        return $html;
+    }
+
+    /**
+     * Génére le code html de la page d'inscription
+     * @return string
+     */
+    private function htmlInscription(){
+        $urlSubmit = $this->app->urlFor('inscriptionprocess');
+        $urlConnexion = $this->app->urlFor('connexion');
+        $html = <<<END
+    <!--Content-->
+    <div class="container">
+        <header class="header-card titre-item">
+            <h1>Inscription</h1>
+            <hr>
+        </header>
+
+        <!--Component-->
+            <form class="form-identification" action="$urlSubmit" method="POST">
+
+                <label for="username">Nom d'utilisateur :</label>
+                <input id="username" type="texte" name="username">
+
+                <label for="password">Mot de passe :</label>
+                <input id="password" type="password" name="password">
+                <a href="$urlConnexion">Déja un compte ?</a>
+
+                <input id="submit-identification" type="submit" value="S'inscrire">
+            </form>
+
+    </div>
+END;
+        return $html;
+
+    }
+
+    /**
+     * Génére le code html de la page de connexion
+     * @return string
+     */
+    private function htmlConnexion(){
+        $urlSubmit = $this->app->urlFor('connexionprocess');
+        $urlPasDeCompte = $this->app->urlFor('inscription');
+        $html = <<<END
+    <!--Content-->
+    <div class="container">
+        <header class="header-card titre-item">
+            <h1>Se connecter</h1>
+            <hr>
+        </header>
+
+        <!--Component-->
+            <form class="form-identification" action="$urlSubmit" method="POST">
+
+                <label for="username">Nom d'utilisateur :</label>
+                <input id="username" type="texte" name="username">
+
+                <label for="password">Mot de passe :</label>
+                <input id="password" type="password" name="password">
+                <a href="$urlPasDeCompte">Pas de compte ?</a>
+
+                <input id="submit-identification" type="submit" value="Se connecter">
+
+
+            </form>
+
+    </div>
+END;
+
+        return $html;
+    }
+
+    public function render(){
+        $homepage="";
+        $content="";
+        $connecte="Vous n'êtes pas connecté !";
+        $linkProfile= $this->app->urlFor("connexion");
+        //Verification si utilisateur est connecté
+        if(isset($_SESSION['profile'])){
+            $uName = $_SESSION['profile']['username'];
+            $connecte = "Bonjour, $uName !";
         }
 
-        public function render(){
-            $homepage="";
-            $content="";
-            switch($this->selecteur){
-                case 'LIST_VIEW' :
-                    $content = $this->htmlListesDeSouhait();
-                    $homepage = <<<END
+
+        switch($this->selecteur){
+            case 'LIST_VIEW' :
+                $content = $this->htmlListesDeSouhait();
+                $homepage = <<<END
             <div id="slider">
                 <figure>
                     <img src="../../img/pic1_carousel.png">
@@ -347,26 +428,34 @@ return $html;
             </div>
 END;
 
-                    break;
+                break;
 
-                case 'LIST_ITEMS' :
-                    $content = $this->htmlItemsListe();
-                    break;
+            case 'LIST_ITEMS' :
+                $content = $this->htmlItemsListe();
+                break;
 
-                case 'ITEM' :
-                    $content = $this->htmlItem();
-                    break;
+            case 'ITEM' :
+                $content = $this->htmlItem();
+                break;
 
-                case 'ITEM_MODIFICATION':
+            case 'ITEM_MODIFICATION':
                 $content = $this->htmlItemModification();
                 break;
 
-                case 'IMAGE_MODIFICATION':
-                    $content = $this->htmlImageModification();
-                    break;
-            }
-            $urlTopBarListes = $this->app->urlFor("listes");
-            $html=<<<END
+            case 'IMAGE_MODIFICATION':
+                $content = $this->htmlImageModification();
+                break;
+
+            case 'INSCRIPTION':
+                $content = $this->htmlInscription();
+                break;
+
+            case 'CONNEXION':
+                $content = $this->htmlConnexion();
+                break;
+        }
+        $urlTopBarListes = $this->app->urlFor("listes");
+        $html=<<<END
         <!DOCTYPE html>
         <html lang="fr">
             <head>
@@ -384,8 +473,8 @@ END;
                     <div class="menu">
                         <ul>
                             <li><a href="$urlTopBarListes">Les <span>Wish</span>Lists</a><hr class="menu_separator"></li>
-                            <li><a href="#">Mes Listes</a><hr class="menu_separator"></li>
-                            <li class="user"><a href="#">Vous n'êtes pas connecté !</a></li>
+                            <li><a href="$linkProfile">Mes Listes</a><hr class="menu_separator"></li>
+                            <li class="user"><a href="$linkProfile">$connecte</a></li>
                         </ul>
                     </div>
             </div>
@@ -396,8 +485,8 @@ END;
 
 </body></html>
 END;
-            echo $html;
-        }
+        echo $html;
+    }
 
 
 

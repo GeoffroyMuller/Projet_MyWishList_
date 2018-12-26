@@ -6,6 +6,9 @@ $db = new DB();
 $db->addConnection(parse_ini_file('./src/conf/conf.ini'));
 $db->setAsGlobal();
 $db->bootEloquent();
+
+session_start();
+
 $app = new \Slim\Slim ;
 
 $app->get('/affichage/afficherItemsListe', function($noliste){
@@ -61,7 +64,7 @@ $app->post('/modifierImage/:id',function($id){
              */
         }else{
             $controlleurCreateur = new \mywishlist\controlleurs\Createur();
-           // $controlleurCreateur->modifierImageItem($_FILES['image'],$id);
+            // $controlleurCreateur->modifierImageItem($_FILES['image'],$id);
             $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
             $controlleurAffichage->afficherItem($id);
         }
@@ -87,8 +90,8 @@ $app->get('/modifierItem/:id',function($id){
  * Url permettant d'appliquer les modifications d'un item
  */
 $app->post('/applicationDesModificationsItem/:id', function($id){
-   $controlleurCreateur = new mywishlist\controlleurs\Createur();
-   //Vérification des données entrée par l'utilisateur
+    $controlleurCreateur = new mywishlist\controlleurs\Createur();
+    //Vérification des données entrée par l'utilisateur
     if(isset($_POST['titre-item-modification'])){
         $nom =filter_var($_POST['titre-item-modification'],FILTER_SANITIZE_STRING);
     }else{
@@ -117,7 +120,7 @@ $app->post('/applicationDesModificationsItem/:id', function($id){
         $image=null;
     }
 
-   $controlleurCreateur->modifierItem($nom,$descr,$image,$id);
+    $controlleurCreateur->modifierItem($nom,$descr,$image,$id);
 
 })->name("application-modification");
 
@@ -170,8 +173,66 @@ $app->post('/applicationModificationImages/:id', function($id){
     $redirect->redirect($redirect->urlFor("modifierImageItem",["id"=>$id]));
 })->name('appModifIMage');
 
+/**
+ * Url permettant d'obtenir la page d'inscription
+ */
+$app->get('/inscription/',function (){
+    if(!isset($_SESSION['profile'])){
+        $controleurAffichage = new mywishlist\controlleurs\Affichage();
+        $controleurAffichage->afficherInscription();
+    }else{
+        $app = \Slim\Slim::getInstance();
+        $app->redirect('listes');
+    }
+
+})->name('inscription');
+
+/**
+ * Url permettant d'obtenir la page de connexion
+ */
+$app->get('/connexion/',function (){
+    if(!isset($_SESSION['profile'])){
+        $controleurAffichage = new mywishlist\controlleurs\Affichage();
+        $controleurAffichage->afficherConnexion();
+    }else{
+        $app = \Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('listes'));
+    }
+
+})->name('connexion');
 
 
+/**
+ * Url permettant de lancer le processus d'inscription d'un internaute
+ */
+$app->post('/inscriptionprocess/',function (){
+    if(isset($_POST['username']) && isset($_POST['password'])){
+        $controleur = new mywishlist\controlleurs\ControleurInternaute();
+        $controleur->inscrire($_POST['username'], $_POST['password']);
+    }else{
+        $app = \Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('erreur',['msg'=>'Veuillez entrer un nom d\'utilisateur et un mot de passe']));
+    }
+    $app = \Slim\Slim::getInstance();
+    $app->redirect($app->urlFor('connexion'));
+
+})->name('inscriptionprocess');
+
+/**
+ * Url permettant de lancer le processus de connexiono d'un internaute
+ */
+$app->post('/connexionprocess/',function (){
+    if(isset($_POST['username']) && isset($_POST['password'])){
+        $controleur = new mywishlist\controlleurs\ControleurInternaute();
+        $controleur->seConnecter($_POST['username'], $_POST['password']);
+    }else{
+        $app = \Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('erreur',['msg'=>'Veuillez entrer un nom d\'utilisateur et un mot de passe']));
+    }
+    $app = \Slim\Slim::getInstance();
+    $app->redirect($app->urlFor('listes'));
+
+})->name('connexionprocess');
 
 $app->run();
 
