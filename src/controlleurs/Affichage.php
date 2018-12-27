@@ -146,5 +146,26 @@ class Affichage
         $vue->render();
     }
 
+    /**
+     * Méthode permettant d'afficher la page du profil
+     */
+    public function afficherProfil(){
+        $res['uName'] = $_SESSION['profile']['username'];
+        $res['listes'] = \mywishlist\models\Utilisateur::where('idUser','=',$_SESSION['profile']['userId'])->first()->listes();
+
+        $vue = new \mywishlist\vue\VueParticipant($res,'PROFIL');
+        $vue->render();
+
+    }
+
+    /**
+     * Méthode permettant d'afficher la page de modification du profil
+     */
+    public function afficherProfilModification(){
+        $vue = new \mywishlist\vue\VueParticipant(null,'PROFIL_MODIFICATION');
+        $vue->render();
+
+    }
+
 
 }

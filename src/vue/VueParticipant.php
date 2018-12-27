@@ -15,11 +15,11 @@ class VueParticipant
      * @var $elements
      *      Tableau des éléments à afficher
      */
-    public $elements;
+    private $elements;
 
-    public $selecteur;
+    private $selecteur;
 
-    public $app;
+    private $app;
 
     /**
      * VueParticipant constructor.
@@ -402,11 +402,109 @@ END;
         return $html;
     }
 
+
+    /**
+     * Génére le code html de la page du profil
+     * @return string
+     */
+    private function htmlProfil(){
+        $urlDeco = $this->app->urlFor('deconnexion');
+        $urlSupp = $this->app->urlFor('suppCompte');
+        $username = $this->elements['uName'];
+
+        $urlModifierProfil = $this->app->urlFor('profilModif');
+
+        $html=<<<END
+ <div class="container">
+        <header class="header-card titre-item">
+            <h1 class="titre-profil">Votre profil</h1>
+            <a href="$urlModifierProfil">Modifier mon profil</a>
+            <hr>
+        </header>
+
+        <!--Component-->
+        <div class="container-composant-profil">
+            <img class="avatar-profil" src="/img/logo_employee_resize.jpg" alt="avatar du profil">
+            <p><span>Nom d'utilisateur : </span>$username</p>
+            
+            <div class="container-boutons">
+                <a href="$urlDeco"><button class="deconnexion">Deconnexion</button></a>
+                <a href="$urlSupp"><button class="supp-compte">Supprimer mon compte</button></a>
+            </div>
+            <h2 class="titre-images-item">Vos listes</h2>
+            <hr>
+END;
+        if(isset($this->elements['listes'])){
+            foreach ($this->elements['listes'] as $liste){
+                $urlListe= $this->app->urlFor('afficherItemsListe',['id'=>$liste->id]);
+                $html=$html.<<<END
+            <div class="liste-preview">
+                <a href="$urlListe">
+                <img src="../img/list_icon.png" alt="Icone d'une liste">
+                <h3>$liste->titre</h3>
+                </a>
+            </div>
+END;
+
+            }
+        }
+
+
+
+
+        return $html;
+    }
+
+    /**
+     * Génére le code html de la page de modification du profil
+     */
+    public function htmlProfilModification(){
+        $urlProfil = $this->app->urlFor('profil');
+        $urlProfilEnregistrerModification = null;//$this->app->urlFor('profilSaveChange');
+        $html=<<<END
+  <div class="container">
+        <header class="header-card titre-item">
+            <h1 class="titre-profil">Votre profil</h1>
+            <a href="$urlProfil">Revenir au profil</a>
+            <hr>
+        </header>
+
+        <!--Component-->
+        <div class="container-composant-profil">
+            <img class="avatar-profil" src="/img/logo_employee_resize.jpg" alt="avatar du profil">
+            <form class="form-modification-profil" action="$urlProfilEnregistrerModification" method="POST">
+
+                <div class="container-input-profil">
+                    <label for="profil-username-modification">Nom d'utilisateur :</label>
+
+                    <input type="text" id="profil-username-modification" name="profil-username-modification">
+                </div>
+
+                <div class="container-input-profil password-input-profil">
+                    <label for="profil-pass-modification">Mot de passe :</label>
+
+                    <input type="password" id="profil-pass-modification" name="profil-pass-modification">
+                </div>
+            </form>
+
+
+            <div class="container-boutons">
+                <a href="#"><button class="deconnexion">Enregistrer les modifications</button></a>
+            </div>
+
+        </div>
+
+    </div>
+END;
+
+        return $html;
+    }
+
     public function render(){
         $homepage="";
         $content="";
         $connecte="Vous n'êtes pas connecté !";
-        $linkProfile= $this->app->urlFor("connexion");
+        $linkProfile= $this->app->urlFor("profil");
         //Verification si utilisateur est connecté
         if(isset($_SESSION['profile'])){
             $uName = $_SESSION['profile']['username'];
@@ -452,6 +550,14 @@ END;
 
             case 'CONNEXION':
                 $content = $this->htmlConnexion();
+                break;
+
+            case 'PROFIL':
+                $content = $this->htmlProfil();
+                break;
+
+            case 'PROFIL_MODIFICATION':
+                $content = $this->htmlProfilModification();
                 break;
         }
         $urlTopBarListes = $this->app->urlFor("listes");

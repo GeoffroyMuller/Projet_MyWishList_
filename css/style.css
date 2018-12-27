@@ -492,6 +492,97 @@ hr{
     margin-top : 31px;
 }
 
+/*Page du profil*/
+.container-composant-profil{
+    margin-left : 35%;
+    margin-top : 20px;
+    width : 40%;
+}
+
+.avatar-profil{
+    float: left;
+    margin-right : 10px;
+    margin-bottom : 10px;
+}
+
+.container-composant-profil p{
+    padding-top :20px;
+}
+
+.container-composant-profil p span{
+    color : black;
+    font-size : 1.2em;
+}
+
+.liste-preview{
+    margin-top : 30px;
+    display : inline-block;
+    width : 30%;
+    margin-left : 10px;
+}
+
+.liste-preview h3{
+    font-size: .9em;
+    width : 100px;
+    height: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.liste-preview a{
+    text-decoration: none;
+    color : black;
+}
+
+.container-boutons{
+    margin-top : 10px;
+}
+
+.deconnexion{
+    margin-right : 10px;
+}
+
+.container-boutons button{
+    font-size : 1.2em;
+    border : 1px solid black;
+}
+
+.supp-compte{
+    background-color: #7D0004;
+    color : white;
+}
+
+.header-card a{
+    font-size: .4em;
+
+}
+
+.titre-profil{
+    float: left;
+    margin-right: 10px;
+}
+
+/*Profil Modification*/
+.container-composant-profil label{
+    font-size : 1.2em;
+}
+
+
+.container-input-profil{
+    margin-bottom : 20px;
+}
+
+.container-composant-profil form{
+    margin-top : 20px;
+}
+
+.password-input-profil{
+    margin-left : 135px;
+}
+
+
+
+
 
 
 

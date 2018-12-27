@@ -94,4 +94,20 @@ class ControleurInternaute
         return $_SESSION['profile']['grade'] >= $gradeRequis;
     }
 
+    /**
+     * Méthode permettant de se déconnecter
+     */
+    public function deconnexion(){
+        session_destroy();
+        session_start();
+    }
+
+    /**
+     * Méthode permettant la suppression d'un compte
+     */
+    public function suppCompte(){
+        $utilisateur = \mywishlist\models\Utilisateur::where('idUser','=',$_SESSION['profile']['userId'])->first()->delete();
+        $this->deconnexion();
+    }
+
 }

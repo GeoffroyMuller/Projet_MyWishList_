@@ -234,6 +234,49 @@ $app->post('/connexionprocess/',function (){
 
 })->name('connexionprocess');
 
+/**
+ * Url permettant d'afficher la page du profil de l'utilisateur
+ */
+$app->get('/profil/', function(){
+    $controleur = new mywishlist\controlleurs\Affichage();
+
+    if(isset($_SESSION['profile'])){
+        $controleur->afficherProfil();
+    }else{
+        $app = \Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('inscription'));
+    }
+})->name('profil');
+
+/**
+ * Url permettant la déconnexion
+ */
+$app->get('/deconnexion/', function (){
+    echo "SALUT";
+    $controleur = new \mywishlist\controlleurs\ControleurInternaute();
+    $controleur->deconnexion();
+    $app = \Slim\Slim::getInstance();
+    $app->redirect($app->urlFor('listes'));
+})->name('deconnexion');
+
+/**
+ * Url permettant la suppression de compte
+ */
+$app->get('/suppCompte/', function (){
+    $controleur = new \mywishlist\controlleurs\ControleurInternaute();
+    $controleur->suppCompte();
+    $app = \Slim\Slim::getInstance();
+    $app->redirect($app->urlFor('listes'));
+})->name('suppCompte');
+
+/**
+ * Url permettant d'acceder a la page de modification du profil
+ */
+$app->get('/profilModif/', function (){
+    $controleur = new mywishlist\controlleurs\Affichage();
+    $controleur->afficherProfilModification();
+})->name('profilModif');
+
 $app->run();
 
 
