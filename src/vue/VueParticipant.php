@@ -15,9 +15,11 @@ class VueParticipant
      * @var $elements
      *      Tableau des éléments à afficher
      */
-    public $elements;
+    private $elements;
 
-    public $selecteur;
+    private $selecteur;
+
+    private $app;
 
     /**
      * VueParticipant constructor.
@@ -27,6 +29,7 @@ class VueParticipant
     {
         $this->elements = $tabAffichage;
         $this->selecteur = $selecteur;
+        $this->app = \Slim\Slim::getInstance();
     }
 
     /**
@@ -41,6 +44,7 @@ class VueParticipant
             </header>
 END;
         foreach ($this->elements as $element){
+            $lienVersItems = $this->app->urlFor("afficherItemsListe",["id"=>$element->no]);
             $html=$html.<<<END
             <div class="card">
                 <header>
@@ -52,7 +56,7 @@ END;
                 <article>
                     <p>$element->description</p>
                 </article>
-                <a href="#"><button class="card-button" type="button"> Voir les items !</button></a>
+                <a href="$lienVersItems"><button class="card-button" type="button"> Voir les items !</button></a>
             </div>
 END;
         }
@@ -64,56 +68,500 @@ END;
      */
     private function htmlItemsListe()
     {
+        $liste = $this->elements['liste'];
         //En tête contenant les informations de la listes actuelle
         $html = <<<END
-        <p>$this->elements[0]->titre</p>
-        <p>$this->elements[0]->description</p>
-        <p>$this->elements[0]->expiration</p>
-END;
-        //On génére le code html pour chaque item
-        for ($i=1; $i<sizeof($this->elements);$i++) {
-            $html = <<<END
-            
-            <p>$this->elements[i]->nom</p>
-            <p>$this->elements[i]->descr</p>
-            <img src="../../img/$this->elements[i]->img">
-            <p>$this->elements[i]->tarif</p>
+           <!--Content-->
+    <header class="header-card">
+        <h1>$liste->titre</h1>
+        <hr>
+    </header>
 END;
 
+        foreach ($this->elements['items'] as $element){
+            $url = $this->app->urlFor("afficherItem",['id'=>$element->id]);
+            $html = $html.<<<END
+            <div class="card-item-liste">
+            <header>
+                <p>$element->nom - $element->tarif €</p>
+                <hr>
+            </header>
+            <article>
+                <img class="item-card-image" src="/img/$element->img">
+                <p class="description-card-item">$element->descr</p>
+            </article>
+            <a href="$url"><button class="card-button" type="button"> Voir l'item !</button></a>
+        </div>
+END;
         }
-        return $html;
+        return '<div class="container-items-liste">'.$html.'</div>';
     }
 
     /**
      * Génére le code html correspondant à l'affichage d'un Item
      */
-        private function htmlItem(){
+    private function htmlItem(){
+        $html="";
+        try{
+            $id = $this->elements['item']->id;
+            $nom = $this->elements['item']->nom;
+            $description = $this->elements['item']->descr;
+            $nomImage = $this->elements['item']->img;
+            $urlButton=$this->app->urlFor("modifierItem",['id'=>$id]);
+
 
             $html = <<<END
             
-            <p>$this->elements[0]->nom</p>
-            <p>$this->elements[0]->descr</p>
-            <img src="web/img/$this->elements[0]->img">
-            <p>$this->elements[0]->tarif</p>
+        <div class="container">
+        <header class="header-card titre-item">
+            <h1>$nom</h1>
+            <hr>
+            <div class="item-modifier-bouton">
+                <a href="$urlButton"><button>Modifier l'item</button></a>
+            </div>
+        </header>
+
+        <!--Component-->
+                <div class="composantItem">
+            <img class="item-image" src="/img/$nomImage">
+            <h2 class="titre-description-item">Description</h2>
+            <hr>
+            <p class="description-item">
+                $description
+            </p>
+            <h2 class="titre-images-item">Images</h2>
+            <hr>
+
+
+            <div class="images-item">
 END;
-            return $html;
+            if(!is_null($this->elements['images'][0])){
+                foreach ($this->elements['images'] as $image){
+                    $html=$html.<<<END
+ <div class="image">
+                    <img src="/img/$image->nom">
+                </div>
+END;
+                }
+            }
+
+            $html=$html.<<<END
+ <h2 class="titre-status-item">Status</h2>
+            <hr>
+            <p class="status-item rouge">
+                Non reservé ! (WIP)
+            </p>
+            <h2 class="titre-form-reserve">Reserver cet item !</h2>
+            <hr>
+
+            <form class="form-reserve" action="#" method="POST">
+                <div class="form-nom">
+                    <label for="nomParticipantInput">Votre nom :</label>
+                    <input type="text" name="nomParticipant" id="nomParticipantInput" placeholder="Votre nom" inputmode="text" required>
+                </div>
+                <div class="form-message">
+                    <label for="messageInput">Ajouter un message (optionel) :</label>
+                    <textarea name="message" id="messageInput" rows="10" cols="40" placeholder="Votre message"></textarea>
+                </div>
+
+                <input class="form-submit" type="submit" value="Reserver">
+
+            </form>
+
+
+
+        </div>
+    </div>
+
+END;
+
+        }catch(\ErrorException $exception){
+            echo $exception;
+            $html = <<<END
+<header class="header-card titre-item">
+            <h1>ERREUR : L'item demandé n'existe pas</h1>
+            <hr>
+        </header>
+END;
+
+
         }
 
-        public function render(){
-            switch($this->selecteur){
-                case 'LIST_VIEW' :
-                    $content = $this->htmlListesDeSouhait();
-                    break;
 
-                case 'LIST_ITEMS' :
-                    $content = $this->htmlItemsListe();
-                    break;
+        return $html;
+    }
 
-                case 'ITEM' :
-                    $content = $this->htmlItem();
-                    break;
+    private function htmlItemModification(){
+        $nom = $this->elements['item']->nom;
+        $descr= $this->elements['item']->descr;
+        $id = $this->elements['item']->id;
+        $tarif = $this->elements['item']->tarif;
+        $nomImage = $this->elements['item']->img;
+        $urlModifierImage = $this->app->urlFor('modifierImageItem',['id'=>$id]);
+
+        $urlSubmit = $this->app->urlFor('application-modification',['id'=>$id]);
+
+        $html = <<<END
+<div class="container">
+        <form enctype="multipart/form-data" class="form-modification-item" action="$urlSubmit" method="POST" >
+            <header class="header-card titre-item">
+                <label class="label-nom-item" for="titre-item-modification-input">Nom de l'item :</label>
+                <input type="text" name="titre-item-modification" id="titre-item-modification-input" inputmode="text"
+                    value="$nom">
+                <hr>
+            </header>
+
+            <!--Component-->
+            <div class="composantItem">
+                <div class="container-image-item item-image">
+                    <img  class="image-principale" src="/img/$nomImage">
+                    <label for="item-image-modification">Modifier l'image de l'item :</label>
+                    <input type="file" name="itemImageModification" id="item-image-modification"  accept="image/png, image/jpeg, image/jpg">
+
+                </div>
+                <h2 class="titre-description-item">Editer la Description</h2>
+                <hr>
+                <div class="description-item">
+                    <textarea class="description-item-modification" name="description-item-modification" id="description-item-modification-input"
+                        rows="20" cols="85">
+$descr</textarea>
+                    <h2 class="titre-images-item">Images</h2>
+                    <a href="$urlModifierImage">Modifier les images</a>
+
+                    <hr>
+                    
+
+
+                    <div class="images-item">
+END;
+        if(!is_null($this->elements['images'][0])) {
+            foreach ($this->elements['images'] as $image) {
+                $html = $html . <<<END
+                <div class="image">
+                            <img src="/img/$image->nom">
+                            <a href="#"><button>Supprimer</button></a>
+                        </div>
+                
+END;
             }
-            $html=<<<END
+        }
+        $html=$html.<<<END
+                    </div>
+                    <input class="modification-submit" type="submit" value="Enregistrer les modifications">
+                </div>
+
+
+
+        </form>
+        </div>
+    </div>
+END;
+
+        return $html;
+    }
+
+    /**
+     * Génére le code html correspondant à la page de modificatioon des images d'un item
+     */
+    private function htmlImageModification(){
+        $item = $this->elements['item'];
+        $imageUtilisees = $this->elements['imagesUtilise'];
+        $imageProposees = $this->elements['imageProposees'];
+        $i=0;
+        $urlSubmit = $this->app->urlFor('appModifIMage',['id'=>$item->id]);
+
+        $html=<<<END
+    <div class="container">
+     <form enctype="multipart/form-data" class="form-modification-item" action="$urlSubmit" method="POST">
+        <header class="header-card titre-item">
+            <h1>$item->nom</h1>
+            <hr>
+        </header>
+        <!--Component-->
+        <div class="composantItem">
+            <h2 class="titre-images-item">Images - Actuellement utilisées</h2>
+            <hr>
+<div class="images-item">
+END;
+        //Images utilisees ($image contient le nom de l'image directement)
+        if(!is_null($imageUtilisees)){
+            foreach($imageUtilisees as $image){
+                $html=$html.<<<END
+ <div class="image">
+                    <img class="image-modification" src="/img/$image->nom">
+                    <input id="input-supp$i" type="checkbox" name="del[]" value="$image->id" />
+                    <label class="label-supp" for="input-supp$i">Supprimer</label>
+                </div>
+END;
+                $i++;
+            }
+        }
+        $html=$html.<<<END
+ <h2 class="titre-images-item">Images - Proposées</h2>
+                <hr>
+<div class="images-item">
+END;
+
+        //Images proposées ($image contient le nom de l'image directement)
+        foreach ($imageProposees as $image){
+            $html=$html.<<<END
+ <div class="image">
+                        <img class="image-modification" src="/img/$image->nom">
+                        <input id="input-supp$i" type="checkbox" name="add[]" value="$image->id" />
+                        <label class="label-supp" for="input-supp$i">Ajouter</label>
+                    </div>
+END;
+            $i++;
+        }
+
+        $html=$html.<<<END
+ </div>
+                <label for="item-image-modification">Importer des images :</label>
+                <input type="file" id="item-image-modification" name="nouvellesImagesItem" accept="image/png, image/jpeg, image/jpg">
+                <input class="form-submit-images" type="submit" value="Enregistrer les modifications">
+
+                </form>
+
+
+
+            </div>
+        </div>
+
+END;
+
+        return $html;
+    }
+
+    /**
+     * Génére le code html de la page d'inscription
+     * @return string
+     */
+    private function htmlInscription(){
+        $urlSubmit = $this->app->urlFor('inscriptionprocess');
+        $urlConnexion = $this->app->urlFor('connexion');
+        $html = <<<END
+    <!--Content-->
+    <div class="container">
+        <header class="header-card titre-item">
+            <h1>Inscription</h1>
+            <hr>
+        </header>
+
+        <!--Component-->
+            <form class="form-identification" action="$urlSubmit" method="POST">
+
+                <label for="username">Nom d'utilisateur :</label>
+                <input id="username" type="texte" name="username">
+
+                <label for="password">Mot de passe :</label>
+                <input id="password" type="password" name="password">
+                <a href="$urlConnexion">Déja un compte ?</a>
+
+                <input id="submit-identification" type="submit" value="S'inscrire">
+            </form>
+
+    </div>
+END;
+        return $html;
+
+    }
+
+    /**
+     * Génére le code html de la page de connexion
+     * @return string
+     */
+    private function htmlConnexion(){
+        $urlSubmit = $this->app->urlFor('connexionprocess');
+        $urlPasDeCompte = $this->app->urlFor('inscription');
+        $html = <<<END
+    <!--Content-->
+    <div class="container">
+        <header class="header-card titre-item">
+            <h1>Se connecter</h1>
+            <hr>
+        </header>
+
+        <!--Component-->
+            <form class="form-identification" action="$urlSubmit" method="POST">
+
+                <label for="username">Nom d'utilisateur :</label>
+                <input id="username" type="texte" name="username">
+
+                <label for="password">Mot de passe :</label>
+                <input id="password" type="password" name="password">
+                <a href="$urlPasDeCompte">Pas de compte ?</a>
+
+                <input id="submit-identification" type="submit" value="Se connecter">
+
+
+            </form>
+
+    </div>
+END;
+
+        return $html;
+    }
+
+
+    /**
+     * Génére le code html de la page du profil
+     * @return string
+     */
+    private function htmlProfil(){
+        $urlDeco = $this->app->urlFor('deconnexion');
+        $urlSupp = $this->app->urlFor('suppCompte');
+        $username = $this->elements['uName'];
+
+        $urlModifierProfil = $this->app->urlFor('profilModif');
+
+        $html=<<<END
+ <div class="container">
+        <header class="header-card titre-item">
+            <h1 class="titre-profil">Votre profil</h1>
+            <a href="$urlModifierProfil">Modifier mon profil</a>
+            <hr>
+        </header>
+
+        <!--Component-->
+        <div class="container-composant-profil">
+            <img class="avatar-profil" src="/img/logo_employee_resize.jpg" alt="avatar du profil">
+            <p><span>Nom d'utilisateur : </span>$username</p>
+            
+            <div class="container-boutons">
+                <a href="$urlDeco"><button class="deconnexion">Deconnexion</button></a>
+                <a href="$urlSupp"><button class="supp-compte">Supprimer mon compte</button></a>
+            </div>
+            <h2 class="titre-images-item">Vos listes</h2>
+            <hr>
+END;
+        if(isset($this->elements['listes'])){
+            foreach ($this->elements['listes'] as $liste){
+                $urlListe= $this->app->urlFor('afficherItemsListe',['id'=>$liste->id]);
+                $html=$html.<<<END
+            <div class="liste-preview">
+                <a href="$urlListe">
+                <img src="../img/list_icon.png" alt="Icone d'une liste">
+                <h3>$liste->titre</h3>
+                </a>
+            </div>
+END;
+
+            }
+        }
+
+
+
+
+        return $html;
+    }
+
+    /**
+     * Génére le code html de la page de modification du profil
+     */
+    public function htmlProfilModification(){
+        $urlProfil = $this->app->urlFor('profil');
+        $urlProfilEnregistrerModification = null;//$this->app->urlFor('profilSaveChange');
+        $html=<<<END
+  <div class="container">
+        <header class="header-card titre-item">
+            <h1 class="titre-profil">Votre profil</h1>
+            <a href="$urlProfil">Revenir au profil</a>
+            <hr>
+        </header>
+
+        <!--Component-->
+        <div class="container-composant-profil">
+            <img class="avatar-profil" src="/img/logo_employee_resize.jpg" alt="avatar du profil">
+            <form class="form-modification-profil" action="$urlProfilEnregistrerModification" method="POST">
+
+                <div class="container-input-profil">
+                    <label for="profil-username-modification">Nom d'utilisateur :</label>
+
+                    <input type="text" id="profil-username-modification" name="profil-username-modification">
+                </div>
+
+                <div class="container-input-profil password-input-profil">
+                    <label for="profil-pass-modification">Mot de passe :</label>
+
+                    <input type="password" id="profil-pass-modification" name="profil-pass-modification">
+                </div>
+            </form>
+
+
+            <div class="container-boutons">
+                <a href="#"><button class="deconnexion">Enregistrer les modifications</button></a>
+            </div>
+
+        </div>
+
+    </div>
+END;
+
+        return $html;
+    }
+
+    public function render(){
+        $homepage="";
+        $content="";
+        $connecte="Vous n'êtes pas connecté !";
+        $linkProfile= $this->app->urlFor("profil");
+        //Verification si utilisateur est connecté
+        if(isset($_SESSION['profile'])){
+            $uName = $_SESSION['profile']['username'];
+            $connecte = "Bonjour, $uName !";
+        }
+
+
+        switch($this->selecteur){
+            case 'LIST_VIEW' :
+                $content = $this->htmlListesDeSouhait();
+                $homepage = <<<END
+            <div id="slider">
+                <figure>
+                    <img src="../../img/pic1_carousel.png">
+                    <img src="../../img/pic2_carousel.png">
+                    <img src="../../img/pic3_carousel.png">
+                    <img src="../../img/pic1_carousel.png">
+                 </figure>
+            </div>
+END;
+
+                break;
+
+            case 'LIST_ITEMS' :
+                $content = $this->htmlItemsListe();
+                break;
+
+            case 'ITEM' :
+                $content = $this->htmlItem();
+                break;
+
+            case 'ITEM_MODIFICATION':
+                $content = $this->htmlItemModification();
+                break;
+
+            case 'IMAGE_MODIFICATION':
+                $content = $this->htmlImageModification();
+                break;
+
+            case 'INSCRIPTION':
+                $content = $this->htmlInscription();
+                break;
+
+            case 'CONNEXION':
+                $content = $this->htmlConnexion();
+                break;
+
+            case 'PROFIL':
+                $content = $this->htmlProfil();
+                break;
+
+            case 'PROFIL_MODIFICATION':
+                $content = $this->htmlProfilModification();
+                break;
+        }
+        $urlTopBarListes = $this->app->urlFor("listes");
+        $html=<<<END
         <!DOCTYPE html>
         <html lang="fr">
             <head>
@@ -126,33 +574,25 @@ END;
 
             <div class="topbar-container">
 
-                    <h1 class="titleTB">WishList</h1>
+                    <h1 class="titleTB"><span>Wish</span>List</h1>
                     
                     <div class="menu">
                         <ul>
-                            <li><a href="#">Les WishLists</a><hr class="menu_separator"></li>
-                            <li><a href="#">Mes Listes</a><hr class="menu_separator"></li>
-                            <li class="user"><a href="#">Vous n'êtes pas connecté !</a></li>
+                            <li><a href="$urlTopBarListes">Les <span>Wish</span>Lists</a><hr class="menu_separator"></li>
+                            <li><a href="$linkProfile">Mes Listes</a><hr class="menu_separator"></li>
+                            <li class="user"><a href="$linkProfile">$connecte</a></li>
                         </ul>
                     </div>
             </div>
 
             <!--Head-->
-            <div id="slider">
-                <figure>
-                    <img src="../../img/pic1_carousel.png">
-                    <img src="../../img/pic2_carousel.png">
-                    <img src="../../img/pic3_carousel.png">
-                    <img src="../../img/pic1_carousel.png">
-                 </figure>
-            </div>
-<div class="content">
-$content
-</div>
-</body><html>
+            $homepage
+            $content
+
+</body></html>
 END;
-            return $html;
-        }
+        echo $html;
+    }
 
 
 

@@ -50,12 +50,12 @@ body{
     color: rgb(0);
     /*line-height: 1.3;*/
 }
-
 /*DEBUT TOPBAR*/
 
 .topbar-container{
     z-index: 4;
     position: fixed;    
+    top : 0;
     left: 0;
     right: 0;
     background : radial-gradient( rgb(40, 35, 35),rgb(0, 0, 0));
@@ -69,6 +69,10 @@ body{
     margin-left: 33px;
     margin-top : 13px;
    
+}
+
+span{
+    color : #FFD200;
 }
 
 .menu{
@@ -135,22 +139,23 @@ div#slider figure img{
 
 /*DEBUT HEADER CARD*/
 .header-card{
+    position : relative;
     color: rgb(65, 65, 65);
-    font-size: 48px;
-    margin-top : 100px;
-    margin-left : 274px;
+    font-size: 2.2em;
+    margin-top : 120px;
+    margin-left: 23%;
 }
 
 .header-card hr{
     position: absolute;
-    width: 50%;
+    width: 67%;
     margin-top : 10px;
 }
 /*FIN HEADER CARD*/
 
 /*DEBUT CARTE*/
 .card{
-    margin-left: 500px;
+    margin-left: 35%;
     margin-top : 78px;
     width : 30%;
     overflow: hidden;
@@ -168,7 +173,7 @@ div#slider figure img{
 
 .card header p{
     font-size: 26px;
-    padding-left : 60px;
+    padding-left : 10%;
     padding-top : 20px;
 }
 
@@ -180,10 +185,10 @@ div#slider figure img{
 
 .card article{
     margin-top : 42px;
-    margin-left : 36px;
+    margin-left : 5%;
     font-size: 18px;
     max-height: 150px;
-    overflow: scroll;
+    overflow:auto;
 }
 
 .card-button{
@@ -209,6 +214,375 @@ div#slider figure img{
     cursor: pointer;
 }
 /*FIN CARTE*/
+
+/*Page Item*/
+
+.composantItem{
+    margin-top : 20px;
+    margin-left : 25%;
+    width : 50%;
+}
+
+.titre-item{
+    margin-top : 6%;
+}
+
+.item-image{
+    float : left;
+    max-width : 250px;
+    height: auto;
+}
+
+.titre-description-item{
+    font-size : 2em;
+    padding-left : 29%;
+}
+
+.description-item{
+    padding-top : 20px;
+    padding-left : 32%;
+    text-align: justify;
+}
+
+.titre-description-item + hr{
+    margin-left : 14%;
+    width : 36%;
+}
+
+.titre-status-item{
+    padding-top : 10px;
+    font-size: 2em;
+    padding-left : 10px;
+}
+
+.titre-images-item{
+    clear: left;
+    padding-top : 10px;
+    font-size: 2em;
+    padding-left : 10px;
+}
+
+.images-item{
+    margin-top : 20px;
+}
+
+.images-item .image{
+    display : inline-block;
+    margin-bottom : 20px;
+    margin-right : 20px;
+}
+
+.images-item .image a{
+        text-decoration: none;
+        
+}
+
+.images-item .image button{
+    display: block;
+    font-size: .6em;
+}
+
+.images-item img:hover{
+    transform: scale(2,2);
+    transition: transform .5s;
+}
+
+hr{
+    position : absolute;
+    width : 40%;
+}
+
+.status-item{
+    margin-top: 20px;
+    padding-left : 20px;
+    font-size: 1.8em;
+}
+
+.rouge{
+    color : #940600;
+}
+
+.vert{
+    color : #009409;
+}
+
+.titre-form-reserve{
+    padding-top: 20px;
+    font-size: 2em;
+    padding-left : 10px;
+    
+}
+
+.form-reserve label{
+    display: block;
+    padding-bottom : 10px;
+}
+
+.form-nom,.form-message{
+  margin-top : 20px;  
+  margin-left : 30%;
+}
+
+#nomParticipantInput{
+    font-size : 1.4em;
+    width : 50%;
+}
+
+#nomParticipantInput,#messageInput{
+    border : 1px solid black;
+    border-radius: 6px;
+}
+
+#messageInput{
+    font-size: 1.1em;
+    width : 50%;
+
+}
+
+.form-submit{
+    margin-top: 10px;
+    margin-left : 42%;
+    font-size : 1.3em;
+    color : white;
+    background-color : #424242;
+    border : 0;
+}
+
+/*Item modification*/
+#titre-item-modification-input{
+    color: rgb(65, 65, 65);
+    font-size: .8em;
+    padding-left : 10px;
+}
+
+.label-nom-item{
+    font-size : .5em;
+    vertical-align:middle;
+}
+
+.description-item-modification{
+ resize: none;
+ font-family: sans-serif;
+}
+
+.item-image-modification{
+    display: block;
+}
+
+.modification-submit{
+    float: right;
+    margin-top : 5px;
+}
+
+.images-item img{
+    width : auto;
+    height: 250px;
+    /*
+    max-width : 250px;
+    height: auto;*/
+    z-index : 9;
+}
+
+.label-images{
+    padding-left : 10px;
+}
+
+
+.titre-images-item + hr{
+    width : 34%;
+}
+
+.bouton-modifierImage button{
+    margin-top : 10px;
+    margin-left : 10px;
+}
+
+.image-principale{
+    max-width: 250px;
+    height: auto;
+}
+
+/*Liste des items d'une liste*/
+
+.container-items-liste{
+    margin : 50px 20% 0 20%;
+}
+
+.card-item-liste{
+     display: inline-block;
+     width : 47%;
+     height: 150px;
+     margin-top : 50px;
+     margin-right : 25px;
+     margin-bottom : 100px;
+ }
+
+
+ .card-item-liste header p + hr{
+     width : 480px;
+ }
+
+ .item-card-image{
+     float: left;
+    max-width : 150px;
+    height: auto;
+    margin-right: 20px;
+ }
+
+ .description-card-item{
+     margin-top : 20px;
+     text-align: justify;
+     overflow:auto;
+     height: 150px;
+     padding-right: 10px;
+ }
+
+ /*Modification Image*/
+
+ .image-modification{
+    display : block;
+    width : auto !important;
+    height: 120px !important;
+ }
+.form-submit-images{
+    display : block;
+    margin-top : 10px;
+}
+
+#input-supp{
+    margin : 5px 0 0 0;
+}
+
+
+.label-supp{
+    font-size : .9em;
+}
+
+/*Page d'identification*/
+
+.form-identification{
+    margin-top : 40px;
+    margin-left : 35%;
+    width : 18.7%;
+}
+
+.form-identification input{
+    display: block;
+    font-size : 1.8em;
+    border: 1px solid black;
+}
+
+.form-identification a{
+    float : right;
+    margin-top : 6px;
+}
+
+#username{
+    margin-bottom: 20px;
+}
+
+#username, #password{
+    border-radius: 10px;
+    padding-left : 10px;
+}
+
+#submit-identification{
+    clear: right;
+    margin : auto;
+    margin-top : 31px;
+}
+
+/*Page du profil*/
+.container-composant-profil{
+    margin-left : 35%;
+    margin-top : 20px;
+    width : 40%;
+}
+
+.avatar-profil{
+    float: left;
+    margin-right : 10px;
+    margin-bottom : 10px;
+}
+
+.container-composant-profil p{
+    padding-top :20px;
+}
+
+.container-composant-profil p span{
+    color : black;
+    font-size : 1.2em;
+}
+
+.liste-preview{
+    margin-top : 30px;
+    display : inline-block;
+    width : 30%;
+    margin-left : 10px;
+}
+
+.liste-preview h3{
+    font-size: .9em;
+    width : 100px;
+    height: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.liste-preview a{
+    text-decoration: none;
+    color : black;
+}
+
+.container-boutons{
+    margin-top : 10px;
+}
+
+.deconnexion{
+    margin-right : 10px;
+}
+
+.container-boutons button{
+    font-size : 1.2em;
+    border : 1px solid black;
+}
+
+.supp-compte{
+    background-color: #7D0004;
+    color : white;
+}
+
+.header-card a{
+    font-size: .4em;
+
+}
+
+.titre-profil{
+    float: left;
+    margin-right: 10px;
+}
+
+/*Profil Modification*/
+.container-composant-profil label{
+    font-size : 1.2em;
+}
+
+
+.container-input-profil{
+    margin-bottom : 20px;
+}
+
+.container-composant-profil form{
+    margin-top : 20px;
+}
+
+.password-input-profil{
+    margin-left : 135px;
+}
+
+
+
+
 
 
 
@@ -258,6 +632,10 @@ div#slider figure img{
        display: none;
    }
    /*FIN HEADER DE LA PAGE CARROUSEL*/
+
+   /*Composant HomePage*/
+
+   /*Composant Item*/
 
     
 }
