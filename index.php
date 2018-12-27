@@ -25,7 +25,6 @@ $app->get('/affichage/afficherTouteLesListes',function (){
 
 });
 
-=======
 /*
  * Un seul ECHO partout, le ECHO doit etre dans la methode render de la VUE
  * href = demander l'url à slim

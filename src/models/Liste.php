@@ -21,4 +21,6 @@ class Liste extends \Illuminate\Database\Eloquent\Model
 
 
 
+
+
 }
