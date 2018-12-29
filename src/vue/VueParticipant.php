@@ -9,6 +9,8 @@
 namespace mywishlist\vue;
 
 
+use mywishlist\controlleurs\ControleurInternaute;
+
 class VueParticipant
 {
     /**
@@ -69,34 +71,53 @@ END;
     private function htmlItemsListe()
     {
         $liste = $this->elements['liste'];
-        $urlRendrePublic = $this->app->urlFor('rendrePublique',['id'=>$liste->no]);
+        $urlRendrePublic = "";/*$this->app->urlFor('rendrePublique',['id'=>$liste->no]);*/
 
+        //On affiche le bouton rendre publique seulement si la liste est privée
+        if($liste->privee === 1){
+            $boutonPublique = <<<END
+            <h1 class="titre-page-liste flottantGauche">$liste->titre</h1>
+        <a href="$urlRendrePublic"><button class="bouton-rendre-publique">Rendre publique</button></a>
+      <hr>
+END;
+        }else{
+            $boutonPublique=<<<END
+            <h1 class="titre-page-liste">$liste->titre</h1>
+      <hr>
+END;
+        }
         //En tête contenant les informations de la listes actuelle
         $html = <<<END
            <!--Content-->
     <header class="header-card">
-        <h1>$liste->titre</h1>
-        <a href="$urlRendrePublic"><button class="bouton-rendre-publique">Rendre publique</button></a>
-        <hr>
+        
+        $boutonPublique
+  
     </header>
 END;
 
         foreach ($this->elements['items'] as $element){
             $url = $this->app->urlFor("afficherItem",['id'=>$element->id]);
-            $urlSupp = $this->app->urlFor("supprimerItem",['id'=>$element->id]);
+            $urlSupp = "";/*$this->app->urlFor("supprimerItem",['id'=>$element->id]);*/
+
+
+            $couleurStatus = 'rouge';
+            $texteStatus = 'Non reservé';
+
             $html = $html.<<<END
             <div class="card-item-liste">
             <header>
-                <p>$element->nom - $element->tarif €</p>
+                <p>$element->nom - $element->tarif € - <span class="$couleurStatus">$texteStatus</span></p>
                 <hr>
             </header>
             <article>
                 <img class="item-card-image" src="/img/$element->img">
                 <p class="description-card-item">$element->descr</p>
             </article>
+            <div class="container-bouton-item">
             <a href="$url"><button class="card-button" type="button"> Voir l'item !</button></a>
              <a href="$urlSupp"><button class="card-button button-del" type="button"> Supprimer l'item !</button></a>
-
+            </div>
         </div>
 END;
         }
@@ -116,15 +137,55 @@ END;
             $urlButton=$this->app->urlFor("modifierItem",['id'=>$id]);
 
 
+
+
+            //Si l'utilisateur est connecté et si l'item n'est pas déja reserve alors on affiche le formulaire et on test l'affichage du bouton de modification
+            if(isset($_SESSION['profile'])){
+                //Si l'utilisateur posséde l'item alors le bouton de modification s'affiche
+                if(ControleurInternaute::testerAppartenanceItem($id)){
+                    $modifBouton=<<<END
+            <div class="item-modifier-bouton">
+                <a href="$urlButton"><button>Modifier l'item</button></a>
+            </div>
+END;
+
+                }else{
+                    $modifBouton="";
+                }
+
+
+
+                $username=$_SESSION['profile']['username'];
+                $form=<<<END
+                            <h2 class="titre-form-reserve">Reserver cet item !</h2>
+            <hr>
+  <form class="form-reserve" action="#" method="POST">
+                <div class="form-nom">
+                    <label for="nomParticipantInput">Votre nom :</label>
+                    <input type="text" name="nomParticipant" id="nomParticipantInput" value="$username" inputmode="text" required>
+                </div>
+                <div class="form-message">
+                    <label for="messageInput">Ajouter un message (optionel) :</label>
+                    <textarea name="message" id="messageInput" rows="10" cols="40" placeholder="Votre message"></textarea>
+                </div>
+
+                <input class="form-submit" type="submit" value="Reserver">
+
+            </form>
+END;
+
+            }else{
+                $form="";
+                $modifBouton="";
+            }
+
             $html = <<<END
             
         <div class="container">
         <header class="header-card titre-item">
             <h1>$nom</h1>
             <hr>
-            <div class="item-modifier-bouton">
-                <a href="$urlButton"><button>Modifier l'item</button></a>
-            </div>
+            $modifBouton
         </header>
 
         <!--Component-->
@@ -135,13 +196,16 @@ END;
             <p class="description-item">
                 $description
             </p>
-            <h2 class="titre-images-item">Images</h2>
-            <hr>
+
 
 
             <div class="images-item">
 END;
             if(!is_null($this->elements['images'][0])){
+                $html=$html.<<<END
+<h2 class="titre-images-item">Images</h2>
+            <hr>
+END;
                 foreach ($this->elements['images'] as $image){
                     $html=$html.<<<END
  <div class="image">
@@ -157,22 +221,9 @@ END;
             <p class="status-item rouge">
                 Non reservé ! (WIP)
             </p>
-            <h2 class="titre-form-reserve">Reserver cet item !</h2>
-            <hr>
 
-            <form class="form-reserve" action="#" method="POST">
-                <div class="form-nom">
-                    <label for="nomParticipantInput">Votre nom :</label>
-                    <input type="text" name="nomParticipant" id="nomParticipantInput" placeholder="Votre nom" inputmode="text" required>
-                </div>
-                <div class="form-message">
-                    <label for="messageInput">Ajouter un message (optionel) :</label>
-                    <textarea name="message" id="messageInput" rows="10" cols="40" placeholder="Votre message"></textarea>
-                </div>
 
-                <input class="form-submit" type="submit" value="Reserver">
-
-            </form>
+          $form
 
 
 

@@ -110,4 +110,19 @@ class ControleurInternaute
         $this->deconnexion();
     }
 
+    /**
+     * Méthode permettant de déterminer si l'utilisateur connecté est bien le créateur de l'item passé en paramétre
+     * @param $idItem
+     * @return bool
+     */
+    public static function testerAppartenanceItem($idItem){
+        $element = \mywishlist\models\Item::where('id','=',$idItem)->first();
+        $element = $element->liste()->first();
+        $res=false;
+        if($element->user_id === $_SESSION['profile']['userId']){
+            $res=true;
+        }
+        return $res;
+    }
+
 }

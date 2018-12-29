@@ -239,7 +239,8 @@ div#slider figure img{
 }
 
 .titre-status-item{
-    padding-top : 10px;
+    clear:left;
+    padding-top : 20px;
     font-size: 2em;
     padding-left : 10px;
 }
@@ -259,6 +260,10 @@ div#slider figure img{
     display : inline-block;
     margin-bottom : 20px;
     margin-right : 20px;
+}
+
+titre-page-liste{
+
 }
 
 .images-item .image a{
@@ -401,7 +406,7 @@ hr{
     margin : 50px 20% 0 20%;
 }
 
-.titre-page-liste{
+.flottantGauche{
     float:left;
 }
 

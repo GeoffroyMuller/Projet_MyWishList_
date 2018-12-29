@@ -42,7 +42,6 @@ $app->get('/afficherListeItems/:id', function ($id){
     echo $controlleurAffichage->afficherListeItems($id);
 })->name("afficherItemsListe");
 
-
 /**
  * Url permettant l'affichage d'un item
  */
@@ -53,15 +52,13 @@ $app->get('/afficherItem/:id',function($id){
 })->name("afficherItem");
 
 
-$app->post('/modifierImage/:id',function($id){
+/*$app->post('/modifierImage/:id',function($id){
     if(!empty($_FILES['image'])){
         //On vérifie que le fichier est bien une image
         $extensions = array('.png','.jpeg','.gif','.jpg');
         $extension = strrchr($_FILES['image']['name'],'.');
         if(!in_array($extension,$extensions)){
-            /*
-             * Throw exception ceci n'est pas une image
-             */
+
         }else{
             $controlleurCreateur = new \mywishlist\controlleurs\Createur();
             // $controlleurCreateur->modifierImageItem($_FILES['image'],$id);
@@ -71,17 +68,19 @@ $app->post('/modifierImage/:id',function($id){
     }else{
         //$controlleurAffichage->afficherErreur('Aucune image trouvée')
     }
-});
+});*/
 
 /**
  * Lien permettant d'afficher la page de modification de l'item
  */
 $app->get('/modifierItem/:id',function($id){
-    /**
-     * To do vérifier les droits
-     */
-    $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
-    $controlleurAffichage->afficherItemModification($id);
+    if(isset($_SESSION['profile']) && \mywishlist\controlleurs\ControleurInternaute::testerAppartenanceItem($id)) {
+        $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
+        $controlleurAffichage->afficherItemModification($id);
+    }else{
+        $app = \Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('erreur',['msg'=>'Vous devez être le créateur de l\'item pour pouvoir le modifier']));
+    }
 
 })->name("modifierItem");
 
@@ -109,9 +108,6 @@ $app->post('/applicationDesModificationsItem/:id', function($id){
         $extensions = array('.png','.jpeg','.gif','.jpg');
         $extension = strrchr($_FILES['itemImageModification']['name'],'.');
         if(!in_array($extension,$extensions)){
-            /*
-             * Throw exception ceci n'est pas une image
-             */
             $image=null;
         }else{
             $image=$_FILES['itemImageModification'];
@@ -128,11 +124,14 @@ $app->post('/applicationDesModificationsItem/:id', function($id){
  * Url permettant d'afficher la page de modification des images d'un item
  */
 $app->get('/modifierLesimages/:id', function($id){
-    /**
-     * To do verifier les droits
-     */
-    $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
-    $controlleurAffichage->afficherImageModification($id);
+    if(isset($_SESSION['profile']) && \mywishlist\controlleurs\ControleurInternaute::testerAppartenanceItem($id)){
+        $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
+        $controlleurAffichage->afficherImageModification($id);
+    }else{
+        $app = \Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('erreur',['msg'=>'Vous devez être le créateur de l\'item pour pouvoir le modifier']));
+    }
+
 })->name('modifierImageItem');
 
 /**
@@ -201,8 +200,9 @@ $app->get('/connexion/',function (){
  */
 $app->post('/inscriptionprocess/',function (){
     if(isset($_POST['username']) && isset($_POST['password'])){
+        $username = filter_var($_POST['username'],FILTER_SANITIZE_STRING);
         $controleur = new mywishlist\controlleurs\ControleurInternaute();
-        $controleur->inscrire($_POST['username'], $_POST['password']);
+        $controleur->inscrire($username, $_POST['password']);
     }else{
         $app = \Slim\Slim::getInstance();
         $app->redirect($app->urlFor('erreur',['msg'=>'Veuillez entrer un nom d\'utilisateur et un mot de passe']));
@@ -213,12 +213,14 @@ $app->post('/inscriptionprocess/',function (){
 })->name('inscriptionprocess');
 
 /**
- * Url permettant de lancer le processus de connexiono d'un internaute
+ * Url permettant de lancer le processus de connexion d'un internaute
  */
 $app->post('/connexionprocess/',function (){
     if(isset($_POST['username']) && isset($_POST['password'])){
+        $username = filter_var($_POST['username'],FILTER_SANITIZE_STRING);
+
         $controleur = new mywishlist\controlleurs\ControleurInternaute();
-        $controleur->seConnecter($_POST['username'], $_POST['password']);
+        $controleur->seConnecter($username, $_POST['password']);
     }else{
         $app = \Slim\Slim::getInstance();
         $app->redirect($app->urlFor('erreur',['msg'=>'Veuillez entrer un nom d\'utilisateur et un mot de passe']));
@@ -267,8 +269,13 @@ $app->get('/suppCompte/', function (){
  * Url permettant d'acceder a la page de modification du profil
  */
 $app->get('/profilModif/', function (){
-    $controleur = new mywishlist\controlleurs\Affichage();
-    $controleur->afficherProfilModification();
+    if(isset($_SESSION['profile'])) {
+        $controleur = new mywishlist\controlleurs\Affichage();
+        $controleur->afficherProfilModification();
+    }else{
+        $app = \Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('listes'));
+    }
 })->name('profilModif');
 
 /**
@@ -289,13 +296,16 @@ $app->get('/creerUneListe/',function(){
 
 
 /**
- * URL permettant d'acceder a la page "Mes Liste"
+ * URL permettant d'acceder a la page "Mes Listes"
  */
 $app->get('/mesListes',function (){
     if(isset($_SESSION['profile'])){
        $controleur = new mywishlist\controlleurs\Affichage();
        $controleur->afficherMesListes();
     }else{
+        /*
+         * Utilisateur non log peut accéder à ses listes stocké dans des cookies
+         */
         $app = \Slim\Slim::getInstance();
         $app->redirect($app->urlFor('connexion'));
     }

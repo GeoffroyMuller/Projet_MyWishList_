@@ -64,9 +64,9 @@ class Affichage
      * Méthode permettant l'affichage de toutes les listes de souhait
      */
     public function afficherLesListesDeSouhaits(){
-        $resultat = \mywishlist\models\Liste::select('no','user_id','titre','description','expiration')->get();
-        $vue = new VueParticipant($resultat,"LIST_VIEW");
-        return $vue->render();
+        $resultat = \mywishlist\models\Liste::orderBy('expiration')->get();
+       $vue = new VueParticipant($resultat,"LIST_VIEW");
+        $vue->render();
     }
 
     /**
