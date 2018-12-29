@@ -167,5 +167,36 @@ class Affichage
 
     }
 
+    /**
+     * Méthode permettant d'afficher la page de creation d'un item
+     */
+    public function afficherCreationItem(){
+        $vue = new \mywishlist\vue\VueParticipant(null,'ITEM_CREATION');
+        $vue->render();
+    }
+
+    /**
+     * Méthode permettant d'afficher la page de creation d'une liste
+     */
+    public function afficherCreationListe(){
+        $vue = new \mywishlist\vue\VueParticipant(null,'LISTE_CREATION');
+        $vue->render();
+    }
+
+    /**
+     * Méthode permettant d'afficher la page mes listes
+     */
+
+    public function afficherMesListes(){
+        $utilisateur = \mywishlist\models\Utilisateur::where("idUser","=",$_SESSION['profile']['userId'])->first();
+        $listes = $utilisateur->listes()->get();
+
+        $vue = new \mywishlist\vue\VueParticipant($listes,'MES_LISTES');
+        $vue->render();
+
+    }
+
+
+
 
 }

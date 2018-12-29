@@ -69,17 +69,21 @@ END;
     private function htmlItemsListe()
     {
         $liste = $this->elements['liste'];
+        $urlRendrePublic = $this->app->urlFor('rendrePublique',['id'=>$liste->no]);
+
         //En tête contenant les informations de la listes actuelle
         $html = <<<END
            <!--Content-->
     <header class="header-card">
         <h1>$liste->titre</h1>
+        <a href="$urlRendrePublic"><button class="bouton-rendre-publique">Rendre publique</button></a>
         <hr>
     </header>
 END;
 
         foreach ($this->elements['items'] as $element){
             $url = $this->app->urlFor("afficherItem",['id'=>$element->id]);
+            $urlSupp = $this->app->urlFor("supprimerItem",['id'=>$element->id]);
             $html = $html.<<<END
             <div class="card-item-liste">
             <header>
@@ -91,6 +95,8 @@ END;
                 <p class="description-card-item">$element->descr</p>
             </article>
             <a href="$url"><button class="card-button" type="button"> Voir l'item !</button></a>
+             <a href="$urlSupp"><button class="card-button button-del" type="button"> Supprimer l'item !</button></a>
+
         </div>
 END;
         }
@@ -219,6 +225,12 @@ END;
                     <input type="file" name="itemImageModification" id="item-image-modification"  accept="image/png, image/jpeg, image/jpg">
 
                 </div>
+                
+                <div class="tarifModification">
+                    <label for="expListe">Tarif :</label>
+                    <input type="number" id="expListe" name="tarifItem" min="0" value="$tarif" required>
+                </div>
+                
                 <h2 class="titre-description-item">Editer la Description</h2>
                 <hr>
                 <div class="description-item">
@@ -500,6 +512,169 @@ END;
         return $html;
     }
 
+    /**
+     * Génére le code html de la page de creation d'un item
+     * @return string
+     */
+    public function htmlCreationItem(){
+        $html=<<<END
+ <div class="container">
+        <header class="header-card titre-item">
+            <h1>Créer un item</h1>
+            <hr>
+        </header>
+
+        <!--Component-->
+        <div class="container-creation-liste">
+            <form class="form-creation-liste" action="#" method="POST" enctype="multipart/form-data">
+
+                <div class="image-creation-item">
+                    <img src="/img/placeholder-creation-liste.gif">
+
+                    <label for="nomListe">Image principale de l'item :</label>
+                    <input type="file" id="item-image-creation" name="item-image-creation" accept="image/png, image/jpeg, image/jpg">
+
+                </div>
+
+                <label for="nomItem">Nom de l'item :</label>
+                <input id="nomItem" type="texte" name="nomItem" placeholder="Mon Item" required>
+
+                <label for="descrItem">Description :</label>
+                <textarea id="descrItem" cols="50" rows="10" name="descrItem" placeholder="Je créer cette item pour..." required></textarea>
+
+                <label for="expListe">Tarif :</label>
+
+                <input type="number" id="expListe" name="expListe" min="0" required>
+
+
+                <input id="submit-creation-liste" type="submit" value="Créer l'item !">
+
+
+            </form>
+        </div>
+
+    </div>
+
+END;
+
+        return $html;
+    }
+
+    /**
+     * Génére le code html de la page de creation d'une liste
+     */
+    public function htmlCreationListe(){
+        $date = date('Y-m-d');
+        $html=<<<END
+    <div class="container">
+        <header class="header-card titre-item">
+            <h1>Créer une liste</h1>
+            <hr>
+        </header>
+
+        <!--Component-->
+        <div class="container-creation-liste">
+            <form class="form-creation-liste" action="#" method="POST">
+
+                <label for="nomListe">Nom de la liste :</label>
+                <input id="nomListe" type="texte" name="nomListe" placeholder="Ma liste" required>
+
+                <label for="descrListe">Description :</label>
+                <textarea id="descrListe" cols="50" rows="10" name="descrListe" placeholder="Je créer cette liste pour..." required></textarea>
+
+                <label for="expListe">Date d'expiration:</label>
+
+                <input type="date" id="expListe" name="expListe" value="$date" min="$date" required>
+
+                <input type="checkbox" id="publiqueListe" name="publiqueListe">
+                <label for="publiqueListe">Rendre publique</label>
+
+                <input id="submit-creation-liste" type="submit" value="Créer la liste !">
+
+
+            </form>
+        </div>
+
+    </div>
+END;
+
+        return $html;
+    }
+
+    /**
+     * Génére le code html de la page "Mes Listes"
+     * @return string
+     */
+    public function htmlMesListes(){
+        $urlCreerListe = $this->app->urlFor('creationListePage');
+        $html=<<<END
+ <div class="container">
+        <header class="header-card titre-item">
+            <h1 class="titre-liste">Vos Listes</h1>
+            <a href="$urlCreerListe"><button class="bouton-rendre-publique">Créer une liste</button></a>
+            <hr>
+        </header>
+
+        <!--Component-->
+        <div class="container-composant-liste">
+            <div class="container-liste-publique">
+                <h2 class="titre-liste-publique titre-images-item">Listes publiques</h1>
+                    <hr>
+
+
+                    <div class="container-liste-preview-detail">
+END;
+        foreach($this->elements as $liste){
+            if($liste->privee == 0){
+                $urlListe = $this->app->urlFor('afficherItemsListe',['id'=>$liste->no]);
+                $html=$html.<<<END
+                        <a href="$urlListe">
+                            <div class="liste-preview-detail">
+                                <h3 class="liste-preview-detail-titre">$liste->titre</h3>
+                                <p class="liste-preview-detail-exp">Exp : $liste->expiration</p>
+                                <p class="liste-preview-detail-descr">$liste->description</p>
+                            </div>
+                        </a>
+END;
+            }
+
+
+        }
+
+        $html=$html.<<<END
+ </div>
+
+
+                    <div class="container-liste-privee">
+                        <h2 class="titre-liste-privee titre-images-item">Listes privée</h2>
+                        <hr>
+
+
+                        <div class="container-liste-preview-detail">
+END;
+
+        foreach($this->elements as $liste){
+            if($liste->privee === 1){
+                $urlListe = $this->app->urlFor('afficherItemsListe',['id'=>$liste->no]);
+                $html=$html.<<<END
+                        <a href="$urlListe">
+                            <div class="liste-preview-detail privee">
+                                <h3 class="liste-preview-detail-titre">$liste->titre</h3>
+                                <p class="liste-preview-detail-exp">Exp : $liste->expiration</p>
+                                <p class="liste-preview-detail-descr">$liste->description</p>
+                            </div>
+                        </a>
+END;
+            }
+
+
+        }
+
+
+
+
+        return $html;
+    }
     public function render(){
         $homepage="";
         $content="";
@@ -559,8 +734,21 @@ END;
             case 'PROFIL_MODIFICATION':
                 $content = $this->htmlProfilModification();
                 break;
+
+            case 'ITEM_CREATION':
+                $content = $this->htmlCreationItem();
+                break;
+
+            case 'LISTE_CREATION':
+                $content = $this->htmlCreationListe();
+                break;
+
+            case 'MES_LISTES':
+                $content = $this->htmlMesListes();
+                break;
         }
         $urlTopBarListes = $this->app->urlFor("listes");
+        $urlTopBarMesListes = $this->app->urlFor("mesListes");
         $html=<<<END
         <!DOCTYPE html>
         <html lang="fr">
@@ -579,7 +767,7 @@ END;
                     <div class="menu">
                         <ul>
                             <li><a href="$urlTopBarListes">Les <span>Wish</span>Lists</a><hr class="menu_separator"></li>
-                            <li><a href="$linkProfile">Mes Listes</a><hr class="menu_separator"></li>
+                            <li><a href="$urlTopBarMesListes">Mes Listes</a><hr class="menu_separator"></li>
                             <li class="user"><a href="$linkProfile">$connecte</a></li>
                         </ul>
                     </div>

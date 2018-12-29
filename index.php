@@ -120,7 +120,7 @@ $app->post('/applicationDesModificationsItem/:id', function($id){
         $image=null;
     }
 
-    $controlleurCreateur->modifierItem($nom,$descr,$image,$id);
+    $controlleurCreateur->modifierItem($nom,$descr,$image,$id,$_POST['tarifItem']);
 
 })->name("application-modification");
 
@@ -191,14 +191,8 @@ $app->get('/inscription/',function (){
  * Url permettant d'obtenir la page de connexion
  */
 $app->get('/connexion/',function (){
-    if(!isset($_SESSION['profile'])){
         $controleurAffichage = new mywishlist\controlleurs\Affichage();
         $controleurAffichage->afficherConnexion();
-    }else{
-        $app = \Slim\Slim::getInstance();
-        $app->redirect($app->urlFor('listes'));
-    }
-
 })->name('connexion');
 
 
@@ -276,6 +270,37 @@ $app->get('/profilModif/', function (){
     $controleur = new mywishlist\controlleurs\Affichage();
     $controleur->afficherProfilModification();
 })->name('profilModif');
+
+/**
+ * Url permettant d'acceder a la page de creation d'un item
+ */
+$app->get('/creerUnItem/',function(){
+    $controleur = new \mywishlist\controlleurs\Affichage();
+    $controleur->afficherCreationItem();
+})->name('creationItemPage');
+
+/**
+ * Url permettant d'acceder a la page de creation d'une liste
+ */
+$app->get('/creerUneListe/',function(){
+    $controleur = new \mywishlist\controlleurs\Affichage();
+    $controleur->afficherCreationListe();
+})->name('creationListePage');
+
+
+/**
+ * URL permettant d'acceder a la page "Mes Liste"
+ */
+$app->get('/mesListes',function (){
+    if(isset($_SESSION['profile'])){
+       $controleur = new mywishlist\controlleurs\Affichage();
+       $controleur->afficherMesListes();
+    }else{
+        $app = \Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('connexion'));
+    }
+})->name("mesListes");
+
 
 $app->run();
 

@@ -134,10 +134,11 @@ class Createur
      * @param $image
      *      Nouvelle image de l'item
      */
-    public function modifierItem($nom,$descr,$image,$id){
+    public function modifierItem($nom,$descr,$image,$id,$tarif){
         $item = \mywishlist\models\Item::where('id','=',$id)->first();
         $item->nom = $nom;
         $item->descr = $descr;
+        $item->tarif=$tarif;
         $item->save();
         if(!is_null($image)){
             $this->modifierImageItem($image,$id);
