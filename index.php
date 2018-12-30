@@ -294,7 +294,17 @@ $app->get('/creerUneListe/',function(){
     $controleur->afficherCreationListe();
 })->name('creationListePage');
 
-
+/**
+* Url permettant de creer une liste
+*/
+$app->post('/createur/creerUneListe/', function(){
+    $controleur = new \mywishlist\controlleurs\Createur();
+    $titre = filter_var($_POST['nomListe'], FILTER_SANITIZE_STRING);
+    $descript = filter_var($_POST['descrListe'], FILTER_SANITIZE_SPECIAL_CHARS);
+    $expir = filter_var($_POST['expListe'], FILTER_SANITIZE_NUMBER_INT);
+    $token = filter_var($_POST['publiqueListe'], FILTER_SANITIZE_STRING);
+    $controleur->creerUneListe(4,1, $titre, $descript, $expir, $token);
+})->name('creationListe');
 /**
  * URL permettant d'acceder a la page "Mes Listes"
  */
