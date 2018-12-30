@@ -149,9 +149,9 @@ class Createur
         $app->redirect($app->urlFor("afficherItem",["id"=>$id]));
 
     }
-    public function creerUneListe($nop,$user_idp,$titrep,$descrip,$expir,$tokenp){
+    public function creerUneListe($user_idp,$titrep,$descrip,$expir,$tokenp){
         $liste = new \mywishlist\models\Liste();
-        $liste->no = $nop;
+        //$liste->no = $nop;
         $liste->user_id = $user_idp;
         $liste->titre = $titrep;
         $liste->description = $descrip;

@@ -313,7 +313,7 @@ $app->post('/createur/creerUneListe/', function(){
         $token = filter_var($_POST['publiqueListe'], FILTER_SANITIZE_STRING);
     }
     try {
-        $controleur->creerUneListe(4, 1, $titre, $descript, $expir, $token);
+        $controleur->creerUneListe($_SESSION['profile']['userId'], $titre, $descript, $expir, $token);
     } catch (Exception $e){
         //la liste ne peut pas etre ajouter
     }
