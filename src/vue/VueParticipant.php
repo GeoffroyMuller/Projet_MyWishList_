@@ -616,6 +616,7 @@ END;
      */
     public function htmlCreationListe(){
         $date = date('Y-m-d');
+        $urlCreerListeCreateur = $this->app->urlFor('creationListe');
         $html=<<<END
     <div class="container">
         <header class="header-card titre-item">
@@ -625,7 +626,7 @@ END;
 
         <!--Component-->
         <div class="container-creation-liste">
-            <form class="form-creation-liste" action="#" method="POST">
+            <form class="form-creation-liste" action="$urlCreerListeCreateur" method="POST">
 
                 <label for="nomListe">Nom de la liste :</label>
                 <input id="nomListe" type="texte" name="nomListe" placeholder="Ma liste" required>
@@ -640,7 +641,7 @@ END;
                 <input type="checkbox" id="publiqueListe" name="publiqueListe">
                 <label for="publiqueListe">Rendre publique</label>
 
-                <input id="submit-creation-liste" type="submit" value="Créer la liste !">
+                 <input id="submit-creation-liste" type="submit" value="Créer la liste !">
 
 
             </form>

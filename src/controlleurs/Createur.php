@@ -157,6 +157,7 @@ class Createur
         $liste->description = $descrip;
         $liste->expiration = $expir;
         $liste->token = $tokenp;
+        $liste->save();
     }
 
     /*public function creerListe($tablist){

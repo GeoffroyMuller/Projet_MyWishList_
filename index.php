@@ -299,11 +299,24 @@ $app->get('/creerUneListe/',function(){
 */
 $app->post('/createur/creerUneListe/', function(){
     $controleur = new \mywishlist\controlleurs\Createur();
-    $titre = filter_var($_POST['nomListe'], FILTER_SANITIZE_STRING);
-    $descript = filter_var($_POST['descrListe'], FILTER_SANITIZE_SPECIAL_CHARS);
-    $expir = filter_var($_POST['expListe'], FILTER_SANITIZE_NUMBER_INT);
-    $token = filter_var($_POST['publiqueListe'], FILTER_SANITIZE_STRING);
-    $controleur->creerUneListe(4,1, $titre, $descript, $expir, $token);
+    $titre = "";$descript = "";$expir = "";$token = "";
+    if(isset($_POST['nomListe'])) {
+        $titre = filter_var($_POST['nomListe'], FILTER_SANITIZE_STRING);
+    }
+    if(isset($_POST['descrListe'])) {
+        $descript = filter_var($_POST['descrListe'], FILTER_SANITIZE_SPECIAL_CHARS);
+    }
+    if(isset($_POST['expListe'])) {
+        $expir = filter_var($_POST['expListe'], FILTER_SANITIZE_NUMBER_INT);
+    }
+    if(isset($_POST['publiqueListe'])) {
+        $token = filter_var($_POST['publiqueListe'], FILTER_SANITIZE_STRING);
+    }
+    try {
+        $controleur->creerUneListe(4, 1, $titre, $descript, $expir, $token);
+    } catch (Exception $e){
+        
+    }
 })->name('creationListe');
 /**
  * URL permettant d'acceder a la page "Mes Listes"
