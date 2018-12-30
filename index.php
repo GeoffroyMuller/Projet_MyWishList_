@@ -35,7 +35,7 @@ $app->get('/affichage/afficherTouteLesListes',function (){
 $app->get('/listes/',function (){
     $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
     echo $controlleurAffichage->afficherLesListesDeSouhaits();
-})->name("listes");;
+})->name("listes");
 
 $app->get('/afficherListeItems/:id', function ($id){
     $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
@@ -315,8 +315,10 @@ $app->post('/createur/creerUneListe/', function(){
     try {
         $controleur->creerUneListe(4, 1, $titre, $descript, $expir, $token);
     } catch (Exception $e){
-        
+        //la liste ne peut pas etre ajouter
     }
+    $app = \Slim\Slim::getInstance();
+    $app->redirect($app->urlFor('listes'));
 })->name('creationListe');
 /**
  * URL permettant d'acceder a la page "Mes Listes"
