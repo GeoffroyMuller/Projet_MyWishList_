@@ -219,7 +219,7 @@ div#slider figure img{
 }
 
 .titre-item{
-    margin-top : 6%;
+    margin-top : 9%;
 }
 
 .item-image{
@@ -240,8 +240,8 @@ div#slider figure img{
 }
 
 .titre-description-item + hr{
-    margin-left : 14%;
-    width : 36%;
+    margin-left : 15%;
+    width : 35%;
 }
 
 .titre-status-item{
@@ -295,12 +295,12 @@ hr{
 #nomParticipantInput,#messageInput{
     border : 1px solid black;
     border-radius: 6px;
+    resize: none;
 }
 
 #messageInput{
     font-size: 1.1em;
     width : 50%;
-
 }
 
 .form-submit{
