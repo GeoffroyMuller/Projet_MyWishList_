@@ -84,6 +84,18 @@ $app->get('/modifierItem/:id',function($id){
 
 })->name("modifierItem");
 
+/**
+ * Url permettant d'ajouter un commentaire
+ */
+$app->post('/ajoutCommentaire:id',function($id){
+    $controlleurCreateur = new \mywishlist\models\Commentaire();
+    //Vérification des données entrée par l'utilisateur
+    if(isset($_POST['message'])){
+        $message =filter_var($_POST['message'],FILTER_SANITIZE_STRING);
+    }else{
+        $message="";
+    }
+})->name("ajoutCommentaire");
 
 /**
  * Url permettant d'appliquer les modifications d'un item
