@@ -148,7 +148,7 @@ class Createur
     }
 
 
-    public function creerUnItem($liste_idp, $nomp, $descrp, $imgp, $urlp, $tarif)
+    public function creerUnItem($liste_idp, $nomp, $descrp, $imgp, $urlp, $tarifp)
     {
         $item = new \mywishlist\models\Item();
         $item->liste_id = $liste_idp;
@@ -156,7 +156,7 @@ class Createur
         $item->descr = $descrp;
         $item->img = $imgp;
         $item->url = $urlp;
-        $item->tarif = $tarif;
+        $item->tarif = $tarifp;
         $item->save();
     }
     /**

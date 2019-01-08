@@ -597,6 +597,7 @@ END;
      * @return string
      */
     public function htmlCreationItem(){
+        $urlCreerItemCreateur = $this->app->urlFor('creationItem');
         $html=<<<END
  <div class="container">
         <header class="header-card titre-item">
@@ -606,7 +607,7 @@ END;
 
         <!--Component-->
         <div class="container-creation-liste">
-            <form class="form-creation-liste" action="#" method="POST" enctype="multipart/form-data">
+            <form class="form-creation-liste" action="$urlCreerItemCreateur" method="POST" enctype="multipart/form-data">
 
                 <div class="image-creation-item">
                     <img src="/img/placeholder-creation-liste.gif">
