@@ -599,7 +599,6 @@ END;
      */
     public function htmlCreationItem(){
         $idDeLaListe = $this->elements;
-
         $urlpourCreationitemProcess = $this->app->urlFor('creationItem',['id'=>$idDeLaListe]);
         $html=<<<END
  <div class="container">
@@ -611,7 +610,6 @@ END;
         <!--Component-->
         <div class="container-creation-liste">
             <form class="form-creation-liste" action="$urlpourCreationitemProcess" method="POST" enctype="multipart/form-data">
-
                 <div class="image-creation-item">
                     <img src="/img/placeholder-creation-liste.gif">
 

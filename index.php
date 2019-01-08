@@ -301,10 +301,19 @@ $app->post('/creerUnItem/:id',function($id){
 /**
  * Url permettant de creer un item
  */
-$app->get('/createur/creerUnItem/:id',function($id){
+$app->post('/createur/creerUnItem/:id',function($id){
     $controleur = new \mywishlist\controlleurs\Createur();
-    $controleur->creerUnItem();
-
+$nomp = ""; $descrp = ""; $imgp = ""; $urlp = ""; $tarifp = "";
+    if(isset($_POST['nomItem'])) {
+        $nomp = filter_var($_POST['nomItem'], FILTER_SANITIZE_STRING);
+    }
+    if(isset($_POST['descrItem'])) {
+        $descrp = filter_var($_POST['descrItem'], FILTER_SANITIZE_SPECIAL_CHARS);
+    }
+    if(isset($_POST['expListe'])) {
+        $tarif = filter_var($_POST['descrItem'], FILTER_SANITIZE_NUMBER_INT);
+    }
+    $controleur->creerUnItem($id, $nomp, $descrp, $imgp, $urlp, $tarifp);
 })->name('creationItem');
 /**
  * Url permettant d'acceder a la page de creation d'une liste
