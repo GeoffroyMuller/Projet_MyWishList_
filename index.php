@@ -377,7 +377,7 @@ $app->get('/mesListes/',function (){
 /**
  * URL permettant d'afficher une liste avec son token
  */
-$app->get('/afficherListeToken/',function($token){
+$app->get('/afficherListeToken/:token',function($token){
     $controleur = new mywishlist\controlleurs\Affichage();
     $idListe = $controleur->afficherListeToken($token);
 
@@ -393,7 +393,7 @@ $app->get('/afficherListeToken/',function($token){
 
 })->name("afficherListeAvecToken");
 
-$app->post('/erreur/:msg', function($msg){
+$app->get('/erreur/:msg', function($msg){
     $controleur = new mywishlist\controlleurs\Affichage();
     $controleur->afficherErreur($msg);
 })->name("erreur");
