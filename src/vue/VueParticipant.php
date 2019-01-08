@@ -779,6 +779,26 @@ END;
      * Génére le code html de la page d'erreur
      */
     public function htmlErreur(){
+        $msgerreur = $this->elements;
+        $html = <<<END
+ <div class="container">
+        <header class="header-card titre-item">
+            <h1 class="titre-liste marge-top">Nous ne pouvons accéder à votre requête</h1>
+ 
+        </header>
+
+        <!--Component-->
+        <div class="container-composant-liste">
+            <div class="container-visualiser-token">
+                    <div class="composant-visualiser-token">
+                        <p class="message-erreur">$msgerreur</p>
+                    </div>
+            </div>
+            
+
+            </div>
+END;
+        return $html;
 
     }
 

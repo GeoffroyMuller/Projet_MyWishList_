@@ -746,6 +746,13 @@ label[for="nomItem"],label[for="descrItem"]{
     margin-left : 70px;
 }
 
+/*Page erreur*/
+
+.marge-top{
+    margin-bottom : 30px;
+    margin-top : 20px;
+}
+
 
 
 
