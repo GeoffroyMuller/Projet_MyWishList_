@@ -340,7 +340,7 @@ $app->post('/createur/creerUneListe/', function(){
 /**
  * URL permettant d'acceder a la page "Mes Listes"
  */
-$app->get('/mesListes',function (){
+$app->get('/mesListes/',function (){
     if(isset($_SESSION['profile'])){
        $controleur = new mywishlist\controlleurs\Affichage();
        $controleur->afficherMesListes();

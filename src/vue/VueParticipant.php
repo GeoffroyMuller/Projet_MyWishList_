@@ -698,6 +698,18 @@ END;
 
         <!--Component-->
         <div class="container-composant-liste">
+                    <div class="container-visualiser-token">
+                    <h2 class="titre-liste-publique titre-images-item">Visualer une liste avec un token</h1>
+                    <hr>
+
+                    <div class="composant-visualiser-token">
+                        <form action="#">
+                                <label for="token">Token de la liste :</label>
+                                <input type="text" name="token" id="token"><br>
+                                <input class="submit-token" type="submit" value="Visualiser la liste">
+                        </form>
+                    </div>
+            </div>
             <div class="container-liste-publique">
                 <h2 class="titre-liste-publique titre-images-item">Listes publiques</h1>
                     <hr>
