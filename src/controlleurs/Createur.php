@@ -188,9 +188,6 @@ class Createur
         $commentaire->no = $no;
         $commentaire->message = $message;
         $commentaire->save();
-
-
-        //return $vue->render();
     }
 
     /*public function creerListe($tablist){
