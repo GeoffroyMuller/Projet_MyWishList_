@@ -293,7 +293,7 @@ $app->get('/profilModif/', function (){
 /**
  * Url permettant d'acceder a la page de creation d'un item
  */
-$app->post('/creerUnItem/:id',function($id){
+$app->get('/creerUnItem/:id',function($id){
     $controleur = new \mywishlist\controlleurs\Affichage();
     $controleur->afficherCreationItem($id);
 })->name('creationItemPage');
@@ -303,7 +303,10 @@ $app->post('/creerUnItem/:id',function($id){
  */
 $app->post('/createur/creerUnItem/:id',function($id){
     $controleur = new \mywishlist\controlleurs\Createur();
-$nomp = ""; $descrp = ""; $imgp = ""; $urlp = ""; $tarifp = "";
+    $idp = ""; $nomp = ""; $descrp = ""; $imgp = ""; $urlp = ""; $tarifp = "";
+    if(isset($id)) {
+        $idp = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
+    }
     if(isset($_POST['nomItem'])) {
         $nomp = filter_var($_POST['nomItem'], FILTER_SANITIZE_STRING);
     }
@@ -311,9 +314,10 @@ $nomp = ""; $descrp = ""; $imgp = ""; $urlp = ""; $tarifp = "";
         $descrp = filter_var($_POST['descrItem'], FILTER_SANITIZE_SPECIAL_CHARS);
     }
     if(isset($_POST['expListe'])) {
-        $tarif = filter_var($_POST['descrItem'], FILTER_SANITIZE_NUMBER_INT);
+        $tarifp = filter_var($_POST['expListe'], FILTER_SANITIZE_NUMBER_INT);
     }
     $controleur->creerUnItem($id, $nomp, $descrp, $imgp, $urlp, $tarifp);
+    $app->redirect($app->urlFor('listes'));
 })->name('creationItem');
 /**
  * Url permettant d'acceder a la page de creation d'une liste
