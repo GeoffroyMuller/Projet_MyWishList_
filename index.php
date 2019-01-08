@@ -299,6 +299,14 @@ $app->get('/creerUnItem/',function(){
 })->name('creationItemPage');
 
 /**
+ * Url permettant de creer un item
+ */
+$app->get('/createur/creerUnItem/',function(){
+    $controleur = new \mywishlist\controlleurs\Createur();
+    $controleur->creerUnItem();
+
+})->name('creationItem');
+/**
  * Url permettant d'acceder a la page de creation d'une liste
  */
 $app->get('/creerUneListe/',function(){
