@@ -147,8 +147,19 @@ class Createur
         $liste->save();
     }
 
+
+    public function creerUnItem($user_idp,$titrep,$descrip,$expir,$tokenp)
+    {
+        $liste = new \mywishlist\models\Liste();
+        //$liste->no = $nop;
+        $liste->user_id = $user_idp;
+        $liste->titre = $titrep;
+        $liste->description = $descrip;
+        $liste->expiration = $expir;
+        $liste->token = $tokenp;
+        $liste->save();
+    }
     /**
-<<<<<<< HEAD
      * Méthode permettant la création d'une liste par un utilisateur non connecté
      * @param $titre
      * @param $descript
@@ -188,6 +199,10 @@ class Createur
         $commentaire->no = $no;
         $commentaire->message = $message;
         $commentaire->save();
+
+
+        return $vue->render();
+        
     }
 
     /*public function creerListe($tablist){
