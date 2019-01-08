@@ -95,6 +95,7 @@ END;
             if(isset($this->elements['items'])){
                 $boutonPublique=<<<END
             <h1 class="titre-page-liste">$liste->titre</h1>
+            <a href="#"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
       <hr>
 END;
             }else{

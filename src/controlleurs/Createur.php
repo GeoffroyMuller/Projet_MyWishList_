@@ -168,7 +168,7 @@ class Createur
         $liste->save();
 
         setcookie($titre, "$token",
-            time() + 60*60*24*30, "/cookie/liste/" );
+            time() + 60*60*24*30, "/" );
 
 
 }

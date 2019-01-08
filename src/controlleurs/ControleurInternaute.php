@@ -33,10 +33,12 @@ class ControleurInternaute
                 foreach ($listesInvite as $liste){
                     $titreDeLaListe = $liste->titre;
                     if(isset($_COOKIE[$titreDeLaListe])){
+
                         $listeAAjouter = \mywishlist\models\Liste::where("titre",'=',$liste->titre)->first();
                         $listeAAjouter->user_id = $utilisateur->idUser;
                         $listeAAjouter->save();
                     }
+
                 }
             }else{
                 throw new \mywishlist\Exception\AuthException("Le nom d'utilisateur est déja utilisé");
