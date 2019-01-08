@@ -295,13 +295,13 @@ $app->get('/profilModif/', function (){
  */
 $app->post('/creerUnItem/:id',function($id){
     $controleur = new \mywishlist\controlleurs\Affichage();
-    $controleur->afficherCreationItem();
+    $controleur->afficherCreationItem($id);
 })->name('creationItemPage');
 
 /**
  * Url permettant de creer un item
  */
-$app->get('/createur/creerUnItem/',function(){
+$app->get('/createur/creerUnItem/:id',function($id){
     $controleur = new \mywishlist\controlleurs\Createur();
     $controleur->creerUnItem();
 

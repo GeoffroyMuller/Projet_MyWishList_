@@ -172,8 +172,8 @@ class Affichage
     /**
      * Méthode permettant d'afficher la page de creation d'un item
      */
-    public function afficherCreationItem(){
-        $vue = new \mywishlist\vue\VueParticipant(null,'ITEM_CREATION');
+    public function afficherCreationItem($id){
+        $vue = new \mywishlist\vue\VueParticipant($id,'ITEM_CREATION');
         $vue->render();
     }
 
