@@ -15,21 +15,6 @@ use mywishlist\vue\VueParticipant;
 
 class Createur
 {
-    /**
-     * Methode permettant d'ajouter un message à une liste
-     * @param $user_id
-     *      id de l'utilisateur
-     * @param $no
-     *      Id de la liste
-     * @param $message
-     *      message a ajouter
-     * @return String
-     */
-    /*public function ajouterMessage($user_id, $no, $message){
-        $res = \mywishlist\models\Commentaire::INSERT INTO Commentaire VALUES ($user_id, $no, $message)->get();
-        $vue = new VueParticipant($res,"Commentaire");
-        return $vue->render();
-        }*/
 
     /**
      * Methode permettant d'ajouter/modifier l'image principale appartenant à un item
@@ -160,7 +145,9 @@ class Createur
         $liste->save();
     }
 
-    public function creerUnItem($user_idp,$titrep,$descrip,$expir,$tokenp){
+
+    public function creerUnItem($user_idp,$titrep,$descrip,$expir,$tokenp)
+    {
         $liste = new \mywishlist\models\Liste();
         //$liste->no = $nop;
         $liste->user_id = $user_idp;
@@ -169,6 +156,26 @@ class Createur
         $liste->expiration = $expir;
         $liste->token = $tokenp;
         $liste->save();
+    }
+    /**
+     * Methode permettant d'ajouter un message à une liste
+     * @param $user_id
+     *      id de l'utilisateur
+     * @param $no
+     *      Id de la liste
+     * @param $message
+     *      message a ajouter
+     * @return String
+     */
+    public function ajouterMessage($user_id, $no, $message){
+        $commentaire =  new \mywishlist\models\Commentaire();
+        $commentaire->user_id = $user_id;
+        $commentaire->no = $no;
+        $commentaire->message = $message;
+        $commentaire->save();
+
+        return $vue->render();
+
     }
 
     /*public function creerListe($tablist){
