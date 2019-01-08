@@ -151,7 +151,9 @@ class Affichage
      */
     public function afficherProfil(){
         $res['uName'] = $_SESSION['profile']['username'];
-        $res['listes'] = \mywishlist\models\Utilisateur::where('idUser','=',$_SESSION['profile']['userId'])->first()->listes();
+        $res['listes'] = \mywishlist\models\Liste::where('user_id','=',$_SESSION['profile']['userId'])->get();
+
+
 
         $vue = new \mywishlist\vue\VueParticipant($res,'PROFIL');
         $vue->render();

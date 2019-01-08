@@ -134,6 +134,8 @@ class Createur
         $app->redirect($app->urlFor("afficherItem",["id"=>$id]));
 
     }
+
+
     public function creerUneListe($user_idp,$titrep,$descrip,$expir,$tokenp){
         $liste = new \mywishlist\models\Liste();
         //$liste->no = $nop;
@@ -158,7 +160,31 @@ class Createur
         $liste->save();
     }
     /**
-     * Methode permettant d'ajouter un message à une liste
+     * Méthode permettant la création d'une liste par un utilisateur non connecté
+     * @param $titre
+     * @param $descript
+     * @param $expir
+     * @param $token
+     */
+    public function creerUneListeNonConnecte($titre, $descript, $expir)
+    {
+        $liste = new \mywishlist\models\Liste();
+
+        $liste->user_id = -1;
+        $liste->titre = $titre;
+        $liste->description = $descript;
+        $liste->expiration = $expir;
+        $token = uniqid();
+        $liste->token = $token;
+        $liste->save();
+
+        setcookie($titre, "$token",
+            time() + 60*60*24*30, "/cookie/liste/" );
+
+
+}
+
+     /* Methode permettant d'ajouter un message à une liste
      * @param $user_id
      *      id de l'utilisateur
      * @param $no
@@ -174,8 +200,9 @@ class Createur
         $commentaire->message = $message;
         $commentaire->save();
 
-        return $vue->render();
 
+        return $vue->render();
+        
     }
 
     /*public function creerListe($tablist){
