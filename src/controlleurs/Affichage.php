@@ -172,8 +172,8 @@ class Affichage
     /**
      * Méthode permettant d'afficher la page de creation d'un item
      */
-    public function afficherCreationItem(){
-        $vue = new \mywishlist\vue\VueParticipant(null,'ITEM_CREATION');
+    public function afficherCreationItem($id){
+        $vue = new \mywishlist\vue\VueParticipant($id,'ITEM_CREATION');
         $vue->render();
     }
 
@@ -196,6 +196,32 @@ class Affichage
         $vue = new \mywishlist\vue\VueParticipant($listes,'MES_LISTES');
         $vue->render();
 
+    }
+
+
+    /**
+     * Méthode permettantde récuperer un id d'une liste avec un token
+     * @param $token
+     * @return $listeId
+     */
+    public function afficherListeToken($token){
+        $listeid = \mywishlist\models\Liste::where('token','=',$token);
+
+        if(count($listeid)==0){
+            $listeid=-1;
+        }else{
+            $listeid = $listeid->id;
+        }
+        return $listeid;
+    }
+
+    /**
+     * Méthode permettant d'afficher une erreur
+     * @param $msg
+     */
+    public function afficherErreur($msg){
+        $vue = new \mywishlist\vue\VueParticipant($msg,'ERREUR');
+        $vue->render();
     }
 
 

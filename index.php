@@ -293,17 +293,17 @@ $app->get('/profilModif/', function (){
 /**
  * Url permettant d'acceder a la page de creation d'un item
  */
-$app->get('/creerUnItem/',function(){
+$app->post('/creerUnItem/:id',function($id){
     $controleur = new \mywishlist\controlleurs\Affichage();
-    $controleur->afficherCreationItem();
+    $controleur->afficherCreationItem($id);
 })->name('creationItemPage');
 
 /**
  * Url permettant de creer un item
  */
-$app->post('/createur/creerUnItem/',function(){
+$app->post('/createur/creerUnItem/:id',function($id){
     $controleur = new \mywishlist\controlleurs\Createur();
-    $liste_idp = ""; $nomp = ""; $descrp = ""; $imgp = ""; $urlp = ""; $tarifp = "";
+$nomp = ""; $descrp = ""; $imgp = ""; $urlp = ""; $tarifp = "";
     if(isset($_POST['nomItem'])) {
         $nomp = filter_var($_POST['nomItem'], FILTER_SANITIZE_STRING);
     }
@@ -313,7 +313,7 @@ $app->post('/createur/creerUnItem/',function(){
     if(isset($_POST['expListe'])) {
         $tarif = filter_var($_POST['descrItem'], FILTER_SANITIZE_NUMBER_INT);
     }
-    $controleur->creerUnItem($liste_idp, $nomp, $descrp, $imgp, $urlp, $tarifp);
+    $controleur->creerUnItem($id, $nomp, $descrp, $imgp, $urlp, $tarifp);
 })->name('creationItem');
 /**
  * Url permettant d'acceder a la page de creation d'une liste
@@ -357,7 +357,7 @@ $app->post('/createur/creerUneListe/', function(){
 /**
  * URL permettant d'acceder a la page "Mes Listes"
  */
-$app->get('/mesListes',function (){
+$app->get('/mesListes/',function (){
     if(isset($_SESSION['profile'])){
        $controleur = new mywishlist\controlleurs\Affichage();
        $controleur->afficherMesListes();
@@ -370,6 +370,29 @@ $app->get('/mesListes',function (){
     }
 })->name("mesListes");
 
+/**
+ * URL permettant d'afficher une liste avec son token
+ */
+$app->get('/afficherListeToken/',function($token){
+    $controleur = new mywishlist\controlleurs\Affichage();
+    $idListe = $controleur->afficherListeToken($token);
+
+    $app = \Slim\Slim::getInstance();
+
+    if($idListe == -1){
+        $app->redirect($app->urlFor('erreur',['msg'=>'Le token entré n\'existe pas']));
+    }else{
+        $app->redirect($app->urlFor('erreur',['id'=>$idListe]));
+
+    }
+
+
+})->name("afficherListeAvecToken");
+
+$app->post('/erreur/:msg', function($msg){
+    $controleur = new mywishlist\controlleurs\Affichage();
+    $controleur->afficherErreur($msg);
+})->name("erreur");
 
 $app->run();
 

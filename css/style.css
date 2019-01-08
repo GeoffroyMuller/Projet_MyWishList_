@@ -674,6 +674,18 @@ hr{
     float : left;
 }
 
+.composant-visualiser-token{
+    width : 400px;
+    margin-top : 30px;
+    margin-bottom: 20px;
+}
+
+
+.submit-token{
+    margin-top : 10px;
+
+}
+
 /*Creation d'une liste*/
 
 .container-creation-liste input,.container-creation-liste textarea{
