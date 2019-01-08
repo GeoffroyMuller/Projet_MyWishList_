@@ -213,7 +213,7 @@ div#slider figure img{
 }
 
 .titre-item{
-    margin-top : 9%;
+    margin-top : 6%;
 }
 
 .item-image{
@@ -234,8 +234,8 @@ div#slider figure img{
 }
 
 .titre-description-item + hr{
-    margin-left : 15%;
-    width : 35%;
+    margin-left : 14%;
+    width : 36%;
 }
 
 .titre-status-item{
@@ -325,12 +325,12 @@ hr{
 #nomParticipantInput,#messageInput{
     border : 1px solid black;
     border-radius: 6px;
-    resize: none;
 }
 
 #messageInput{
     font-size: 1.1em;
     width : 50%;
+
 }
 
 .form-submit{
@@ -403,7 +403,8 @@ hr{
 /*Liste des items d'une liste*/
 
 .container-items-liste{
-    margin : 50px 20% 0 20%;
+    width : 1000px;
+    margin : 0 auto;
 }
 
 .flottantGauche{
@@ -412,6 +413,10 @@ hr{
 
 .header-card hr{
     clear:both;
+}
+
+.yellow{
+    background-color: #FFD337!important;
 }
 
 .bouton-rendre-publique{
@@ -432,12 +437,12 @@ hr{
 }
 
 .card-item-liste{
-     display: inline-block;
+     display: block;
      width : 47%;
      height: 150px;
-     margin-top : 50px;
-     margin-right : 25px;
-     margin-bottom : 100px;
+     /*margin-top : 50px;
+     margin-bottom : 100px;*/
+     margin : 100px auto;
  }
 
 

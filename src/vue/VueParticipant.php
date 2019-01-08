@@ -75,16 +75,36 @@ END;
 
         //On affiche le bouton rendre publique seulement si la liste est privée
         if($liste->privee === 1){
-            $boutonPublique = <<<END
+            if(isset($this->elements['items'])){
+                $boutonPublique = <<<END
             <h1 class="titre-page-liste flottantGauche">$liste->titre</h1>
         <a href="$urlRendrePublic"><button class="bouton-rendre-publique">Rendre publique</button></a>
+        <a href="#"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
       <hr>
 END;
+            }else{
+                $boutonPublique = <<<END
+            <h1 class="titre-page-liste flottantGauche">$liste->titre - Cette liste n'a pas d'item</h1>
+        <a href="$urlRendrePublic"><button class="bouton-rendre-publique">Rendre publique</button></a>
+        <a href="#"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
+      <hr>
+END;
+            }
+
         }else{
-            $boutonPublique=<<<END
+            if(isset($this->elements['items'])){
+                $boutonPublique=<<<END
             <h1 class="titre-page-liste">$liste->titre</h1>
       <hr>
 END;
+            }else{
+                $boutonPublique=<<<END
+            <h1 class="titre-page-liste">$liste->titre - Cette liste n'a pas d'item</h1>
+            <a href="#"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
+      <hr>
+END;
+            }
+
         }
         //En tête contenant les informations de la listes actuelle
         $html = <<<END
@@ -96,15 +116,17 @@ END;
     </header>
 END;
 
-        foreach ($this->elements['items'] as $element){
-            $url = $this->app->urlFor("afficherItem",['id'=>$element->id]);
-            $urlSupp = "";/*$this->app->urlFor("supprimerItem",['id'=>$element->id]);*/
+        if(isset($this->elements['items'])){
+            foreach ($this->elements['items'] as $element){
+                $url = $this->app->urlFor("afficherItem",['id'=>$element->id]);
+                $urlSupp = "";
+                /*$this->app->urlFor("supprimerItem",['id'=>$element->id]);*/
 
 
-            $couleurStatus = 'rouge';
-            $texteStatus = 'Non reservé';
+                $couleurStatus = 'rouge';
+                $texteStatus = 'Non reservé';
 
-            $html = $html.<<<END
+                $html = $html.<<<END
             <div class="card-item-liste">
             <header>
                 <p>$element->nom - $element->tarif € - <span class="$couleurStatus">$texteStatus</span></p>
@@ -120,7 +142,9 @@ END;
             </div>
         </div>
 END;
+            }
         }
+
         return '<div class="container-items-liste">'.$html.'</div>';
     }
 
@@ -248,6 +272,10 @@ END;
         return $html;
     }
 
+    /**
+     * Génére le code html de modification de l'item
+     * @return string
+     */
     private function htmlItemModification(){
         $nom = $this->elements['item']->nom;
         $descr= $this->elements['item']->descr;
@@ -727,6 +755,7 @@ END;
 
         return $html;
     }
+
     public function render(){
         $homepage="";
         $content="";

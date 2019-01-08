@@ -313,7 +313,12 @@ $app->post('/createur/creerUneListe/', function(){
         $token = filter_var($_POST['publiqueListe'], FILTER_SANITIZE_STRING);
     }
     try {
-        $controleur->creerUneListe($_SESSION['profile']['userId'], $titre, $descript, $expir, $token);
+        if(isset($_SESSION['profile'])){
+            $controleur->creerUneListe($_SESSION['profile']['userId'], $titre, $descript, $expir, $token);
+        }else{
+            $controleur->creerUneListeNonConnecte($titre, $descript, $expir, $token);
+        }
+
     } catch (Exception $e){
         //la liste ne peut pas etre ajouter
     }
@@ -332,7 +337,7 @@ $app->get('/mesListes',function (){
          * Utilisateur non log peut accéder à ses listes stocké dans des cookies
          */
         $app = \Slim\Slim::getInstance();
-        $app->redirect($app->urlFor('connexion'));
+        $app->redirect($app->urlFor('creationListePage'));
     }
 })->name("mesListes");
 
