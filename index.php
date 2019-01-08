@@ -293,7 +293,7 @@ $app->get('/profilModif/', function (){
 /**
  * Url permettant d'acceder a la page de creation d'un item
  */
-$app->get('/creerUnItem/',function(){
+$app->post('/creerUnItem/:id',function($id){
     $controleur = new \mywishlist\controlleurs\Affichage();
     $controleur->afficherCreationItem();
 })->name('creationItemPage');
@@ -361,6 +361,29 @@ $app->get('/mesListes/',function (){
     }
 })->name("mesListes");
 
+/**
+ * URL permettant d'afficher une liste avec son token
+ */
+$app->get('/afficherListeToken/',function($token){
+    $controleur = new mywishlist\controlleurs\Affichage();
+    $idListe = $controleur->afficherListeToken($token);
+
+    $app = \Slim\Slim::getInstance();
+
+    if($idListe == -1){
+        $app->redirect($app->urlFor('erreur',['msg'=>'Le token entré n\'existe pas']));
+    }else{
+        $app->redirect($app->urlFor('erreur',['id'=>$idListe]));
+
+    }
+
+
+})->name("afficherListeAvecToken");
+
+$app->post('/erreur/:msg', function($msg){
+    $controleur = new mywishlist\controlleurs\Affichage();
+    $controleur->afficherErreur($msg);
+})->name("erreur");
 
 $app->run();
 

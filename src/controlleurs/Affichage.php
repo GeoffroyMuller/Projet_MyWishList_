@@ -199,6 +199,32 @@ class Affichage
     }
 
 
+    /**
+     * Méthode permettantde récuperer un id d'une liste avec un token
+     * @param $token
+     * @return $listeId
+     */
+    public function afficherListeToken($token){
+        $listeid = \mywishlist\models\Liste::where('token','=',$token);
+
+        if(count($listeid)==0){
+            $listeid=-1;
+        }else{
+            $listeid = $listeid->id;
+        }
+        return $listeid;
+    }
+
+    /**
+     * Méthode permettant d'afficher une erreur
+     * @param $msg
+     */
+    public function afficherErreur($msg){
+        $vue = new \mywishlist\vue\VueParticipant($msg,'ERREUR');
+        $vue->render();
+    }
+
+
 
 
 }

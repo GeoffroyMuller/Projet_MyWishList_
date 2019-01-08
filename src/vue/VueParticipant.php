@@ -72,6 +72,7 @@ END;
     {
         $liste = $this->elements['liste'];
         $urlRendrePublic = "";/*$this->app->urlFor('rendrePublique',['id'=>$liste->no]);*/
+        $urlCreeItem = $this->app->urlFor('creationItemPage',['id'=>$liste->no]);
 
         //On affiche le bouton rendre publique seulement si la liste est privée
         if($liste->privee === 1){
@@ -79,7 +80,7 @@ END;
                 $boutonPublique = <<<END
             <h1 class="titre-page-liste flottantGauche">$liste->titre</h1>
         <a href="$urlRendrePublic"><button class="bouton-rendre-publique">Rendre publique</button></a>
-        <a href="#"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
+        <a href="$urlCreeItem"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
       <hr>
 END;
             }else{
@@ -688,6 +689,8 @@ END;
      */
     public function htmlMesListes(){
         $urlCreerListe = $this->app->urlFor('creationListePage');
+        $urlVisualiseToken = $this->app->urlFor('afficherListeAvecToken');
+
         $html=<<<END
  <div class="container">
         <header class="header-card titre-item">
@@ -699,11 +702,11 @@ END;
         <!--Component-->
         <div class="container-composant-liste">
                     <div class="container-visualiser-token">
-                    <h2 class="titre-liste-publique titre-images-item">Visualer une liste avec un token</h1>
+                    <h2 class="titre-liste-publique titre-images-item">Visualiser une liste avec un token</h1>
                     <hr>
 
                     <div class="composant-visualiser-token">
-                        <form action="#">
+                        <form action="$urlVisualiseToken">
                                 <label for="token">Token de la liste :</label>
                                 <input type="text" name="token" id="token"><br>
                                 <input class="submit-token" type="submit" value="Visualiser la liste">
@@ -767,6 +770,13 @@ END;
 
 
         return $html;
+    }
+
+    /**
+     * Génére le code html de la page d'erreur
+     */
+    public function htmlErreur(){
+
     }
 
     public function render(){
@@ -839,6 +849,10 @@ END;
 
             case 'MES_LISTES':
                 $content = $this->htmlMesListes();
+                break;
+
+            case 'ERREUR':
+                $content = $this->htmlErreur();
                 break;
         }
         $urlTopBarListes = $this->app->urlFor("listes");
