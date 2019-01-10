@@ -63,12 +63,14 @@ class Affichage
      * affiche la liste des createur
      */
    public function afficherListeCreateur(){
+       //On recupere toute les listes pour avoir les id_utilisateur
         $resultat = array();
         $liste_public['liste'] = \mywishlist\models\Liste::where('public', '=', 1)->first();
         $id_users = $liste_public['liste']->user_id()-get();
        foreach($id_users as $id_user) {
            $liste_public['liste'][] = $id_user;
        }
+       //on recupere tout les utilisateur 
        foreach ($liste_public as $id_user) {
            $utilisateur = \mywishlist\models\Utilisateur::where('iduser', '=', $id_user)->first();
            foreach($utilisateur as $nom) {
