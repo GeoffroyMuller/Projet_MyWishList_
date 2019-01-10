@@ -135,7 +135,14 @@ class ControleurInternaute
      */
     public static function testerAppartenanceItem($idItem){
         $element = \mywishlist\models\Item::where('id','=',$idItem)->first();
-        $element = $element->liste()->first();
+        $element = $element->liste();
+
+        if(is_null($element)){
+            return false;
+        }
+
+        $element = $element->first();
+
         $res=false;
         if($element->user_id === $_SESSION['profile']['userId']){
             $res=true;

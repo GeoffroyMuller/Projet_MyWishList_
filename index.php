@@ -321,13 +321,13 @@ $app->post('/createur/creerUnItem/:id',function($id){
     $app->redirect($app->urlFor('afficherItemsListe',['id'=>$id]));
 })->name('creationItem');
 
-$app->post('/createur/supprimerItem/:id',function ($id){
-
-    if( \mywishlist\controlleurs\ControleurInternaute::testerAppartenanceItem($id) == true){
+$app->get('/createur/supprimerItem/:idlist/:id',function ($idlist, $id){
+    if( \mywishlist\controlleurs\ControleurInternaute::testerAppartenanceItem($id) === true){
         $controleur = new \mywishlist\controlleurs\Createur();
         $controleur->supprimerItem($id);
     }
-
+    $app = \Slim\Slim::getInstance();
+    $app->redirect($app->urlFor('afficherItemsListe',['id'=>$idlist]));
 })->name('supprimerItem');
 /**
  * Url permettant d'acceder a la page de creation d'une liste

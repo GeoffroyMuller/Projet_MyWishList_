@@ -92,8 +92,16 @@ class Createur
         }
     }
 
-    pubic function supprimerItem($id){
+    public function supprimerItem($id){
         $item = \mywishlist\models\Item::where('id','=',$id)->first();
+
+        //On supprime les réservation liée a cet item
+        $listeDesReservation = $item->reservation();
+
+        foreach ($listeDesReservation as $reservation){
+            $reservation->delete();
+        }
+
         $item->delete();
     }
 
