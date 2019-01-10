@@ -234,10 +234,11 @@ END;
 
 
                 $username=$_SESSION['profile']['username'];
+                $urlsubmitReserv = $this->app->urlFor('reserverItem');
                 $form=<<<END
                             <h2 class="titre-form-reserve">Reserver cet item !</h2>
             <hr>
-  <form class="form-reserve" action="#" method="POST">
+  <form class="form-reserve" action="$urlsubmitReserv" method="POST">
                 <div class="form-nom">
                     <label for="nomParticipantInput">Votre nom :</label>
                     <input type="text" name="nomParticipant" id="nomParticipantInput" value="$username" inputmode="text" required>
@@ -246,7 +247,8 @@ END;
                     <label for="messageInput">Ajouter un message (optionel) :</label>
                     <textarea name="message" id="messageInput" rows="10" cols="40" placeholder="Votre message"></textarea>
                 </div>
-
+                
+                <input class="cacher" type="text" value="$id" name="idItem">
                 <input class="form-submit" type="submit" value="Reserver">
 
             </form>

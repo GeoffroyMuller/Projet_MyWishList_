@@ -420,7 +420,7 @@ $app->post('/reserverItem/',function(){
                     $controlleurParticipant->reserverItem($idItem,$nomparticipant,$message);
 
                     $app=\Slim\Slim::getInstance();
-                    $app->redirect($app->urlFor('afficherItem'),['id'=>'idItem']);
+                    $app->redirect($app->urlFor('afficherItem',['id'=>$idItem]));
                 }
                 else{
                     $app=\Slim\Slim::getInstance();
