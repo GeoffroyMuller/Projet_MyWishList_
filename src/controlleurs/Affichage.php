@@ -59,7 +59,32 @@ class Affichage
         $vue = new VueParticipant($resultat,"LIST_ITEMS");
         return $vue->render();
     }
+    /**
+     * affiche la liste des createur
+     */
+   public function afficherListeCreateur(){
+        $resultat = array();
+        $liste_public['liste'] = \mywishlist\models\Liste::where('public', '=', 1)->first();
+        $id_users = $liste_public['liste']->user_id()-get();
+       foreach($id_users as $id_user) {
+           $liste_public['liste'][] = $id_user;
+       }
+       foreach ($liste_public as $id_user) {
+           $utilisateur = \mywishlist\models\Utilisateur::where('iduser', '=', $id_user)->first();
+           foreach($utilisateur as $nom) {
+               $resultat['utilisateur'][] = $nom;
+           }
+       }
+        //SELECT uName from utilisateur INNER JOIN liste on utilisateur.idUser=liste.user_id;
+        $vue = new VueParticipant($resultat,"LIST_CREATEUR");
+        return $vue->render();
+    }
 
+    public function afficherListesPublic(){
+       $resultat = \mywishlist\models\Liste::where('public','=',1)->first();
+        $vue = new VueParticipant($resultat,"LISTE_PUBLIC");
+        $vue->render();
+    }
     /**
      * Méthode permettant l'affichage de toutes les listes de souhait
      */

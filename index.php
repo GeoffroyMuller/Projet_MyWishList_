@@ -87,7 +87,7 @@ $app->get('/modifierItem/:id',function($id){
 /**
  * Url permettant d'ajouter un commentaire
  */
-$app->post('/ajoutCommentaire:id',function($id){
+$app->post('/ajoutCommentaire/:id',function($id){
     $controlleurCreateur = new \mywishlist\models\Commentaire();
     //Vérification des données entrée par l'utilisateur
     if(isset($_POST['message'])){
@@ -95,6 +95,8 @@ $app->post('/ajoutCommentaire:id',function($id){
     }else{
         $message="";
     }
+    $app = \Slim\Slim::getInstance();
+    $app->redirect($app->urlFor("afficherItemsListe",['id'=>$id]));
 })->name("ajoutCommentaire");
 
 /**
