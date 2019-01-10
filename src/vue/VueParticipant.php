@@ -144,6 +144,58 @@ END;
         </div>
 END;
             }
+
+            //Partie commentaire
+            $html=$html.<<<END
+            <header class="header-card">
+        <h1 class="titre-page-liste">Commentaires</h1>
+        <hr>
+    </header>
+ <div class="container-commentaire">
+        <div class="wrapper">
+END;
+            if(isset($this->elements['commentaires'])){
+
+                $commentaires = $this->elements['commentaires'];
+
+                foreach($commentaires as $commentaire){
+                    $pseudoPersonne = \mywishlist\models\Utilisateur::where('id','=',$commentaire->user_id)->first();
+                    $pseudoPersonne = $pseudoPersonne->uName;
+
+                    $html=$html.<<<END
+
+            <div class="composant-commentaire">
+                <div class="pseudo-commentaire">$pseudoPersonne</div>
+                <p class="contenu-commentaire">
+                   $commentaire->commentaire;
+                </p>
+            </div>
+
+END;
+
+                }
+
+            }
+
+            $urlAjoutComm=$this->app->urlFor('ajoutCommentaire');
+            $idListe = $liste->no;
+
+            $html=$html.<<<END
+            <div class="ajouter-commentaire">
+                <h2 class="title-commentaire">Ajouter un Commentaire :</h2>
+
+                <form action="$urlAjoutComm" method="post">
+                    <textarea name="commentaire" rows="10" cols="98" placeholder="Votre commentaire ici...">
+
+                    </textarea>
+                    <input class="button-send-commentaire" type="submit" value="Envoyer le commentaire">
+                    <input class="cacher" name="idListe" type="text" value="$idListe"
+                  </form> 
+
+            </div>
+        </div>
+    </div>
+END;
         }
 
         return '<div class="container-items-liste">'.$html.'</div>';
@@ -181,10 +233,11 @@ END;
 
 
                 $username=$_SESSION['profile']['username'];
+                $urlsubmitReserv = $this->app->urlFor('reserverItem');
                 $form=<<<END
                             <h2 class="titre-form-reserve">Reserver cet item !</h2>
             <hr>
-  <form class="form-reserve" action="#" method="POST">
+  <form class="form-reserve" action="$urlsubmitReserv" method="POST">
                 <div class="form-nom">
                     <label for="nomParticipantInput">Votre nom :</label>
                     <input type="text" name="nomParticipant" id="nomParticipantInput" value="$username" inputmode="text" required>
@@ -193,7 +246,8 @@ END;
                     <label for="messageInput">Ajouter un message (optionel) :</label>
                     <textarea name="message" id="messageInput" rows="10" cols="40" placeholder="Votre message"></textarea>
                 </div>
-
+                
+                <input class="cacher" type="text" value="$id" name="idItem">
                 <input class="form-submit" type="submit" value="Reserver">
 
             </form>

@@ -19,12 +19,12 @@ class Participant{
     public function reserverItem($idItem,$nomUtilisateur,$message){
         $item = \mywishlist\models\Item::where('id','=',$idItem)->first();
 
-        $utilisateur = \mywishlist\models\Utilisateur::where('uName'===$nomUtilisateur)->first();
+        $utilisateur = \mywishlist\models\Utilisateur::where('uName','=',$nomUtilisateur)->first();
 
         $reservation = new \mywishlist\models\Reservation();
 
         $reservation->idItem=$idItem;
-        $reservation->idUser=$utilisateur->id;
+        $reservation->idUser=$utilisateur->idUser;
         $reservation->message=$message;
 
         $reservation->save();
