@@ -96,7 +96,7 @@ class Createur
         $item = \mywishlist\models\Item::where('id','=',$id)->first();
 
         //On supprime les réservation liée a cet item
-        $listeDesReservation = $item->reservation();
+        $listeDesReservation = $item->reservation()->get();
 
         foreach ($listeDesReservation as $reservation){
             $reservation->delete();

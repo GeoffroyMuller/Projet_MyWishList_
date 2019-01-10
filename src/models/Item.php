@@ -27,7 +27,7 @@ class Item extends \Illuminate\Database\Eloquent\Model
     }
 
     public function reservation(){
-        return $this->hasMany('\mywishlist\model\Reservation','idItem');
+        return $this->hasMany('\mywishlist\models\Reservation','idItem');
     }
 
 
