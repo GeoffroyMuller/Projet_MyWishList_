@@ -92,6 +92,11 @@ class Createur
         }
     }
 
+    pubic function supprimerItem($id){
+        $item = \mywishlist\models\Item::where('id','=',$id)->first();
+        $item->delete();
+    }
+
     /**
      * Méthode permettant l'ajout d'images selectionnées à un item
      * @param $images
@@ -135,7 +140,14 @@ class Createur
 
     }
 
-
+    /**
+     * permet de creer liste
+     * @param $user_idp
+     * @param $titrep
+     * @param $descrip
+     * @param $expir
+     * @param $tokenp
+     */
     public function creerUneListe($user_idp,$titrep,$descrip,$expir,$tokenp){
         $liste = new \mywishlist\models\Liste();
         //$liste->no = $nop;
@@ -147,7 +159,15 @@ class Createur
         $liste->save();
     }
 
-
+    /**
+     * permet de creer un Item
+     * @param $liste_idp
+     * @param $nomp
+     * @param $descrp
+     * @param $imgp
+     * @param $urlp
+     * @param $tarifp
+     */
     public function creerUnItem($liste_idp, $nomp, $descrp, $imgp, $urlp, $tarifp)
     {
         $item = new \mywishlist\models\Item();

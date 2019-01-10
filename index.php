@@ -317,8 +317,18 @@ $app->post('/createur/creerUnItem/:id',function($id){
         $tarifp = filter_var($_POST['expListe'], FILTER_SANITIZE_NUMBER_INT);
     }
     $controleur->creerUnItem($id, $nomp, $descrp, $imgp, $urlp, $tarifp);
-    $app->redirect($app->urlFor('listes'));
+    $app = \Slim\Slim::getInstance();
+    $app->redirect($app->urlFor('afficherItemsListe',['id'=>$id]));
 })->name('creationItem');
+
+$app->post('/createur/supprimerItem/:id',function ($id){
+
+    if( \mywishlist\controlleurs\ControleurInternaute::testerAppartenanceItem($id) == true){
+        $controleur = new \mywishlist\controlleurs\Createur();
+        $controleur->supprimerItem($id);
+    }
+
+})->name('supprimerItem');
 /**
  * Url permettant d'acceder a la page de creation d'une liste
  */

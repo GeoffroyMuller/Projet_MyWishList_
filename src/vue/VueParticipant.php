@@ -121,7 +121,7 @@ END;
         if(isset($this->elements['items'])){
             foreach ($this->elements['items'] as $element){
                 $url = $this->app->urlFor("afficherItem",['id'=>$element->id]);
-                $urlSupp = "";
+                $urlSupp = $this->app->urlFor("supprimerItem",['id'=>$element->id]);
                 /*$this->app->urlFor("supprimerItem",['id'=>$element->id]);*/
 
 
