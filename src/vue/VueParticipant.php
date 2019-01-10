@@ -87,7 +87,7 @@ END;
                 $boutonPublique = <<<END
             <h1 class="titre-page-liste flottantGauche">$liste->titre - Cette liste n'a pas d'item</h1>
         <a href="$urlRendrePublic"><button class="bouton-rendre-publique">Rendre publique</button></a>
-        <a href="#"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
+        <a href="$urlCreeItem"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
       <hr>
 END;
             }
@@ -96,13 +96,13 @@ END;
             if(isset($this->elements['items'])){
                 $boutonPublique=<<<END
             <h1 class="titre-page-liste">$liste->titre</h1>
-            <a href="#"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
+            <a href="$urlCreeItem"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
       <hr>
 END;
             }else{
                 $boutonPublique=<<<END
             <h1 class="titre-page-liste">$liste->titre - Cette liste n'a pas d'item</h1>
-            <a href="#"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
+            <a href="$urlCreeItem"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
       <hr>
 END;
             }

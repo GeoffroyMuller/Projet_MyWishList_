@@ -293,7 +293,7 @@ $app->get('/profilModif/', function (){
 /**
  * Url permettant d'acceder a la page de creation d'un item
  */
-$app->post('/creerUnItem/:id',function($id){
+$app->get('/creerUnItem/:id',function($id){
     $controleur = new \mywishlist\controlleurs\Affichage();
     $controleur->afficherCreationItem($id);
 })->name('creationItemPage');
@@ -303,7 +303,10 @@ $app->post('/creerUnItem/:id',function($id){
  */
 $app->post('/createur/creerUnItem/:id',function($id){
     $controleur = new \mywishlist\controlleurs\Createur();
-$nomp = ""; $descrp = ""; $imgp = ""; $urlp = ""; $tarifp = "";
+    $idp = ""; $nomp = ""; $descrp = ""; $imgp = ""; $urlp = ""; $tarifp = "";
+    if(isset($id)) {
+        $idp = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
+    }
     if(isset($_POST['nomItem'])) {
         $nomp = filter_var($_POST['nomItem'], FILTER_SANITIZE_STRING);
     }
@@ -311,9 +314,10 @@ $nomp = ""; $descrp = ""; $imgp = ""; $urlp = ""; $tarifp = "";
         $descrp = filter_var($_POST['descrItem'], FILTER_SANITIZE_SPECIAL_CHARS);
     }
     if(isset($_POST['expListe'])) {
-        $tarif = filter_var($_POST['descrItem'], FILTER_SANITIZE_NUMBER_INT);
+        $tarifp = filter_var($_POST['expListe'], FILTER_SANITIZE_NUMBER_INT);
     }
     $controleur->creerUnItem($id, $nomp, $descrp, $imgp, $urlp, $tarifp);
+    $app->redirect($app->urlFor('listes'));
 })->name('creationItem');
 /**
  * Url permettant d'acceder a la page de creation d'une liste
@@ -394,7 +398,61 @@ $app->get('/erreur/:msg', function($msg){
     $controleur->afficherErreur($msg);
 })->name("erreur");
 
+/**
+ * Url permettant de reserver un item
+ */
+$app->post('/reserverItem/',function(){
+    $controlleurParticipant = new \mywishlist\controlleurs\Participant();
+    //Vérification des données entrée par l'utilisateur
+    if(isset($_POST['message'])){
+        $message =filter_var($_POST['message'],FILTER_SANITIZE_STRING);
+    }else{
+        $message="";
+    }
+
+    if(isset($_POST['nomParticipant'])){
+        $nomparticipant = filter_var($_POST['nomParticipant'],FILTER_SANITIZE_STRING);
+        if(isset($_SESSION['profile'])){
+            if($_SESSION['profile']['username']===$nomparticipant){
+
+                if(isset($_POST['idItem'])){
+                    $idItem = filter_var($_POST['idItem'],FILTER_SANITIZE_STRING);
+                    $controlleurParticipant->reserverItem($idItem,$nomparticipant,$message);
+
+                    $app=\Slim\Slim::getInstance();
+                    $app->redirect($app->urlFor('afficherItem'),['id'=>'idItem']);
+                }
+                else{
+                    $app=\Slim\Slim::getInstance();
+                    $app->redirect($app->urlFor('erreur'),['msg'=>'vous netes pas authorizer a regarder le code source']);
+                }
+
+
+            }
+            else{
+                $app=\Slim\Slim::getInstance();
+                $app->redirect($app->urlFor('erreur'),['msg'=>'laissez votre pseudo svp']);
+            }
+
+        }
+        else{
+            $app=\Slim\Slim::getInstance();
+            $app->redirect($app->urlFor('erreur'),['msg'=>'vous netes pas connecter']);
+        }
+    }
+    else{
+        $app=\Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('erreur'),['msg'=>'Rentrez un nom svp']);
+    }
+
+})->name("reserverItem");
+
+
+
+
 $app->run();
+
+
 
 
 
