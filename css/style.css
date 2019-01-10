@@ -52,6 +52,11 @@ body{
 }
 /*DEBUT TOPBAR*/
 
+
+.cacher{
+    display: none;
+}
+
 .topbar-container{
     z-index: 4;
     position: fixed;    
@@ -445,6 +450,58 @@ hr{
      margin : 100px auto;
  }
 
+ .wrapper{
+     width : 800px;
+     margin : 0 auto;
+ }
+
+ .contenu-commentaire{
+     width : 780px;
+     overflow: hidden;
+     word-wrap: break-word;
+     height: auto;
+     margin-bottom: 20px;
+ }
+
+ .contenu-commentaire{
+     margin : 15px 0 10px 10px;
+     font-size: .8em;
+ }
+
+ .ajouter-commentaire{
+     margin-top : 15px;
+ }
+
+ .title-commentaire{
+     margin-bottom : 5px;
+ }
+
+ .ajouter-commentaire textarea{
+    resize: none;
+    border-radius: 6px;
+    border : solid 1px black;
+    margin-bottom : 5px;
+ }
+
+ .composant-commentaire{
+     padding-top : 10px;
+     padding-bottom : 10px;
+     background: #C4C4C4;
+     color: black;
+ }
+
+ .pseudo-commentaire{
+     margin : 10px 0 0 10px;
+ }
+
+ .button-send-commentaire{
+     display : block;
+ }
+
+ .container-commentaire{
+     margin-top : 30px;
+ }
+
 
  .card-item-liste header p + hr{
      width : 480px;
@@ -752,6 +809,8 @@ label[for="nomItem"],label[for="descrItem"]{
     margin-bottom : 30px;
     margin-top : 20px;
 }
+
+
 
 
 

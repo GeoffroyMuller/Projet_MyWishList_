@@ -52,6 +52,17 @@ class Affichage
         $resultat = array();
         $liste_de_souhait = \mywishlist\models\Liste::where('no', '=', $idlisteSouhait)->first();
         $resultat['liste'] = $liste_de_souhait;
+
+        $commentaires = \mywishlist\models\Commentaire::all();
+        if(is_null($commentaires)){
+            $resultat['commentaires'] = -1;
+        }else{
+            $resultat['commentaires'] = $commentaires;
+        }
+
+
+
+
         $ListeItems = $liste_de_souhait->items()->get();
         foreach ($ListeItems as $item){
             $resultat['items'][]=$item;
@@ -207,10 +218,10 @@ class Affichage
     public function afficherListeToken($token){
         $listeid = \mywishlist\models\Liste::where('token','=',$token);
 
-        if(is_null($listeid)==0){
+        if(is_null($listeid)){
             $listeid=-1;
         }else{
-            $listeid = $listeid->id;
+            $listeid = $listeid->no;
         }
         return $listeid;
     }
