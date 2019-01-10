@@ -64,9 +64,9 @@ class Affichage
      * Méthode permettant l'affichage de toutes les listes de souhait
      */
     public function afficherLesListesDeSouhaits(){
-        $resultat = \mywishlist\models\Liste::select('no','user_id','titre','description','expiration')->get();
-        $vue = new VueParticipant($resultat,"LIST_VIEW");
-        return $vue->render();
+        $resultat = \mywishlist\models\Liste::orderBy('expiration')->get();
+       $vue = new VueParticipant($resultat,"LIST_VIEW");
+        $vue->render();
     }
 
     /**
@@ -151,7 +151,9 @@ class Affichage
      */
     public function afficherProfil(){
         $res['uName'] = $_SESSION['profile']['username'];
-        $res['listes'] = \mywishlist\models\Utilisateur::where('idUser','=',$_SESSION['profile']['userId'])->first()->listes();
+        $res['listes'] = \mywishlist\models\Liste::where('user_id','=',$_SESSION['profile']['userId'])->get();
+
+
 
         $vue = new \mywishlist\vue\VueParticipant($res,'PROFIL');
         $vue->render();
@@ -166,6 +168,63 @@ class Affichage
         $vue->render();
 
     }
+
+    /**
+     * Méthode permettant d'afficher la page de creation d'un item
+     */
+    public function afficherCreationItem($id){
+        $vue = new \mywishlist\vue\VueParticipant($id,'ITEM_CREATION');
+        $vue->render();
+    }
+
+    /**
+     * Méthode permettant d'afficher la page de creation d'une liste
+     */
+    public function afficherCreationListe(){
+        $vue = new \mywishlist\vue\VueParticipant(null,'LISTE_CREATION');
+        $vue->render();
+    }
+
+    /**
+     * Méthode permettant d'afficher la page mes listes
+     */
+
+    public function afficherMesListes(){
+        $utilisateur = \mywishlist\models\Utilisateur::where("idUser","=",$_SESSION['profile']['userId'])->first();
+        $listes = $utilisateur->listes()->get();
+
+        $vue = new \mywishlist\vue\VueParticipant($listes,'MES_LISTES');
+        $vue->render();
+
+    }
+
+
+    /**
+     * Méthode permettantde récuperer un id d'une liste avec un token
+     * @param $token
+     * @return $listeId
+     */
+    public function afficherListeToken($token){
+        $listeid = \mywishlist\models\Liste::where('token','=',$token);
+
+        if(is_null($listeid)==0){
+            $listeid=-1;
+        }else{
+            $listeid = $listeid->id;
+        }
+        return $listeid;
+    }
+
+    /**
+     * Méthode permettant d'afficher une erreur
+     * @param $msg
+     */
+    public function afficherErreur($msg){
+        $vue = new \mywishlist\vue\VueParticipant($msg,'ERREUR');
+        $vue->render();
+    }
+
+
 
 
 }

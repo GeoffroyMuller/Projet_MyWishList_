@@ -15,21 +15,6 @@ use mywishlist\vue\VueParticipant;
 
 class Createur
 {
-    /**
-     * Methode permettant d'ajouter un message à une liste
-     * @param $user_id
-     *      id de l'utilisateur
-     * @param $no
-     *      Id de la liste
-     * @param $message
-     *      message a ajouter
-     * @return String
-     */
-    /*public function ajouterMessage($user_id, $no, $message){
-        $res = \mywishlist\models\Commentaire::INSERT INTO Commentaire VALUES ($user_id, $no, $message)->get();
-        $vue = new VueParticipant($res,"Commentaire");
-        return $vue->render();
-        }*/
 
     /**
      * Methode permettant d'ajouter/modifier l'image principale appartenant à un item
@@ -134,10 +119,11 @@ class Createur
      * @param $image
      *      Nouvelle image de l'item
      */
-    public function modifierItem($nom,$descr,$image,$id){
+    public function modifierItem($nom,$descr,$image,$id,$tarif){
         $item = \mywishlist\models\Item::where('id','=',$id)->first();
         $item->nom = $nom;
         $item->descr = $descr;
+        $item->tarif=$tarif;
         $item->save();
         if(!is_null($image)){
             $this->modifierImageItem($image,$id);
@@ -146,6 +132,76 @@ class Createur
 
         $app = \Slim\Slim::getInstance();
         $app->redirect($app->urlFor("afficherItem",["id"=>$id]));
+
+    }
+
+
+    public function creerUneListe($user_idp,$titrep,$descrip,$expir,$tokenp){
+        $liste = new \mywishlist\models\Liste();
+        //$liste->no = $nop;
+        $liste->user_id = $user_idp;
+        $liste->titre = $titrep;
+        $liste->description = $descrip;
+        $liste->expiration = $expir;
+        $liste->token = $tokenp;
+        $liste->save();
+    }
+
+
+    public function creerUnItem($liste_idp, $nomp, $descrp, $imgp, $urlp, $tarifp)
+    {
+        $item = new \mywishlist\models\Item();
+        $item->liste_id = $liste_idp;
+        $item->nom = $nomp;
+        $item->descr = $descrp;
+        $item->img = $imgp;
+        $item->url = $urlp;
+        $item->tarif = $tarifp;
+        $item->save();
+    }
+    /**
+     * Méthode permettant la création d'une liste par un utilisateur non connecté
+     * @param $titre
+     * @param $descript
+     * @param $expir
+     * @param $token
+     */
+    public function creerUneListeNonConnecte($titre, $descript, $expir)
+    {
+        $liste = new \mywishlist\models\Liste();
+
+        $liste->user_id = -1;
+        $liste->titre = $titre;
+        $liste->description = $descript;
+        $liste->expiration = $expir;
+        $token = uniqid();
+        $liste->token = $token;
+        $liste->save();
+
+        setcookie($titre, "$token",
+            time() + 60*60*24*30, "/" );
+
+
+}
+
+     /* Methode permettant d'ajouter un message à une liste
+     * @param $user_id
+     *      id de l'utilisateur
+     * @param $no
+     *      Id de la liste
+     * @param $message
+     *      message a ajouter
+     * @return String
+     */
+    public function ajouterMessage($user_id, $no, $message){
+        $commentaire =  new \mywishlist\models\Commentaire();
+        $commentaire->user_id = $user_id;
+        $commentaire->no = $no;
+        $commentaire->message = $message;
+        $commentaire->save();
+
+
+        return $vue->render();
 
     }
 

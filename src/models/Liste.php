@@ -19,6 +19,15 @@ class Liste extends \Illuminate\Database\Eloquent\Model
         return $this->hasMany('\mywishlist\models\item','liste_id');
     }
 
+    public static function cmp($a,$b){
+        if(strtotime($a->expiration) > strtotime($b->expiration)){ //  valeur précedente $a comparée à la valeur suivante $b
+            return 1;
+        }elseif (strtotime($a->expiration) < strtotime($b->expiration)){
+            return -1;
+        }
+        return 0;
+    }
+
 
 
 
