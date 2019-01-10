@@ -72,19 +72,41 @@ END;
     {
         $liste = $this->elements['liste'];
         $urlRendrePublic = "";/*$this->app->urlFor('rendrePublique',['id'=>$liste->no]);*/
+        $urlCreeItem = $this->app->urlFor('creationItemPage',['id'=>$liste->no]);
 
         //On affiche le bouton rendre publique seulement si la liste est privée
         if($liste->privee === 1){
-            $boutonPublique = <<<END
+            if(isset($this->elements['items'])){
+                $boutonPublique = <<<END
             <h1 class="titre-page-liste flottantGauche">$liste->titre</h1>
         <a href="$urlRendrePublic"><button class="bouton-rendre-publique">Rendre publique</button></a>
+        <a href="$urlCreeItem"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
       <hr>
 END;
+            }else{
+                $boutonPublique = <<<END
+            <h1 class="titre-page-liste flottantGauche">$liste->titre - Cette liste n'a pas d'item</h1>
+        <a href="$urlRendrePublic"><button class="bouton-rendre-publique">Rendre publique</button></a>
+        <a href="$urlCreeItem"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
+      <hr>
+END;
+            }
+
         }else{
-            $boutonPublique=<<<END
+            if(isset($this->elements['items'])){
+                $boutonPublique=<<<END
             <h1 class="titre-page-liste">$liste->titre</h1>
+            <a href="$urlCreeItem"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
       <hr>
 END;
+            }else{
+                $boutonPublique=<<<END
+            <h1 class="titre-page-liste">$liste->titre - Cette liste n'a pas d'item</h1>
+            <a href="$urlCreeItem"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
+      <hr>
+END;
+            }
+
         }
         //En tête contenant les informations de la listes actuelle
         $html = <<<END
@@ -96,15 +118,17 @@ END;
     </header>
 END;
 
-        foreach ($this->elements['items'] as $element){
-            $url = $this->app->urlFor("afficherItem",['id'=>$element->id]);
-            $urlSupp = "";/*$this->app->urlFor("supprimerItem",['id'=>$element->id]);*/
+        if(isset($this->elements['items'])){
+            foreach ($this->elements['items'] as $element){
+                $url = $this->app->urlFor("afficherItem",['id'=>$element->id]);
+                $urlSupp = "";
+                /*$this->app->urlFor("supprimerItem",['id'=>$element->id]);*/
 
 
-            $couleurStatus = 'rouge';
-            $texteStatus = 'Non reservé';
+                $couleurStatus = 'rouge';
+                $texteStatus = 'Non reservé';
 
-            $html = $html.<<<END
+                $html = $html.<<<END
             <div class="card-item-liste">
             <header>
                 <p>$element->nom - $element->tarif € - <span class="$couleurStatus">$texteStatus</span></p>
@@ -120,7 +144,9 @@ END;
             </div>
         </div>
 END;
+            }
         }
+
         return '<div class="container-items-liste">'.$html.'</div>';
     }
 
@@ -248,6 +274,10 @@ END;
         return $html;
     }
 
+    /**
+     * Génére le code html de modification de l'item
+     * @return string
+     */
     private function htmlItemModification(){
         $nom = $this->elements['item']->nom;
         $descr= $this->elements['item']->descr;
@@ -568,6 +598,8 @@ END;
      * @return string
      */
     public function htmlCreationItem(){
+        $idDeLaListe = $this->elements;
+        $urlpourCreationitemProcess = $this->app->urlFor('creationItem',['id'=>$idDeLaListe]);
         $html=<<<END
  <div class="container">
         <header class="header-card titre-item">
@@ -577,8 +609,7 @@ END;
 
         <!--Component-->
         <div class="container-creation-liste">
-            <form class="form-creation-liste" action="#" method="POST" enctype="multipart/form-data">
-
+            <form class="form-creation-liste" action="$urlpourCreationitemProcess" method="POST" enctype="multipart/form-data">
                 <div class="image-creation-item">
                     <img src="/img/placeholder-creation-liste.gif">
 
@@ -659,6 +690,8 @@ END;
      */
     public function htmlMesListes(){
         $urlCreerListe = $this->app->urlFor('creationListePage');
+        $urlVisualiseToken = $this->app->urlFor('afficherListeAvecToken');
+
         $html=<<<END
  <div class="container">
         <header class="header-card titre-item">
@@ -669,6 +702,18 @@ END;
 
         <!--Component-->
         <div class="container-composant-liste">
+                    <div class="container-visualiser-token">
+                    <h2 class="titre-liste-publique titre-images-item">Visualiser une liste avec un token</h1>
+                    <hr>
+
+                    <div class="composant-visualiser-token">
+                        <form action="$urlVisualiseToken">
+                                <label for="token">Token de la liste :</label>
+                                <input type="text" name="token" id="token"><br>
+                                <input class="submit-token" type="submit" value="Visualiser la liste">
+                        </form>
+                    </div>
+            </div>
             <div class="container-liste-publique">
                 <h2 class="titre-liste-publique titre-images-item">Listes publiques</h1>
                     <hr>
@@ -727,6 +772,34 @@ END;
 
         return $html;
     }
+
+    /**
+     * Génére le code html de la page d'erreur
+     */
+    public function htmlErreur(){
+        $msgerreur = $this->elements;
+        $html = <<<END
+ <div class="container">
+        <header class="header-card titre-item">
+            <h1 class="titre-liste marge-top">Nous ne pouvons accéder à votre requête</h1>
+ 
+        </header>
+
+        <!--Component-->
+        <div class="container-composant-liste">
+            <div class="container-visualiser-token">
+                    <div class="composant-visualiser-token">
+                        <p class="message-erreur">$msgerreur</p>
+                    </div>
+            </div>
+            
+
+            </div>
+END;
+        return $html;
+
+    }
+
     public function render(){
         $homepage="";
         $content="";
@@ -797,6 +870,10 @@ END;
 
             case 'MES_LISTES':
                 $content = $this->htmlMesListes();
+                break;
+
+            case 'ERREUR':
+                $content = $this->htmlErreur();
                 break;
         }
         $urlTopBarListes = $this->app->urlFor("listes");

@@ -403,7 +403,8 @@ hr{
 /*Liste des items d'une liste*/
 
 .container-items-liste{
-    margin : 50px 20% 0 20%;
+    width : 1000px;
+    margin : 0 auto;
 }
 
 .flottantGauche{
@@ -412,6 +413,10 @@ hr{
 
 .header-card hr{
     clear:both;
+}
+
+.yellow{
+    background-color: #FFD337!important;
 }
 
 .bouton-rendre-publique{
@@ -432,12 +437,12 @@ hr{
 }
 
 .card-item-liste{
-     display: inline-block;
+     display: block;
      width : 47%;
      height: 150px;
-     margin-top : 50px;
-     margin-right : 25px;
-     margin-bottom : 100px;
+     /*margin-top : 50px;
+     margin-bottom : 100px;*/
+     margin : 100px auto;
  }
 
 
@@ -669,6 +674,18 @@ hr{
     float : left;
 }
 
+.composant-visualiser-token{
+    width : 400px;
+    margin-top : 30px;
+    margin-bottom: 20px;
+}
+
+
+.submit-token{
+    margin-top : 10px;
+
+}
+
 /*Creation d'une liste*/
 
 .container-creation-liste input,.container-creation-liste textarea{
@@ -727,6 +744,13 @@ hr{
 
 label[for="nomItem"],label[for="descrItem"]{
     margin-left : 70px;
+}
+
+/*Page erreur*/
+
+.marge-top{
+    margin-bottom : 30px;
+    margin-top : 20px;
 }
 
 

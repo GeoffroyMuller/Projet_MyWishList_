@@ -26,6 +26,20 @@ class ControleurInternaute
                 $utilisateur->uName = $uName;
                 $utilisateur->grade = self::UTILISATEUR_INSCRIT;
                 $utilisateur->save();
+
+                //Si l'utilisateur à crée des listes en tant qu'invité alors on les ajoutes à son compte
+                $listesInvite = \mywishlist\models\Liste::where("user_id",'=',-1)->get();
+
+                foreach ($listesInvite as $liste){
+                    $titreDeLaListe = $liste->titre;
+                    if(isset($_COOKIE[$titreDeLaListe])){
+
+                        $listeAAjouter = \mywishlist\models\Liste::where("titre",'=',$liste->titre)->first();
+                        $listeAAjouter->user_id = $utilisateur->idUser;
+                        $listeAAjouter->save();
+                    }
+
+                }
             }else{
                 throw new \mywishlist\Exception\AuthException("Le nom d'utilisateur est déja utilisé");
             }
@@ -34,6 +48,10 @@ class ControleurInternaute
              * Page d'erreur
              */
         }
+
+
+
+
     }
 
     /**

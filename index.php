@@ -295,11 +295,32 @@ $app->get('/profilModif/', function (){
 /**
  * Url permettant d'acceder a la page de creation d'un item
  */
-$app->get('/creerUnItem/',function(){
+$app->get('/creerUnItem/:id',function($id){
     $controleur = new \mywishlist\controlleurs\Affichage();
-    $controleur->afficherCreationItem();
+    $controleur->afficherCreationItem($id);
 })->name('creationItemPage');
 
+/**
+ * Url permettant de creer un item
+ */
+$app->post('/createur/creerUnItem/:id',function($id){
+    $controleur = new \mywishlist\controlleurs\Createur();
+    $idp = ""; $nomp = ""; $descrp = ""; $imgp = ""; $urlp = ""; $tarifp = "";
+    if(isset($id)) {
+        $idp = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
+    }
+    if(isset($_POST['nomItem'])) {
+        $nomp = filter_var($_POST['nomItem'], FILTER_SANITIZE_STRING);
+    }
+    if(isset($_POST['descrItem'])) {
+        $descrp = filter_var($_POST['descrItem'], FILTER_SANITIZE_SPECIAL_CHARS);
+    }
+    if(isset($_POST['expListe'])) {
+        $tarifp = filter_var($_POST['expListe'], FILTER_SANITIZE_NUMBER_INT);
+    }
+    $controleur->creerUnItem($id, $nomp, $descrp, $imgp, $urlp, $tarifp);
+    $app->redirect($app->urlFor('listes'));
+})->name('creationItem');
 /**
  * Url permettant d'acceder a la page de creation d'une liste
  */
@@ -327,7 +348,12 @@ $app->post('/createur/creerUneListe/', function(){
         $token = filter_var($_POST['publiqueListe'], FILTER_SANITIZE_STRING);
     }
     try {
-        $controleur->creerUneListe($_SESSION['profile']['userId'], $titre, $descript, $expir, $token);
+        if(isset($_SESSION['profile'])){
+            $controleur->creerUneListe($_SESSION['profile']['userId'], $titre, $descript, $expir, $token);
+        }else{
+            $controleur->creerUneListeNonConnecte($titre, $descript, $expir, $token);
+        }
+
     } catch (Exception $e){
         //la liste ne peut pas etre ajouter
     }
@@ -337,7 +363,7 @@ $app->post('/createur/creerUneListe/', function(){
 /**
  * URL permettant d'acceder a la page "Mes Listes"
  */
-$app->get('/mesListes',function (){
+$app->get('/mesListes/',function (){
     if(isset($_SESSION['profile'])){
        $controleur = new mywishlist\controlleurs\Affichage();
        $controleur->afficherMesListes();
@@ -346,10 +372,33 @@ $app->get('/mesListes',function (){
          * Utilisateur non log peut accéder à ses listes stocké dans des cookies
          */
         $app = \Slim\Slim::getInstance();
-        $app->redirect($app->urlFor('connexion'));
+        $app->redirect($app->urlFor('creationListePage'));
     }
 })->name("mesListes");
 
+/**
+ * URL permettant d'afficher une liste avec son token
+ */
+$app->get('/afficherListeToken/:token',function($token){
+    $controleur = new mywishlist\controlleurs\Affichage();
+    $idListe = $controleur->afficherListeToken($token);
+
+    $app = \Slim\Slim::getInstance();
+
+    if($idListe == -1){
+        $app->redirect($app->urlFor('erreur',['msg'=>'Le token entré n\'existe pas']));
+    }else{
+        $app->redirect($app->urlFor('erreur',['id'=>$idListe]));
+
+    }
+
+
+})->name("afficherListeAvecToken");
+
+$app->get('/erreur/:msg', function($msg){
+    $controleur = new mywishlist\controlleurs\Affichage();
+    $controleur->afficherErreur($msg);
+})->name("erreur");
 
 $app->run();
 
