@@ -408,7 +408,61 @@ $app->get('/erreur/:msg', function($msg){
     $controleur->afficherErreur($msg);
 })->name("erreur");
 
+/**
+ * Url permettant de reserver un item
+ */
+$app->post('/reserverItem/',function(){
+    $controlleurParticipant = new \mywishlist\controlleurs\Participant();
+    //Vérification des données entrée par l'utilisateur
+    if(isset($_POST['message'])){
+        $message =filter_var($_POST['message'],FILTER_SANITIZE_STRING);
+    }else{
+        $message="";
+    }
+
+    if(isset($_POST['nomParticipant'])){
+        $nomparticipant = filter_var($_POST['nomParticipant'],FILTER_SANITIZE_STRING);
+        if(isset($_SESSION['profile'])){
+            if($_SESSION['profile']['username']===$nomparticipant){
+
+                if(isset($_POST['idItem'])){
+                    $idItem = filter_var($_POST['idItem'],FILTER_SANITIZE_STRING);
+                    $controlleurParticipant->reserverItem($idItem,$nomparticipant,$message);
+
+                    $app=\Slim\Slim::getInstance();
+                    $app->redirect($app->urlFor('afficherItem'),['id'=>'idItem']);
+                }
+                else{
+                    $app=\Slim\Slim::getInstance();
+                    $app->redirect($app->urlFor('erreur'),['msg'=>'vous netes pas authorizer a regarder le code source']);
+                }
+
+
+            }
+            else{
+                $app=\Slim\Slim::getInstance();
+                $app->redirect($app->urlFor('erreur'),['msg'=>'laissez votre pseudo svp']);
+            }
+
+        }
+        else{
+            $app=\Slim\Slim::getInstance();
+            $app->redirect($app->urlFor('erreur'),['msg'=>'vous netes pas connecter']);
+        }
+    }
+    else{
+        $app=\Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('erreur'),['msg'=>'Rentrez un nom svp']);
+    }
+
+})->name("reserverItem");
+
+
+
+
 $app->run();
+
+
 
 
 
