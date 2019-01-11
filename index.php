@@ -366,7 +366,7 @@ $app->post('/createur/creerUneListe/', function(){
         //la liste ne peut pas etre ajouter
     }
     $app = \Slim\Slim::getInstance();
-    $app->redirect($app->urlFor('listes'));
+    $app->redirect($app->urlFor('mesListes'));
 })->name('creationListe');
 /**
  * URL permettant d'acceder a la page "Mes Listes"
