@@ -227,6 +227,15 @@ class Affichage
     }
 
     /**
+     * Méthode permettant d'afficher la page de modification d'une liste
+     * @param $id
+     */
+    public function afficherModifierListe($id){
+        $vue = new VueParticipant($id,'MODIFIER_LISTE');
+        $vue->render();
+    }
+
+    /**
      * Méthode permettant d'afficher une erreur
      * @param $msg
      */

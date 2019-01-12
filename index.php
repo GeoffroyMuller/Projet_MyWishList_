@@ -52,24 +52,6 @@ $app->get('/afficherItem/:id',function($id){
 })->name("afficherItem");
 
 
-/*$app->post('/modifierImage/:id',function($id){
-    if(!empty($_FILES['image'])){
-        //On vérifie que le fichier est bien une image
-        $extensions = array('.png','.jpeg','.gif','.jpg');
-        $extension = strrchr($_FILES['image']['name'],'.');
-        if(!in_array($extension,$extensions)){
-
-        }else{
-            $controlleurCreateur = new \mywishlist\controlleurs\Createur();
-            // $controlleurCreateur->modifierImageItem($_FILES['image'],$id);
-            $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
-            $controlleurAffichage->afficherItem($id);
-        }
-    }else{
-        //$controlleurAffichage->afficherErreur('Aucune image trouvée')
-    }
-});*/
-
 /**
  * Lien permettant d'afficher la page de modification de l'item
  */
@@ -252,7 +234,7 @@ $app->get('/profil/', function(){
         $controleur->afficherProfil();
     }else{
         $app = \Slim\Slim::getInstance();
-        $app->redirect($app->urlFor('inscription'));
+        $app->redirect($app->urlFor('connexion'));
     }
 })->name('profil');
 
@@ -396,9 +378,9 @@ $app->get('/afficherListeToken/:token',function($token){
     if($idListe == -1){
         $app->redirect($app->urlFor('erreur',['msg'=>'Le token entré n\'existe pas']));
     }else{
-        $app->redirect($app->urlFor('erreur',['id'=>$idListe]));
-
+        $app->redirect($app->urlFor('afficherItemsListe',['id'=>$idListe]));
     }
+
 
 
 })->name("afficherListeAvecToken");
@@ -458,6 +440,129 @@ $app->post('/reserverItem/',function(){
 })->name("reserverItem");
 
 
+/**
+ * URL permettant d'appliquer les modification du profil
+ */
+$app->post('/enregistrerProfilModification', function(){
+    if(isset($_POST['profil-username-modification'])){
+        $nouveauPseudo = filter_var($_POST['profil-username-modification'],FILTER_SANITIZE_STRING);
+    }else{
+        $nouveauPseudo = null;
+    }
+
+    if(isset($_POST['profil-pass-modification'])){
+        $nouveauMotDePasse = $_POST['profil-pass-modification'];
+    }else{
+        $nouveauMotDePasse = null;
+    }
+
+    $controleur = new \mywishlist\controlleurs\ControleurInternaute();
+    $controleur->modificationProfil($nouveauPseudo,$nouveauMotDePasse);
+
+    $app = \Slim\Slim::getInstance();
+    $app->redirect($app->urlFor('profil'));
+
+
+})->name("enregistrerProfil");
+
+
+$app->post('/creerUneListe/',function(){
+    if(isset($_POST['nomListe'])){
+        $nomListe = filter_var($_POST['nomListe'],FILTER_SANITIZE_STRING);
+    }else{
+        $app = \Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('erreur', ['msg'=>'Une liste doit avoir un nom']));
+    }
+
+    if(isset($_POST['descrListe'])){
+        $description = filter_var($_POST['descrListe'],FILTER_SANITIZE_STRING);
+    }else{
+        $description = null;
+    }
+
+    if(isset($_POST['expListe'])){
+        $exp = filter_var($_POST['expListe'],FILTER_SANITIZE_URL);
+    }else{
+        $app = \Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('erreur', ['msg'=>'Une liste doit avoir une date d\'expiration']));
+    }
+
+    $controleur = new mywishlist\controlleurs\Createur();
+    $token = $controleur->creerUneListe($nomListe,$description,$exp);
+
+    $app->redirect($app->urlFor('afficherListeAvecToken',['token'=>$token]));
+
+
+
+})->name("creerUneListe");
+
+$app->get('/modifierInfoListe/:id',function($id){
+    if(\mywishlist\controlleurs\Createur::verifierLeProprietaireDeLaListe($id)){
+        $controleur = new mywishlist\controlleurs\Affichage();
+        $controleur->afficherModifierListe($id);
+    }else{
+        $app = Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('erreur',['msg'=>'Cette liste ne vous appartient pas']));
+    }
+
+})->name("modifierInfoListe");
+
+
+
+$app->post('/processmodifierInfoListe/',function(){
+
+    if(isset($_POST['idListe'])){
+        $id=filter_var($_POST['idListe']);
+    }else{
+        $app = Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('erreur',['msg'=>'L\'id de la liste à été modifier']));
+    }
+
+
+    if(isset($_POST['nomListe'])){
+        $nomListe = filter_var($_POST['nomListe'],FILTER_SANITIZE_STRING);
+    }else{
+        $app = \Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('erreur', ['msg'=>'Une liste doit avoir un nom']));
+    }
+
+    if(isset($_POST['descrListe'])){
+        $description = filter_var($_POST['descrListe'],FILTER_SANITIZE_STRING);
+    }else{
+        $description = null;
+    }
+
+    if(isset($_POST['expListe'])){
+        $exp = filter_var($_POST['expListe'],FILTER_SANITIZE_URL);
+    }else{
+        $app = \Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('erreur', ['msg'=>'Une liste doit avoir une date d\'expiration']));
+    }
+
+
+    if(\mywishlist\controlleurs\Createur::verifierLeProprietaireDeLaListe($id)){
+        $controleur = new mywishlist\controlleurs\Createur();
+        $controleur->modifierListe($id,$nomListe,$description,$exp);
+    }else{
+        $app = Slim\Slim::getInstance();
+        $app->redirect($app->urlFor('erreur',['msg'=>'Cette liste ne vous appartient pas']));
+    }
+    $app = Slim\Slim::getInstance();
+
+    $app->redirect($app->urlFor('afficherItemsListe',['id'=>$id]));
+
+})->name("processmodifierInfoListe");
+
+/**
+ * URL permettant de rendre une liste publique
+ */
+$app->get('/rendrePublique/:id', function($id){
+    $controleur = new \mywishlist\controlleurs\Createur();
+    $controleur->rendrePublique($id);
+
+    $app = Slim\Slim::getInstance();
+    $app->redirect($app->urlFor('afficherItemsListe',['id'=>$id]));
+})->name('rendrePublique');
 
 
 $app->run();

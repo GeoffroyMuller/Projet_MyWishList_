@@ -156,15 +156,21 @@ class Createur
      * @param $expir
      * @param $tokenp
      */
-    public function creerUneListe($user_idp,$titrep,$descrip,$expir,$tokenp){
+    public function creerUneListe($titrep,$descrip,$expir){
         $liste = new \mywishlist\models\Liste();
-        //$liste->no = $nop;
-        $liste->user_id = $user_idp;
+
+        $token = uniqid();
+
+        $liste->user_id = $_SESSION['profile']['userId'];
         $liste->titre = $titrep;
         $liste->description = $descrip;
         $liste->expiration = $expir;
-        $liste->token = $tokenp;
+        $liste->token = $token;
         $liste->save();
+
+
+
+        return $token;
     }
 
     /**
@@ -232,6 +238,67 @@ class Createur
         return $vue->render();
 
     }
+
+
+    /**
+     * Méthode permettant de vérifier si un item à été réserver ou non
+     * @param $idItem
+     * @return bool
+     *      Vrai si l'item est réservé, Faux sinon.
+     */
+    public static function verifierLaReservationItem($idItem){
+        $reservation = \mywishlist\models\Reservation::where('idItem','=',$idItem)->first();
+        if(is_null($reservation)){
+            $res=false;
+        }else{
+            $res=true;
+        }
+        return $res;
+    }
+
+    /**
+     * Méthode permettant de vérifier si un utilisateur est le créateur d'une liste
+     * @param $idListe
+     * @return bool
+     *      Vrai si l'utilisateur est le créateur, Faux sinon.
+     */
+    public static function verifierLeProprietaireDeLaListe($idListe){
+        $liste = \mywishlist\models\Liste::where("no","=",$idListe)->first();
+        if(isset($_SESSION['profile']) &&
+            ($liste->user_id === $_SESSION['profile']['userId'])){
+            $res=true;
+        }else{
+            $res=false;
+        }
+        return $res;
+
+    }
+
+
+    public function modifierListe($id,$nom, $descr,$exp){
+        $liste = Liste::where('no','=',$id)->first();
+
+        if(!is_null($nom)){
+            $liste->titre = $nom;
+
+        }
+        if(!is_null($descr)){
+            $liste->description = $descr;
+
+        }
+        if(!is_null($exp)){
+            $liste->expiration = $exp;
+
+        }
+        $liste->save();
+}
+
+
+public function rendrePublique($idListe){
+        $liste = Liste::where('no','=',$idListe)->first();
+        $liste->privee = 0;
+        $liste->save();
+}
 
     /*public function creerListe($tablist){
         //$no, $user_id, $titre, $description, $expiration, $token
