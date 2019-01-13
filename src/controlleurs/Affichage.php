@@ -216,7 +216,7 @@ class Affichage
      * @return $listeId
      */
     public function afficherListeToken($token){
-        $listeid = \mywishlist\models\Liste::where('token','=',$token);
+        $listeid = \mywishlist\models\Liste::where('token','=',$token)->first();
 
         if(is_null($listeid)){
             $listeid=-1;

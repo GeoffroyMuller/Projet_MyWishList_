@@ -285,7 +285,7 @@ $app->get('/creerUnItem/:id',function($id){
  */
 $app->post('/createur/creerUnItem/:id',function($id){
     $controleur = new \mywishlist\controlleurs\Createur();
-    $idp = ""; $nomp = ""; $descrp = ""; $imgp = ""; $urlp = ""; $tarifp = "";
+    $idp = ""; $nomp = ""; $descrp = ""; $tarifp = "";
     if(isset($id)) {
         $idp = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
     }
@@ -295,13 +295,30 @@ $app->post('/createur/creerUnItem/:id',function($id){
     if(isset($_POST['descrItem'])) {
         $descrp = filter_var($_POST['descrItem'], FILTER_SANITIZE_SPECIAL_CHARS);
     }
-    if(isset($_POST['expListe'])) {
-        $tarifp = filter_var($_POST['expListe'], FILTER_SANITIZE_NUMBER_INT);
+    if(isset($_POST['prixItem'])) {
+        $tarifp = filter_var($_POST['prixItem'], FILTER_SANITIZE_NUMBER_INT);
     }
-    $controleur->creerUnItem($id, $nomp, $descrp, $imgp, $urlp, $tarifp);
+
+
+    //Vérification image
+    if(isset($_FILES['item-image-creation']) && !empty($_FILES['item-image-creation']['name'])){
+
+
+        //On vérifie que le fichier est bien une image
+        $extensions = array('.png','.jpeg','.gif','.jpg');
+        $extension = strrchr($_FILES['item-image-creation']['name'],'.');
+        if(!in_array($extension,$extensions)){
+            $image=null;
+        }else{
+            $image=$_FILES['item-image-creation'];
+        }
+    }
+
+    $controleur->creerUnItem($id, $nomp, $descrp, $image, $tarifp);
     $app = \Slim\Slim::getInstance();
     $app->redirect($app->urlFor('afficherItemsListe',['id'=>$id]));
 })->name('creationItem');
+
 
 $app->get('/createur/supprimerItem/:idlist/:id',function ($idlist, $id){
     if( \mywishlist\controlleurs\ControleurInternaute::testerAppartenanceItem($id) === true){
@@ -367,7 +384,7 @@ $app->get('/mesListes/',function (){
 })->name("mesListes");
 
 /**
- * URL permettant d'afficher une liste avec son token
+ * URL permettant d'afficher une liste avec son token, pour le partage
  */
 $app->get('/afficherListeToken/:token',function($token){
     $controleur = new mywishlist\controlleurs\Affichage();
@@ -384,6 +401,34 @@ $app->get('/afficherListeToken/:token',function($token){
 
 
 })->name("afficherListeAvecToken");
+
+/**
+ * URL permettant d'afficher une liste avec son token, pour la visualisation via formulaire
+ */
+$app->post('/afficherToken/',function(){
+    $app = \Slim\Slim::getInstance();
+    $token="";
+    if(isset($_POST['token'])){
+        $token=filter_var($_POST['token'],FILTER_SANITIZE_STRING);
+    }else{
+        $app->redirect($app->urlFor('erreur',['msg'=>'Le token entré n\'existe pas']));
+    }
+    $controleur = new mywishlist\controlleurs\Affichage();
+    $idListe = $controleur->afficherListeToken($token);
+
+
+
+    if($idListe == -1){
+        $app->redirect($app->urlFor('erreur',['msg'=>'Le token entré n\'existe pas']));
+    }else{
+        $app->redirect($app->urlFor('afficherItemsListe',['id'=>$idListe]));
+    }
+
+
+
+})->name("afficherToken");
+
+
 
 $app->get('/erreur/:msg', function($msg){
     $controleur = new mywishlist\controlleurs\Affichage();

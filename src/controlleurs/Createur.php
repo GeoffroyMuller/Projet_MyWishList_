@@ -33,11 +33,7 @@ class Createur
 
 
             //On déplace le fichier dans le répertoire définitif avec un nom différent pour éviter les caractére spéciaux
-          if (!(move_uploaded_file($file['tmp_name'], "$path/img/".$nomDufichierDossierPermanent ))) {
-                /*
-                 * Throw une erreur
-                 */
-            }
+          move_uploaded_file($file['tmp_name'], "$path/img/".$nomDufichierDossierPermanent );
         if(!is_null($item->img)){
             //L'item à déja une image et on souhaite juste la mettre à jour
             $this->supprimerFichierImage($item->img);
@@ -182,14 +178,15 @@ class Createur
      * @param $urlp
      * @param $tarifp
      */
-    public function creerUnItem($liste_idp, $nomp, $descrp, $imgp, $urlp, $tarifp)
+    public function creerUnItem($liste_idp, $nomp, $descrp, $imgp, $tarifp)
     {
+        //Upload de l'image
+        $nomImage=$this->uploadImage($imgp);
         $item = new \mywishlist\models\Item();
         $item->liste_id = $liste_idp;
         $item->nom = $nomp;
         $item->descr = $descrp;
-        $item->img = $imgp;
-        $item->url = $urlp;
+        $item->img = $nomImage[0];
         $item->tarif = $tarifp;
         $item->save();
     }
@@ -275,6 +272,13 @@ class Createur
     }
 
 
+    /**
+     * Méthode permettant de modifier une liste
+     * @param $id
+     * @param $nom
+     * @param $descr
+     * @param $exp
+     */
     public function modifierListe($id,$nom, $descr,$exp){
         $liste = Liste::where('no','=',$id)->first();
 
@@ -294,20 +298,11 @@ class Createur
 }
 
 
-public function rendrePublique($idListe){
+    public function rendrePublique($idListe){
         $liste = Liste::where('no','=',$idListe)->first();
         $liste->privee = 0;
         $liste->save();
 }
 
-    /*public function creerListe($tablist){
-        //$no, $user_id, $titre, $description, $expiration, $token
-        $resliste = new \mywishlist\models\Liste();
-        $resliste->no = $no;
-        $resliste->user_id = $user_id;
-        $resliste->titre = $titre;
-        $resliste->description = $description;
-        $resliste->expiration = $expiration;
-        $resliste->token = $token;
-    }*/
+
 }

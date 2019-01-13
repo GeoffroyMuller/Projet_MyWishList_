@@ -10,6 +10,7 @@ namespace mywishlist\vue;
 
 
 use mywishlist\controlleurs\ControleurInternaute;
+use mywishlist\controlleurs\Createur;
 use mywishlist\models\Liste;
 
 class VueParticipant
@@ -118,13 +119,23 @@ END;
         //En tête contenant les informations de la listes actuelle
         $token = Liste::where('no','=',$liste->no)->first();
         $urlToken = \Slim\Slim::getInstance()->urlFor('afficherListeAvecToken',['token'=>$token->token]);
+
+        if(isset($_SESSION['profile']) && Createur::verifierLeProprietaireDeLaListe($liste->no)){
+            $tokenHtml=<<<END
+<p class="affichage-token">Token : $urlToken </p>
+END;
+
+        }else{
+            $tokenHtml="";
+        }
+
         $html = <<<END
            <!--Content-->
     <header class="header-card">
         
         $boutonPublique
         $boutonAjouterItem
-        <p class="affichage-token">Token : $urlToken </p>
+        $tokenHtml
         <hr>
   
     </header>
@@ -162,7 +173,7 @@ END;
             <a href="$url"><button class="card-button" type="button"> Voir l'item !</button></a>
 
 END;
-                if(!$reserve){
+                if(!$reserve && isset($_SESSION['profile'])){
                     $html=$html.<<<END
              <a href="$urlSupp"><button class="card-button button-del" type="button"> Supprimer l'item !</button></a>
             </div>
@@ -736,7 +747,7 @@ END;
 
                 <label for="expListe">Tarif :</label>
 
-                <input type="number" id="expListe" name="expListe" min="0" required>
+                <input type="number" id="expListe" name="prixItem" min="0" required>
 
 
                 <input id="submit-creation-liste" type="submit" value="Créer l'item !">
@@ -800,7 +811,7 @@ END;
      */
     public function htmlMesListes(){
         $urlCreerListe = $this->app->urlFor('creationListePage');
-        $urlVisualiseToken = $this->app->urlFor('afficherListeAvecToken');
+        $urlVisualiseToken = $this->app->urlFor('afficherToken');
 
         $html=<<<END
  <div class="container">
@@ -817,7 +828,7 @@ END;
                     <hr>
 
                     <div class="composant-visualiser-token">
-                        <form action="$urlVisualiseToken">
+                        <form action="$urlVisualiseToken" method="post">
                                 <label for="token">Token de la liste :</label>
                                 <input type="text" name="token" id="token"><br>
                                 <input class="submit-token" type="submit" value="Visualiser la liste">
