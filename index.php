@@ -69,13 +69,13 @@ $app->get('/modifierItem/:id',function($id){
 /**
  * Url permettant d'ajouter un commentaire
  */
-$app->post('/createur/ajoutCommentaire/:id',function($id,$no){
+$app->post('/createur/ajoutCommentaire/:no/:id',function($no, $id){
     $controlleurCreateur = new \mywishlist\models\Commentaire();
     //Vérification des données entrée par l'utilisateur
     $message="";
-    if(isset($_POST['message'])){
+    if(isset($_POST['commentaire'])){
         $controleur = new mywishlist\controlleurs\Createur();
-        $message =filter_var($_POST['message'],FILTER_SANITIZE_STRING);
+        $message =filter_var($_POST['commentaire'],FILTER_SANITIZE_STRING);
         $controleur->ajouterMessage($id,$no,$message);
     }
     $app = \Slim\Slim::getInstance();
