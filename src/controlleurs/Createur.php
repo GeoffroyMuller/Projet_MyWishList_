@@ -193,7 +193,7 @@ class Createur
      *      message a ajouter
      * @return String
      */
-    public function ajouterMessage($user_id, $no, $message){
+    public function ajouterMessage($user_id, $no, $message, $vue){
         $commentaire =  new \mywishlist\models\Commentaire();
         $commentaire->user_id = $user_id;
         $commentaire->no = $no;
