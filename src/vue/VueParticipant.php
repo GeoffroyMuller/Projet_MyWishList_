@@ -10,6 +10,8 @@ namespace mywishlist\vue;
 
 
 use mywishlist\controlleurs\ControleurInternaute;
+use mywishlist\controlleurs\Createur;
+use mywishlist\models\Liste;
 
 class VueParticipant
 {
@@ -71,24 +73,19 @@ END;
     private function htmlItemsListe()
     {
         $liste = $this->elements['liste'];
-        $urlRendrePublic = "";/*$this->app->urlFor('rendrePublique',['id'=>$liste->no]);*/
-        $urlCreeItem = $this->app->urlFor('creationItemPage',['id'=>$liste->no]);
+        $urlRendrePublic = $this->app->urlFor('rendrePublique',['id'=>$liste->no]);
 
         //On affiche le bouton rendre publique seulement si la liste est privée
         if($liste->privee === 1){
             if(isset($this->elements['items'])){
                 $boutonPublique = <<<END
-            <h1 class="titre-page-liste flottantGauche">$liste->titre</h1>
+            <h1 class="titre-page-liste">$liste->titre</h1>
         <a href="$urlRendrePublic"><button class="bouton-rendre-publique">Rendre publique</button></a>
-        <a href="$urlCreeItem"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
-      <hr>
 END;
             }else{
                 $boutonPublique = <<<END
             <h1 class="titre-page-liste flottantGauche">$liste->titre - Cette liste n'a pas d'item</h1>
         <a href="$urlRendrePublic"><button class="bouton-rendre-publique">Rendre publique</button></a>
-        <a href="$urlCreeItem"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
-      <hr>
 END;
             }
 
@@ -96,37 +93,71 @@ END;
             if(isset($this->elements['items'])){
                 $boutonPublique=<<<END
             <h1 class="titre-page-liste">$liste->titre</h1>
-            <a href="$urlCreeItem"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
-      <hr>
 END;
             }else{
                 $boutonPublique=<<<END
             <h1 class="titre-page-liste">$liste->titre - Cette liste n'a pas d'item</h1>
-            <a href="$urlCreeItem"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
-      <hr>
 END;
             }
 
         }
+
+        //Vérification du créateur
+        $urlCreeItem = $this->app->urlFor('creationItemPage',['id'=>$liste->no]);
+        $urlModifierListe = $this->app->urlFor('modifierInfoListe',['id'=>$liste->no]);
+        if(\mywishlist\controlleurs\Createur::verifierLeProprietaireDeLaListe($liste->no)){
+            $boutonAjouterItem=<<<END
+            <a href="$urlCreeItem"><button class="bouton-rendre-publique yellow">Ajouter un item</button></a>
+            <a href="$urlModifierListe"><button class="bouton-rendre-publique">Modifier la liste</button></a>
+END;
+
+        }else{
+            $boutonAjouterItem="";
+        }
+
+
         //En tête contenant les informations de la listes actuelle
+        $token = Liste::where('no','=',$liste->no)->first();
+        $urlToken = \Slim\Slim::getInstance()->urlFor('afficherListeAvecToken',['token'=>$token->token]);
+
+        if(isset($_SESSION['profile']) && Createur::verifierLeProprietaireDeLaListe($liste->no)){
+            $tokenHtml=<<<END
+<p class="affichage-token">Token : $urlToken </p>
+END;
+
+        }else{
+            $tokenHtml="";
+        }
+
         $html = <<<END
            <!--Content-->
     <header class="header-card">
         
         $boutonPublique
+        $boutonAjouterItem
+        $tokenHtml
+        <hr>
   
     </header>
 END;
 
+
+
         if(isset($this->elements['items'])){
+
             foreach ($this->elements['items'] as $element){
                 $url = $this->app->urlFor("afficherItem",['id'=>$element->id]);
-                $urlSupp = "";
-                /*$this->app->urlFor("supprimerItem",['id'=>$element->id]);*/
+                $urlSupp = $this->app->urlFor("supprimerItem",['idlist'=>$liste->no,'id'=>$element->id]);
 
+                $reserve = \mywishlist\controlleurs\Createur::verifierLaReservationItem($element->id);
+                if(!$reserve){
+                    $couleurStatus = 'rouge';
+                    $texteStatus = 'Non reservé';
+                }else{
+                    $couleurStatus = 'vert';
+                    $texteStatus = 'Reservé';
+                }
 
-                $couleurStatus = 'rouge';
-                $texteStatus = 'Non reservé';
 
                 $html = $html.<<<END
             <div class="card-item-liste">
@@ -140,11 +171,74 @@ END;
             </article>
             <div class="container-bouton-item">
             <a href="$url"><button class="card-button" type="button"> Voir l'item !</button></a>
+
+END;
+                if(!$reserve && isset($_SESSION['profile'])){
+                    $html=$html.<<<END
              <a href="$urlSupp"><button class="card-button button-del" type="button"> Supprimer l'item !</button></a>
             </div>
         </div>
 END;
+                }else{
+                    $html=$html.<<<END
+            </div>
+        </div>
+END;
+
+                }
             }
+
+            //Partie commentaire
+            $html=$html.<<<END
+            <header class="header-card">
+        <h1 class="titre-page-liste">Commentaires</h1>
+        <hr>
+    </header>
+ <div class="container-commentaire">
+        <div class="wrapper">
+END;
+            if(isset($this->elements['commentaires'])){
+
+                $commentaires = $this->elements['commentaires'];
+
+                foreach($commentaires as $commentaire){
+                    $pseudoPersonne = \mywishlist\models\Utilisateur::where('id','=',$commentaire->user_id)->first();
+                    $pseudoPersonne = $pseudoPersonne->uName;
+
+                    $html=$html.<<<END
+
+            <div class="composant-commentaire">
+                <div class="pseudo-commentaire">$pseudoPersonne</div>
+                <p class="contenu-commentaire">
+                   $commentaire->commentaire;
+                </p>
+            </div>
+
+END;
+
+                }
+
+            }
+
+            $urlAjoutComm=$this->app->urlFor('ajoutCommentaire');
+            $idListe = $liste->no;
+
+            $html=$html.<<<END
+            <div class="ajouter-commentaire">
+                <h2 class="title-commentaire">Ajouter un Commentaire :</h2>
+
+                <form action="$urlAjoutComm" method="post">
+                    <textarea name="commentaire" rows="10" cols="98" placeholder="Votre commentaire ici...">
+
+                    </textarea>
+                    <input class="button-send-commentaire" type="submit" value="Envoyer le commentaire">
+                    <input class="cacher" name="idListe" type="text" value="$idListe"
+                  </form> 
+
+            </div>
+        </div>
+    </div>
+END;
         }
 
         return '<div class="container-items-liste">'.$html.'</div>';
@@ -166,9 +260,10 @@ END;
 
 
             //Si l'utilisateur est connecté et si l'item n'est pas déja reserve alors on affiche le formulaire et on test l'affichage du bouton de modification
-            if(isset($_SESSION['profile'])){
+            if(isset($_SESSION['profile']) ){
                 //Si l'utilisateur posséde l'item alors le bouton de modification s'affiche
-                if(ControleurInternaute::testerAppartenanceItem($id)){
+                if(ControleurInternaute::testerAppartenanceItem($id) &&
+                    (!\mywishlist\controlleurs\Createur::verifierLaReservationItem($id))){
                     $modifBouton=<<<END
             <div class="item-modifier-bouton">
                 <a href="$urlButton"><button>Modifier l'item</button></a>
@@ -182,10 +277,13 @@ END;
 
 
                 $username=$_SESSION['profile']['username'];
-                $form=<<<END
+                $urlsubmitReserv = $this->app->urlFor('reserverItem');
+
+                if(!\mywishlist\controlleurs\Createur::verifierLaReservationItem($id)){
+                    $form=<<<END
                             <h2 class="titre-form-reserve">Reserver cet item !</h2>
             <hr>
-  <form class="form-reserve" action="#" method="POST">
+  <form class="form-reserve" action="$urlsubmitReserv" method="POST">
                 <div class="form-nom">
                     <label for="nomParticipantInput">Votre nom :</label>
                     <input type="text" name="nomParticipant" id="nomParticipantInput" value="$username" inputmode="text" required>
@@ -194,11 +292,16 @@ END;
                     <label for="messageInput">Ajouter un message (optionel) :</label>
                     <textarea name="message" id="messageInput" rows="10" cols="40" placeholder="Votre message"></textarea>
                 </div>
-
+                
+                <input class="cacher" type="text" value="$id" name="idItem">
                 <input class="form-submit" type="submit" value="Reserver">
 
             </form>
 END;
+                }else{
+                    $form="";
+                }
+
 
             }else{
                 $form="";
@@ -216,7 +319,7 @@ END;
 
         <!--Component-->
                 <div class="composantItem">
-            <img class="item-image" src="/img/$nomImage">
+            <img class="item-image" src="/img/$nomImage" alt="image d'un item">
             <h2 class="titre-description-item">Description</h2>
             <hr>
             <p class="description-item">
@@ -235,17 +338,18 @@ END;
                 foreach ($this->elements['images'] as $image){
                     $html=$html.<<<END
  <div class="image">
-                    <img src="/img/$image->nom">
+                    <img src="/img/$image->nom" alt="image de l'item">
                 </div>
 END;
                 }
             }
 
-            $html=$html.<<<END
+            if(\mywishlist\controlleurs\Createur::verifierLaReservationItem($id)){
+                $html=$html.<<<END
  <h2 class="titre-status-item">Status</h2>
             <hr>
-            <p class="status-item rouge">
-                Non reservé ! (WIP)
+            <p class="status-item vert">
+                Reservé !
             </p>
 
 
@@ -257,17 +361,28 @@ END;
     </div>
 
 END;
+            }else{
+                $html=$html.<<<END
+ <h2 class="titre-status-item">Status</h2>
+            <hr>
+            <p class="status-item rouge">
+                Non reservé !
+            </p>
+
+
+          $form
+
+
+
+        </div>
+    </div>
+
+END;
+            }
+
 
         }catch(\ErrorException $exception){
-            echo $exception;
-            $html = <<<END
-<header class="header-card titre-item">
-            <h1>ERREUR : L'item demandé n'existe pas</h1>
-            <hr>
-        </header>
-END;
-
-
+            $this->app->redirect($this->app->urlFor('erreur',['msg'=>"L'item demandé n'existe pas"]));
         }
 
 
@@ -529,11 +644,16 @@ END;
 END;
         if(isset($this->elements['listes'])){
             foreach ($this->elements['listes'] as $liste){
-                $urlListe= $this->app->urlFor('afficherItemsListe',['id'=>$liste->id]);
+                $urlListe= $this->app->urlFor('afficherItemsListe',['id'=>$liste->no]);
+                if($liste->privee == 1){
+                    $type = 'privee';
+                }else{
+                    $type = 'publique';
+                }
                 $html=$html.<<<END
-            <div class="liste-preview">
+            <div class="liste-preview $type">
                 <a href="$urlListe">
-                <img src="../img/list_icon.png" alt="Icone d'une liste">
+                <img src="/img/list_icon.png" alt="Icone d'une liste">
                 <h3>$liste->titre</h3>
                 </a>
             </div>
@@ -553,7 +673,7 @@ END;
      */
     public function htmlProfilModification(){
         $urlProfil = $this->app->urlFor('profil');
-        $urlProfilEnregistrerModification = null;//$this->app->urlFor('profilSaveChange');
+        $urlProfilEnregistrerModification = $this->app->urlFor('enregistrerProfil');
         $html=<<<END
   <div class="container">
         <header class="header-card titre-item">
@@ -578,12 +698,13 @@ END;
 
                     <input type="password" id="profil-pass-modification" name="profil-pass-modification">
                 </div>
+                            <div class="container-boutons">
+                <input type="submit" value="Enregistrer les modifications"  class="deconnexion"></input>
+            </div>
             </form>
 
 
-            <div class="container-boutons">
-                <a href="#"><button class="deconnexion">Enregistrer les modifications</button></a>
-            </div>
+
 
         </div>
 
@@ -626,7 +747,7 @@ END;
 
                 <label for="expListe">Tarif :</label>
 
-                <input type="number" id="expListe" name="expListe" min="0" required>
+                <input type="number" id="expListe" name="prixItem" min="0" required>
 
 
                 <input id="submit-creation-liste" type="submit" value="Créer l'item !">
@@ -690,7 +811,7 @@ END;
      */
     public function htmlMesListes(){
         $urlCreerListe = $this->app->urlFor('creationListePage');
-        $urlVisualiseToken = $this->app->urlFor('afficherListeAvecToken');
+        $urlVisualiseToken = $this->app->urlFor('afficherToken');
 
         $html=<<<END
  <div class="container">
@@ -707,7 +828,7 @@ END;
                     <hr>
 
                     <div class="composant-visualiser-token">
-                        <form action="$urlVisualiseToken">
+                        <form action="$urlVisualiseToken" method="post">
                                 <label for="token">Token de la liste :</label>
                                 <input type="text" name="token" id="token"><br>
                                 <input class="submit-token" type="submit" value="Visualiser la liste">
@@ -739,6 +860,7 @@ END;
         }
 
         $html=$html.<<<END
+ </div>
  </div>
 
 
@@ -798,6 +920,52 @@ END;
 END;
         return $html;
 
+    }
+
+
+    /**
+     * Génére le code html de la page de modification d'une liste
+     */
+    public function htmlModifierListe(){
+        $id = $this->elements;
+        $liste = Liste::where('no','=',$id)->first();
+        $nom = $liste->titre;
+        $description = $liste->description;
+        $expiration = $liste->expiration;
+        $date = date('Y-m-d');
+        $urlModifierListe = $this->app->urlFor('processmodifierInfoListe',['id'=>$id]);
+        $html=<<<END
+    <div class="container">
+        <header class="header-card titre-item">
+            <h1>Modifier une liste</h1>
+            <hr>
+        </header>
+
+        <!--Component-->
+        <div class="container-creation-liste">
+            <form class="form-creation-liste" action="$urlModifierListe" method="POST">
+
+                <label for="nomListe">Nom de la liste :</label>
+                <input id="nomListe" type="texte" name="nomListe" value="$nom" required>
+
+                <label for="descrListe">Description :</label>
+                <textarea id="descrListe" cols="50" rows="10" name="descrListe" value="$description" required></textarea>
+
+                <label for="expListe">Date d'expiration:</label>
+
+                <input type="date" id="expListe" name="expListe" value="$expiration" min="$date" required>
+
+                <input type="text" id="publiqueListe" name="idListe" class="cacher" value="$id">
+                 <input id="submit-creation-liste" type="submit" value="Modifier la liste !">
+
+
+            </form>
+        </div>
+
+    </div>
+END;
+
+        return $html;
     }
 
     public function render(){
@@ -875,6 +1043,9 @@ END;
             case 'ERREUR':
                 $content = $this->htmlErreur();
                 break;
+            case 'MODIFIER_LISTE':
+                $content = $this->htmlModifierListe();
+                break;
         }
         $urlTopBarListes = $this->app->urlFor("listes");
         $urlTopBarMesListes = $this->app->urlFor("mesListes");
@@ -905,7 +1076,27 @@ END;
             <!--Head-->
             $homepage
             $content
+            </div>
+            </div>
+            </div>
+            </div></div></div>
+<footer class="pagefooter">
 
+        <div class="footer-left">
+
+            <h3>Mem<span>bres</span></h3>
+
+            <div class="footer-members">
+                <p>Groupe S3B</p> 
+                <p>Biancalana Théo</p> 
+                <p>Guezennec Lucas</p> 
+                <p>Plaid Justin</p> 
+                <p>Muller Geoffroy</p>
+                <p>Liens du dépôt GIT :<a href="https://bitbucket.org/muller624u/projet_mywishlist_/src/master/" target="_blank">https://bitbucket.org/muller624u/projet_mywishlist_/src/master/</a> </p>
+            </div>
+        </div>
+
+    </footer> 
 </body></html>
 END;
         echo $html;

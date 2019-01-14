@@ -52,6 +52,17 @@ class Affichage
         $resultat = array();
         $liste_de_souhait = \mywishlist\models\Liste::where('no', '=', $idlisteSouhait)->first();
         $resultat['liste'] = $liste_de_souhait;
+
+        $commentaires = \mywishlist\models\Commentaire::all();
+        if(is_null($commentaires)){
+            $resultat['commentaires'] = -1;
+        }else{
+            $resultat['commentaires'] = $commentaires;
+        }
+
+
+
+
         $ListeItems = $liste_de_souhait->items()->get();
         foreach ($ListeItems as $item){
             $resultat['items'][]=$item;
@@ -232,14 +243,23 @@ class Affichage
      * @return $listeId
      */
     public function afficherListeToken($token){
-        $listeid = \mywishlist\models\Liste::where('token','=',$token);
+        $listeid = \mywishlist\models\Liste::where('token','=',$token)->first();
 
-        if(is_null($listeid)==0){
+        if(is_null($listeid)){
             $listeid=-1;
         }else{
-            $listeid = $listeid->id;
+            $listeid = $listeid->no;
         }
         return $listeid;
+    }
+
+    /**
+     * Méthode permettant d'afficher la page de modification d'une liste
+     * @param $id
+     */
+    public function afficherModifierListe($id){
+        $vue = new VueParticipant($id,'MODIFIER_LISTE');
+        $vue->render();
     }
 
     /**

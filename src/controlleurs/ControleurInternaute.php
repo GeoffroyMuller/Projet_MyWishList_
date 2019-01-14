@@ -135,12 +135,34 @@ class ControleurInternaute
      */
     public static function testerAppartenanceItem($idItem){
         $element = \mywishlist\models\Item::where('id','=',$idItem)->first();
-        $element = $element->liste()->first();
+        $element = $element->liste();
+
+        if(is_null($element)){
+            return false;
+        }
+
+        $element = $element->first();
+
         $res=false;
         if($element->user_id === $_SESSION['profile']['userId']){
             $res=true;
         }
         return $res;
+    }
+
+
+    public function modificationProfil($nomUtilisateur, $motDePasse){
+        $utilisateur = \mywishlist\models\Utilisateur::where('uName','=',$_SESSION['profile']['username'])->first();
+        if(!is_null($nomUtilisateur)){
+            $utilisateur->uName = $nomUtilisateur;
+        }
+
+        if(!is_null($motDePasse)){
+            $newMotDePasse = password_hash($motDePasse, PASSWORD_DEFAULT);
+            $utilisateur->uPass = $newMotDePasse;
+        }
+        $utilisateur->save();
+        session_destroy();
     }
 
 }

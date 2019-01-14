@@ -33,11 +33,7 @@ class Createur
 
 
             //On déplace le fichier dans le répertoire définitif avec un nom différent pour éviter les caractére spéciaux
-          if (!(move_uploaded_file($file['tmp_name'], "$path/img/".$nomDufichierDossierPermanent ))) {
-                /*
-                 * Throw une erreur
-                 */
-            }
+          move_uploaded_file($file['tmp_name'], "$path/img/".$nomDufichierDossierPermanent );
         if(!is_null($item->img)){
             //L'item à déja une image et on souhaite juste la mettre à jour
             $this->supprimerFichierImage($item->img);
@@ -92,6 +88,19 @@ class Createur
         }
     }
 
+    public function supprimerItem($id){
+        $item = \mywishlist\models\Item::where('id','=',$id)->first();
+
+        //On supprime les réservation liée a cet item
+        $listeDesReservation = $item->reservation()->get();
+
+        foreach ($listeDesReservation as $reservation){
+            $reservation->delete();
+        }
+
+        $item->delete();
+    }
+
     /**
      * Méthode permettant l'ajout d'images selectionnées à un item
      * @param $images
@@ -135,27 +144,49 @@ class Createur
 
     }
 
-
-    public function creerUneListe($user_idp,$titrep,$descrip,$expir,$tokenp){
+    /**
+     * permet de creer liste
+     * @param $user_idp
+     * @param $titrep
+     * @param $descrip
+     * @param $expir
+     * @param $tokenp
+     */
+    public function creerUneListe($titrep,$descrip,$expir){
         $liste = new \mywishlist\models\Liste();
-        //$liste->no = $nop;
-        $liste->user_id = $user_idp;
+
+        $token = uniqid();
+
+        $liste->user_id = $_SESSION['profile']['userId'];
         $liste->titre = $titrep;
         $liste->description = $descrip;
         $liste->expiration = $expir;
-        $liste->token = $tokenp;
+        $liste->token = $token;
         $liste->save();
+
+
+
+        return $token;
     }
 
-
-    public function creerUnItem($liste_idp, $nomp, $descrp, $imgp, $urlp, $tarifp)
+    /**
+     * permet de creer un Item
+     * @param $liste_idp
+     * @param $nomp
+     * @param $descrp
+     * @param $imgp
+     * @param $urlp
+     * @param $tarifp
+     */
+    public function creerUnItem($liste_idp, $nomp, $descrp, $imgp, $tarifp)
     {
+        //Upload de l'image
+        $nomImage=$this->uploadImage($imgp);
         $item = new \mywishlist\models\Item();
         $item->liste_id = $liste_idp;
         $item->nom = $nomp;
         $item->descr = $descrp;
-        $item->img = $imgp;
-        $item->url = $urlp;
+        $item->img = $nomImage[0];
         $item->tarif = $tarifp;
         $item->save();
     }
@@ -205,14 +236,73 @@ class Createur
 
     }
 
-    /*public function creerListe($tablist){
-        //$no, $user_id, $titre, $description, $expiration, $token
-        $resliste = new \mywishlist\models\Liste();
-        $resliste->no = $no;
-        $resliste->user_id = $user_id;
-        $resliste->titre = $titre;
-        $resliste->description = $description;
-        $resliste->expiration = $expiration;
-        $resliste->token = $token;
-    }*/
+
+    /**
+     * Méthode permettant de vérifier si un item à été réserver ou non
+     * @param $idItem
+     * @return bool
+     *      Vrai si l'item est réservé, Faux sinon.
+     */
+    public static function verifierLaReservationItem($idItem){
+        $reservation = \mywishlist\models\Reservation::where('idItem','=',$idItem)->first();
+        if(is_null($reservation)){
+            $res=false;
+        }else{
+            $res=true;
+        }
+        return $res;
+    }
+
+    /**
+     * Méthode permettant de vérifier si un utilisateur est le créateur d'une liste
+     * @param $idListe
+     * @return bool
+     *      Vrai si l'utilisateur est le créateur, Faux sinon.
+     */
+    public static function verifierLeProprietaireDeLaListe($idListe){
+        $liste = \mywishlist\models\Liste::where("no","=",$idListe)->first();
+        if(isset($_SESSION['profile']) &&
+            ($liste->user_id === $_SESSION['profile']['userId'])){
+            $res=true;
+        }else{
+            $res=false;
+        }
+        return $res;
+
+    }
+
+
+    /**
+     * Méthode permettant de modifier une liste
+     * @param $id
+     * @param $nom
+     * @param $descr
+     * @param $exp
+     */
+    public function modifierListe($id,$nom, $descr,$exp){
+        $liste = Liste::where('no','=',$id)->first();
+
+        if(!is_null($nom)){
+            $liste->titre = $nom;
+
+        }
+        if(!is_null($descr)){
+            $liste->description = $descr;
+
+        }
+        if(!is_null($exp)){
+            $liste->expiration = $exp;
+
+        }
+        $liste->save();
+}
+
+
+    public function rendrePublique($idListe){
+        $liste = Liste::where('no','=',$idListe)->first();
+        $liste->privee = 0;
+        $liste->save();
+}
+
+
 }
