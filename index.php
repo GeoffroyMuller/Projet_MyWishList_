@@ -69,14 +69,17 @@ $app->get('/modifierItem/:id',function($id){
 /**
  * Url permettant d'ajouter un commentaire
  */
-$app->post('/ajoutCommentaire:id',function($id){
+$app->post('/createur/ajoutCommentaire/:id',function($id,$no){
     $controlleurCreateur = new \mywishlist\models\Commentaire();
     //Vérification des données entrée par l'utilisateur
+    $message="";
     if(isset($_POST['message'])){
+        $controleur = new mywishlist\controlleurs\Createur();
         $message =filter_var($_POST['message'],FILTER_SANITIZE_STRING);
-    }else{
-        $message="";
+        $controleur->ajouterMessage($id,$no,$message);
     }
+    $app = \Slim\Slim::getInstance();
+    $app->redirect($app->urlFor("afficherItemsListe",['id'=>$id]));
 })->name("ajoutCommentaire");
 
 /**
