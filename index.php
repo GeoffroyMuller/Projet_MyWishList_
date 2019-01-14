@@ -312,6 +312,8 @@ $app->post('/createur/creerUnItem/:id',function($id){
         }else{
             $image=$_FILES['item-image-creation'];
         }
+    }else{
+        $image=null;
     }
 
     $controleur->creerUnItem($id, $nomp, $descrp, $image, $tarifp);
@@ -354,16 +356,14 @@ $app->post('/createur/creerUneListe/', function(){
     if(isset($_POST['publiqueListe'])) {
         $token = filter_var($_POST['publiqueListe'], FILTER_SANITIZE_STRING);
     }
-    try {
+
         if(isset($_SESSION['profile'])){
-            $controleur->creerUneListe($_SESSION['profile']['userId'], $titre, $descript, $expir, $token);
+            $controleur->creerUneListe($titre, $descript, $expir);
         }else{
             $controleur->creerUneListeNonConnecte($titre, $descript, $expir, $token);
         }
 
-    } catch (Exception $e){
-        //la liste ne peut pas etre ajouter
-    }
+
     $app = \Slim\Slim::getInstance();
     $app->redirect($app->urlFor('mesListes'));
 })->name('creationListe');

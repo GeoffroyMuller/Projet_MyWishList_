@@ -42,7 +42,7 @@ class Affichage
         }
 
         $vue = new VueParticipant($res,'ITEM');
-        return $vue->render();
+        $vue->render();
     }
     /**
      * affiche les items d'une liste choisie par son id 

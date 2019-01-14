@@ -9,6 +9,9 @@
 namespace mywishlist\controlleurs;
 
 
+use mywishlist\models\Liste;
+use mywishlist\models\Reservation;
+
 class ControleurInternaute
 {
     const UTILISATEUR_INSCRIT = 1;
@@ -124,6 +127,18 @@ class ControleurInternaute
      * Méthode permettant la suppression d'un compte
      */
     public function suppCompte(){
+        $listesUtilisateur = Liste::where('user_id','=',$_SESSION['profile']['userId']);
+
+        foreach ($listesUtilisateur as $liste){
+            $items = $liste->items()->get();
+            foreach($items as $item){
+                $reservation = Reservation::where('idItem','=',$item->id)->first();
+                if(!is_null($reservation)){
+                    $reservation->delete();
+                }
+            }
+            $liste->delete();
+        }
         $utilisateur = \mywishlist\models\Utilisateur::where('idUser','=',$_SESSION['profile']['userId'])->first()->delete();
         $this->deconnexion();
     }

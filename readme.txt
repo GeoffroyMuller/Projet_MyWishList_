@@ -25,4 +25,8 @@ les images qu'il souhaite ajouter à l'item, il peut aussi uploader des images.
 
 - Le token d'une liste est visible sur la page de la liste (avec ces items) seulement si l'internaute est connecté et que la liste lui appartient.
 
+- Le nom des participant ayant réservé un item ne sont pas afficher au créateur avant la date d'expiration de la liste.
+
+- Les messages des réservations sont affichés sur la page de l'item correspondant lorsque la liste à expirée seulement. 
+
 Lorsqu'un utilisateur non connecté crée une liste puis se crée un compte, alors les listes crées son ajoutées a son compte au moment de l'inscription.

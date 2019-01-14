@@ -165,6 +165,10 @@ class Createur
         $liste->save();
 
 
+        $listecookie = serialize($liste);
+        setcookie($token,$listecookie,60*60*24*30,'/');
+
+
 
         return $token;
     }
@@ -178,15 +182,18 @@ class Createur
      * @param $urlp
      * @param $tarifp
      */
-    public function creerUnItem($liste_idp, $nomp, $descrp, $imgp, $tarifp)
+    public function creerUnItem($liste_idp, $nomp, $descrp, $imgp=null, $tarifp)
     {
-        //Upload de l'image
-        $nomImage=$this->uploadImage($imgp);
         $item = new \mywishlist\models\Item();
+        //Upload de l'image
+        if(!is_null($imgp)){
+            $nomImage=$this->uploadImage($imgp);
+            $item->img = $nomImage[0];
+
+        }
         $item->liste_id = $liste_idp;
         $item->nom = $nomp;
         $item->descr = $descrp;
-        $item->img = $nomImage[0];
         $item->tarif = $tarifp;
         $item->save();
     }
@@ -208,6 +215,9 @@ class Createur
         $token = uniqid();
         $liste->token = $token;
         $liste->save();
+
+        $listecookie = serialize($liste);
+        setcookie($token,$listecookie,60*60*24*30,'/');
 
         setcookie($titre, "$token",
             time() + 60*60*24*30, "/" );
@@ -259,8 +269,16 @@ class Createur
      * @return bool
      *      Vrai si l'utilisateur est le créateur, Faux sinon.
      */
-    public static function verifierLeProprietaireDeLaListe($idListe){
+    public static function verifierLeProprietaireDeLaListe($idListe=null,$token=null){
+        $res=false;
         $liste = \mywishlist\models\Liste::where("no","=",$idListe)->first();
+
+        //Verification par cookie
+        if(isset($_COOKIE[$token]) && !is_null($token)){
+                    $res=true;
+            }
+
+
         if(isset($_SESSION['profile']) &&
             ($liste->user_id === $_SESSION['profile']['userId'])){
             $res=true;

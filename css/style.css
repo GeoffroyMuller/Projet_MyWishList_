@@ -226,6 +226,7 @@ div#slider figure img{
     float : left;
     max-width : 250px;
     height: auto;
+	z-index : 9;
 }
 
 .titre-description-item{
@@ -240,8 +241,9 @@ div#slider figure img{
 }
 
 .titre-description-item + hr{
-    margin-left : 14%;
+    margin-left : 250px;
     width : 36%;
+	z-index : 0;
 }
 
 .titre-status-item{

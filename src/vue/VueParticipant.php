@@ -12,6 +12,8 @@ namespace mywishlist\vue;
 use mywishlist\controlleurs\ControleurInternaute;
 use mywishlist\controlleurs\Createur;
 use mywishlist\models\Liste;
+use mywishlist\models\Reservation;
+use mywishlist\models\Utilisateur;
 
 class VueParticipant
 {
@@ -344,8 +346,46 @@ END;
                 }
             }
 
+            //On vérifie si l'item est réservé
             if(\mywishlist\controlleurs\Createur::verifierLaReservationItem($id)){
-                $html=$html.<<<END
+
+                $nomParticipant=Reservation::where('idItem','=',$id)->first();
+                $nomParticipant = $nomParticipant->idUser;
+                $nomParticipant = Utilisateur::where('idUser','=',$nomParticipant)->first();
+                $nomParticipant = $nomParticipant->uName;
+
+                //Si le créateur consulte la page
+                $liste = $this->elements['item']->liste()->first();
+
+                //On vérifie si la liste appartient à l'utilisateur
+                //La méthode utiliser dans la condition vérifie également les cookies.
+                if(Createur::verifierLeProprietaireDeLaListe($liste->no,$liste->token)){
+                    //L'utilisateur est le propriétaire de la liste
+                    $dateDuJour = date("Y-m-d");
+                    $dateExpListe = $liste->expiration;
+                    //Si la liste a expiré alors on affiche lemessage de reservation et le nom du participant
+                    if($dateDuJour>$dateExpListe){
+                        $messageReservation = Reservation::where('idItem','=',$id)->first();
+                        $messageReservation = $messageReservation->message;
+                        $html=$html.<<<END
+ <h2 class="titre-status-item">Status</h2>
+            <hr>
+            <p class="status-item vert">
+                Reservé ! - Par $nomParticipant
+            </p>
+            <p class="status-item">Message de reservation : $messageReservation</p>
+
+
+          $form
+
+
+
+        </div>
+    </div>
+
+END;
+                    }else{
+                        $html=$html.<<<END
  <h2 class="titre-status-item">Status</h2>
             <hr>
             <p class="status-item vert">
@@ -361,7 +401,28 @@ END;
     </div>
 
 END;
-            }else{
+                    }
+
+                }else{
+                    $html=$html.<<<END
+ <h2 class="titre-status-item">Status</h2>
+            <hr>
+            <p class="status-item vert">
+                Reservé ! - Par $nomParticipant
+            </p>
+
+
+          $form
+
+
+
+        </div>
+    </div>
+
+END;
+                }
+
+            }else{//L'item n'est pas réservé
                 $html=$html.<<<END
  <h2 class="titre-status-item">Status</h2>
             <hr>
@@ -381,8 +442,8 @@ END;
             }
 
 
-        }catch(\ErrorException $exception){
-            $this->app->redirect($this->app->urlFor('erreur',['msg'=>"L'item demandé n'existe pas"]));
+        }catch(\OutOfBoundsException $exception){
+            //$this->app->redirect($this->app->urlFor('erreur',['msg'=>"L'item demandé n'existe pas"]));
         }
 
 
