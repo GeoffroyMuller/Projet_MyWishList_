@@ -149,7 +149,7 @@ END;
 
             foreach ($this->elements['items'] as $element){
                 $url = $this->app->urlFor("afficherItem",['id'=>$element->id]);
-                $urlSupp = $this->app->urlFor("supprimerItem",['idlist'=>$liste->no,'id'=>$element->id]);
+                $urlSupp = $this->app->urlFor("supprimerItem",['id'=>$liste->no,'id'=>$element->id]);
 
                 $reserve = \mywishlist\controlleurs\Createur::verifierLaReservationItem($element->id);
                 if(!$reserve){
@@ -222,7 +222,7 @@ END;
 
             }
 
-            $urlAjoutComm=$this->app->urlFor('ajoutCommentaire');
+            $urlAjoutComm=$this->app->urlFor('ajoutCommentaire',['2','2']);
             $idListe = $liste->no;
 
             $html=$html.<<<END
