@@ -424,6 +424,10 @@ hr{
     clear:both;
 }
 
+textarea{
+    padding : 5px 0 0 5px;
+}
+
 .yellow{
     background-color: #FFD337!important;
 }
@@ -490,6 +494,7 @@ hr{
      padding-bottom : 10px;
      background: #C4C4C4;
      color: black;
+     margin-bottom :15px;
  }
 
  .pseudo-commentaire{
@@ -699,10 +704,6 @@ hr{
     color : black;
 }
 
-.liste-preview-detail:hover{
-    background-color : #FFEC61;
-    
-}
 
 .publique{
 	background-color : #558BB2;

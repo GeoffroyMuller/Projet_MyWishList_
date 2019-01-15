@@ -152,7 +152,7 @@ class Createur
      * @param $expir
      * @param $tokenp
      */
-    public function creerUneListe($titrep,$descrip,$expir){
+    public function creerUneListe($titrep,$descrip,$expir,$privee){
         $liste = new \mywishlist\models\Liste();
 
         $token = uniqid();
@@ -162,6 +162,7 @@ class Createur
         $liste->description = $descrip;
         $liste->expiration = $expir;
         $liste->token = $token;
+        $liste->privee = $privee;
         $liste->save();
 
 
@@ -234,9 +235,9 @@ class Createur
      *      message a ajouter
      * @return String
      */
-    public function ajouterMessage($user_id, $no, $message){
+    public function ajouterMessage($no, $message){
         $commentaire =  new \mywishlist\models\Commentaire();
-        $commentaire->user_id = $user_id;
+        $commentaire->user_id = $_SESSION['profile']['userId'];
         $commentaire->no = $no;
         $commentaire->commentaire = $message;
         $commentaire->save();

@@ -11,11 +11,6 @@ session_start();
 
 $app = new \Slim\Slim ;
 
-$app->get('/affichage/afficherItemsListe', function($noliste){
-    echo '===jhonny====' ;
-    $control = new \mywishlist\controlleurs\Affichage();
-    $control->itemSListe($noliste);
-});
 
 
 $app->get('/',function(){
@@ -60,17 +55,19 @@ $app->get('/modifierItem/:id',function($id){
 /**
  * Url permettant d'ajouter un commentaire
  */
-$app->post('/createur/ajoutCommentaire/:no/:id',function($no, $id){
-    $controlleurCreateur = new \mywishlist\models\Commentaire();
+$app->post('/createur/ajoutCommentaire/',function(){
     //Vérification des données entrée par l'utilisateur
     $message="";
+    if(isset($_POST['idListe'])){
+        $idListe = filter_var($_POST['idListe'],FILTER_SANITIZE_NUMBER_INT);
+    }
     if(isset($_POST['commentaire'])){
         $controleur = new mywishlist\controlleurs\Createur();
         $message =filter_var($_POST['commentaire'],FILTER_SANITIZE_STRING);
-        $controleur->ajouterMessage($id,$no,$message);
+        $controleur->ajouterMessage($idListe,$message);
     }
     $app = \Slim\Slim::getInstance();
-    $app->redirect($app->urlFor("afficherItemsListe",['id'=>$id]));
+    $app->redirect($app->urlFor("afficherItemsListe",['id'=>$idListe]));
 })->name("ajoutCommentaire");
 
 /**
@@ -348,13 +345,15 @@ $app->post('/createur/creerUneListe/', function(){
         $expir = filter_var($_POST['expListe'], FILTER_SANITIZE_NUMBER_INT);
     }
     if(isset($_POST['publiqueListe'])) {
-        $token = filter_var($_POST['publiqueListe'], FILTER_SANITIZE_STRING);
+        $privee = 0;
+    }else{
+        $privee = 1;
     }
 
         if(isset($_SESSION['profile'])){
-            $controleur->creerUneListe($titre, $descript, $expir);
+            $controleur->creerUneListe($titre, $descript, $expir,$privee);
         }else{
-            $controleur->creerUneListeNonConnecte($titre, $descript, $expir, $token);
+            $controleur->creerUneListeNonConnecte($titre, $descript, $expir, $privee);
         }
 
 
@@ -482,7 +481,7 @@ $app->post('/reserverItem/',function(){
 /**
  * URL permettant d'appliquer les modification du profil
  */
-$app->post('/enregistrerProfilModification', function(){
+$app->post('/enregistrerProfilModification/', function(){
     if(isset($_POST['profil-username-modification'])){
         $nouveauPseudo = filter_var($_POST['profil-username-modification'],FILTER_SANITIZE_STRING);
     }else{
@@ -505,35 +504,6 @@ $app->post('/enregistrerProfilModification', function(){
 })->name("enregistrerProfil");
 
 
-$app->post('/creerUneListe/',function(){
-    if(isset($_POST['nomListe'])){
-        $nomListe = filter_var($_POST['nomListe'],FILTER_SANITIZE_STRING);
-    }else{
-        $app = \Slim\Slim::getInstance();
-        $app->redirect($app->urlFor('erreur', ['msg'=>'Une liste doit avoir un nom']));
-    }
-
-    if(isset($_POST['descrListe'])){
-        $description = filter_var($_POST['descrListe'],FILTER_SANITIZE_STRING);
-    }else{
-        $description = null;
-    }
-
-    if(isset($_POST['expListe'])){
-        $exp = filter_var($_POST['expListe'],FILTER_SANITIZE_URL);
-    }else{
-        $app = \Slim\Slim::getInstance();
-        $app->redirect($app->urlFor('erreur', ['msg'=>'Une liste doit avoir une date d\'expiration']));
-    }
-
-    $controleur = new mywishlist\controlleurs\Createur();
-    $token = $controleur->creerUneListe($nomListe,$description,$exp);
-
-    $app->redirect($app->urlFor('afficherListeAvecToken',['token'=>$token]));
-
-
-
-})->name("creerUneListe");
 
 $app->get('/modifierInfoListe/:id',function($id){
     if(\mywishlist\controlleurs\Createur::verifierLeProprietaireDeLaListe($id)){

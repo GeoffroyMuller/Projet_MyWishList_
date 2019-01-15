@@ -50,8 +50,9 @@ class VueParticipant
             </header>
 END;
         foreach ($this->elements as $element){
-            $lienVersItems = $this->app->urlFor("afficherItemsListe",["id"=>$element->no]);
-            $html=$html.<<<END
+            if($element->privee === 0){
+                $lienVersItems = $this->app->urlFor("afficherItemsListe",["id"=>$element->no]);
+                $html=$html.<<<END
             <div class="card">
                 <header>
                     <img src="../../img/list_icon.png">
@@ -65,6 +66,8 @@ END;
                 <a href="$lienVersItems"><button class="card-button" type="button"> Voir les items !</button></a>
             </div>
 END;
+            }
+
         }
         return $html;
     }
@@ -204,7 +207,7 @@ END;
                 $commentaires = $this->elements['commentaires'];
 
                 foreach($commentaires as $commentaire){
-                    $pseudoPersonne = \mywishlist\models\Utilisateur::where('id','=',$commentaire->user_id)->first();
+                    $pseudoPersonne = \mywishlist\models\Utilisateur::where('idUser','=',$commentaire->user_id)->first();
                     $pseudoPersonne = $pseudoPersonne->uName;
 
                     $html=$html.<<<END
@@ -212,7 +215,7 @@ END;
             <div class="composant-commentaire">
                 <div class="pseudo-commentaire">$pseudoPersonne</div>
                 <p class="contenu-commentaire">
-                   $commentaire->commentaire;
+                   $commentaire->commentaire
                 </p>
             </div>
 
@@ -222,19 +225,17 @@ END;
 
             }
 
-            $urlAjoutComm=$this->app->urlFor('ajoutCommentaire',['2','2']);
             $idListe = $liste->no;
+            $urlAjoutComm=$this->app->urlFor('ajoutCommentaire');
 
             $html=$html.<<<END
             <div class="ajouter-commentaire">
                 <h2 class="title-commentaire">Ajouter un Commentaire :</h2>
 
                 <form action="$urlAjoutComm" method="post">
-                    <textarea name="commentaire" rows="10" cols="98" placeholder="Votre commentaire ici...">
-
-                    </textarea>
+                    <textarea name="commentaire" rows="10" cols="98" placeholder="Votre commentaire ici..."></textarea>
                     <input class="button-send-commentaire" type="submit" value="Envoyer le commentaire">
-                    <input class="cacher" name="idListe" type="text" value="$idListe"
+                    <input class="cacher" name="idListe" type="text" value="$idListe">
                   </form> 
 
             </div>
@@ -908,7 +909,7 @@ END;
                 $urlListe = $this->app->urlFor('afficherItemsListe',['id'=>$liste->no]);
                 $html=$html.<<<END
                         <a href="$urlListe">
-                            <div class="liste-preview-detail">
+                            <div class="liste-preview-detail publique">
                                 <h3 class="liste-preview-detail-titre">$liste->titre</h3>
                                 <p class="liste-preview-detail-exp">Exp : $liste->expiration</p>
                                 <p class="liste-preview-detail-descr">$liste->description</p>
