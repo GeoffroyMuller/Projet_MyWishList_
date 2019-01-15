@@ -175,7 +175,7 @@ END;
             <a href="$url"><button class="card-button" type="button"> Voir l'item !</button></a>
 
 END;
-                if(!$reserve && isset($_SESSION['profile'])){
+                if(!$reserve && isset($_SESSION['profile']) && Createur::verifierLeProprietaireDeLaListe($liste->no,$liste->token)){
                     $html=$html.<<<END
              <a href="$urlSupp"><button class="card-button button-del" type="button"> Supprimer l'item !</button></a>
             </div>

@@ -17,21 +17,12 @@ $app->get('/affichage/afficherItemsListe', function($noliste){
     $control->itemSListe($noliste);
 });
 
-/**
- * Created by PhpStorm.
- * User: theob
- * Date: 03/12/2018
- * Time: 15:04
- */
 
-$app->get('/affichage/afficherTouteLesListes',function (){
-
+$app->get('/',function(){
+   $app =\Slim\Slim::getInstance();
+   $app->redirect($app->urlFor('listes'));
 });
 
-/*
- * Un seul ECHO partout, le ECHO doit etre dans la methode render de la VUE
- * href = demander l'url à slim
- */
 $app->get('/listes/',function (){
     $controlleurAffichage = new \mywishlist\controlleurs\Affichage();
     echo $controlleurAffichage->afficherLesListesDeSouhaits();
