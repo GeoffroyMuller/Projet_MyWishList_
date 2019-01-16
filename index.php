@@ -1,5 +1,7 @@
 <?php
 require_once 'vendor/autoload.php';
+
+define ('SITE_ROOT', realpath(dirname(__FILE__)));
 use Illuminate\Database\Capsule\Manager as DB;
 
 $db = new DB();
@@ -139,7 +141,7 @@ $app->post('/applicationModificationImages/:id', function($id){
 
 
         //On vérifie que le fichier est bien une image
-        $extensions = array('.png','.jpeg','.gif','.jpg');
+        $extensions = array('.png','.jpeg','.gif','.jpg','.JPG','.PNG','.JPEG','.GIF');
         $extension = strrchr($_FILES['nouvellesImagesItem']['name'],'.');
         if(!in_array($extension,$extensions)){
             $image=null;
@@ -147,9 +149,10 @@ $app->post('/applicationModificationImages/:id', function($id){
             $image=$_FILES['nouvellesImagesItem'];
         }
         $nomImagesUpload = $controlleurCreateur->uploadImage($image);
+
         //On ajoute les images upload à l'item
         foreach ($nomImagesUpload as $nom){
-            $controlleurCreateur->ajouterImageItem($id,null,$nom);
+            $controlleurCreateur->ajouterImageItem($id,null,$nom.$extension);
         }
     }
 
@@ -293,16 +296,10 @@ $app->post('/createur/creerUnItem/:id',function($id){
 
     //Vérification image
     if(isset($_FILES['item-image-creation']) && !empty($_FILES['item-image-creation']['name'])){
-
-
         //On vérifie que le fichier est bien une image
-        $extensions = array('.png','.jpeg','.gif','.jpg');
-        $extension = strrchr($_FILES['item-image-creation']['name'],'.');
-        if(!in_array($extension,$extensions)){
-            $image=null;
-        }else{
             $image=$_FILES['item-image-creation'];
-        }
+    
+
     }else{
         $image=null;
     }

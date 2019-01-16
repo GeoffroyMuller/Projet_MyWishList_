@@ -1,5 +1,7 @@
 ﻿Les informations concernant le groupes sont présentent dans le footer ainsi que le lien vers le dépôt GIT.
 
+Des commentaires relatifs aux tâches se trouvent dans le fichier excel représentant les tâches effectuées et leurs répartitions.
+
 
 Voici quelque notes permettant de mieux comprendre le fonctionnement de l'application :
 

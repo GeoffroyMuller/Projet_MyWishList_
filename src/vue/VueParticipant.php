@@ -55,7 +55,7 @@ END;
                 $html=$html.<<<END
             <div class="card">
                 <header>
-                    <img src="../../img/list_icon.png">
+                    <img src="../../img/list_icon.png" alt="Icone d'une liste">
                     <p>$element->titre</p>
                     <hr>
                 </header>
@@ -152,7 +152,7 @@ END;
 
             foreach ($this->elements['items'] as $element){
                 $url = $this->app->urlFor("afficherItem",['id'=>$element->id]);
-                $urlSupp = $this->app->urlFor("supprimerItem",['id'=>$liste->no,'id'=>$element->id]);
+                $urlSupp = $this->app->urlFor("supprimerItem",['idlist'=>$liste->no,'id'=>$element->id]);
 
                 $reserve = \mywishlist\controlleurs\Createur::verifierLaReservationItem($element->id);
                 if(!$reserve){
@@ -162,7 +162,8 @@ END;
                     $couleurStatus = 'vert';
                     $texteStatus = 'Reservé';
                 }
-
+                
+                
 
                 $html = $html.<<<END
             <div class="card-item-liste">
@@ -171,7 +172,7 @@ END;
                 <hr>
             </header>
             <article>
-                <img class="item-card-image" src="/img/$element->img">
+                <img class="item-card-image" src="../../img/$element->img" alt="image d'un item">
                 <p class="description-card-item">$element->descr</p>
             </article>
             <div class="container-bouton-item">
@@ -193,8 +194,10 @@ END;
                 }
             }
 
-            //Partie commentaire
-            $html=$html.<<<END
+
+        }
+        //Partie commentaire
+        $html=$html.<<<END
             <header class="header-card">
         <h1 class="titre-page-liste">Commentaires</h1>
         <hr>
@@ -202,15 +205,15 @@ END;
  <div class="container-commentaire">
         <div class="wrapper">
 END;
-            if(isset($this->elements['commentaires'])){
+        if(isset($this->elements['commentaires'])){
 
-                $commentaires = $this->elements['commentaires'];
+            $commentaires = $this->elements['commentaires'];
 
-                foreach($commentaires as $commentaire){
-                    $pseudoPersonne = \mywishlist\models\Utilisateur::where('idUser','=',$commentaire->user_id)->first();
-                    $pseudoPersonne = $pseudoPersonne->uName;
+            foreach($commentaires as $commentaire){
+                $pseudoPersonne = \mywishlist\models\Utilisateur::where('idUser','=',$commentaire->user_id)->first();
+                $pseudoPersonne = $pseudoPersonne->uName;
 
-                    $html=$html.<<<END
+                $html=$html.<<<END
 
             <div class="composant-commentaire">
                 <div class="pseudo-commentaire">$pseudoPersonne</div>
@@ -221,14 +224,14 @@ END;
 
 END;
 
-                }
-
             }
 
-            $idListe = $liste->no;
-            $urlAjoutComm=$this->app->urlFor('ajoutCommentaire');
+        }
 
-            $html=$html.<<<END
+        $idListe = $liste->no;
+        $urlAjoutComm=$this->app->urlFor('ajoutCommentaire');
+
+        $html=$html.<<<END
             <div class="ajouter-commentaire">
                 <h2 class="title-commentaire">Ajouter un Commentaire :</h2>
 
@@ -242,7 +245,6 @@ END;
         </div>
     </div>
 END;
-        }
 
         return '<div class="container-items-liste">'.$html.'</div>';
     }
@@ -322,7 +324,7 @@ END;
 
         <!--Component-->
                 <div class="composantItem">
-            <img class="item-image" src="/img/$nomImage" alt="image d'un item">
+            <img class="item-image" src="../../img/$nomImage" alt="image d'un item">
             <h2 class="titre-description-item">Description</h2>
             <hr>
             <p class="description-item">
@@ -341,7 +343,7 @@ END;
                 foreach ($this->elements['images'] as $image){
                     $html=$html.<<<END
  <div class="image">
-                    <img src="/img/$image->nom" alt="image de l'item">
+                    <img src="../../img/$image->nom" alt="image de l'item">
                 </div>
 END;
                 }
@@ -478,7 +480,7 @@ END;
             <!--Component-->
             <div class="composantItem">
                 <div class="container-image-item item-image">
-                    <img  class="image-principale" src="/img/$nomImage">
+                    <img  class="image-principale" src="/img/$nomImage" alt="Image principal d'un item">
                     <label for="item-image-modification">Modifier l'image de l'item :</label>
                     <input type="file" name="itemImageModification" id="item-image-modification"  accept="image/png, image/jpeg, image/jpg">
 
@@ -508,7 +510,7 @@ END;
             foreach ($this->elements['images'] as $image) {
                 $html = $html . <<<END
                 <div class="image">
-                            <img src="/img/$image->nom">
+                            <img src="/img/$image->nom" alt="Image d'un item">
                             <a href="#"><button>Supprimer</button></a>
                         </div>
                 
@@ -558,7 +560,7 @@ END;
             foreach($imageUtilisees as $image){
                 $html=$html.<<<END
  <div class="image">
-                    <img class="image-modification" src="/img/$image->nom">
+                    <img class="image-modification" src="/img/$image->nom" alt="Image utilisee par l'item">
                     <input id="input-supp$i" type="checkbox" name="del[]" value="$image->id" />
                     <label class="label-supp" for="input-supp$i">Supprimer</label>
                 </div>
@@ -576,7 +578,7 @@ END;
         foreach ($imageProposees as $image){
             $html=$html.<<<END
  <div class="image">
-                        <img class="image-modification" src="/img/$image->nom">
+                        <img class="image-modification" src="/img/$image->nom" alt="Image proposée">
                         <input id="input-supp$i" type="checkbox" name="add[]" value="$image->id" />
                         <label class="label-supp" for="input-supp$i">Ajouter</label>
                     </div>
@@ -794,7 +796,7 @@ END;
         <div class="container-creation-liste">
             <form class="form-creation-liste" action="$urlpourCreationitemProcess" method="POST" enctype="multipart/form-data">
                 <div class="image-creation-item">
-                    <img src="/img/placeholder-creation-liste.gif">
+                    <img src="/img/placeholder-creation-liste.gif" alt="Placeholder">
 
                     <label for="nomListe">Image principale de l'item :</label>
                     <input type="file" id="item-image-creation" name="item-image-creation" accept="image/png, image/jpeg, image/jpg">
@@ -886,7 +888,7 @@ END;
         <!--Component-->
         <div class="container-composant-liste">
                     <div class="container-visualiser-token">
-                    <h2 class="titre-liste-publique titre-images-item">Visualiser une liste avec un token</h1>
+                    <h1 class="titre-liste-publique titre-images-item">Visualiser une liste avec un token</h1>
                     <hr>
 
                     <div class="composant-visualiser-token">
@@ -898,7 +900,7 @@ END;
                     </div>
             </div>
             <div class="container-liste-publique">
-                <h2 class="titre-liste-publique titre-images-item">Listes publiques</h1>
+                <h1 class="titre-liste-publique titre-images-item">Listes publiques</h1>
                     <hr>
 
 
@@ -1048,10 +1050,10 @@ END;
                 $homepage = <<<END
             <div id="slider">
                 <figure>
-                    <img src="../../img/pic1_carousel.png">
-                    <img src="../../img/pic2_carousel.png">
-                    <img src="../../img/pic3_carousel.png">
-                    <img src="../../img/pic1_carousel.png">
+                    <img src="../../img/pic1_carousel.png" alt="Image caroussel">
+                    <img src="../../img/pic2_carousel.png" alt="Image caroussel">
+                    <img src="../../img/pic3_carousel.png" alt="Image caroussel">
+                    <img src="../../img/pic1_carousel.png" alt="Image caroussel">
                  </figure>
             </div>
 END;
@@ -1141,7 +1143,7 @@ END;
             </div>
             </div>
             </div>
-            </div></div></div>
+        
 <footer class="pagefooter">
 
         <div class="footer-left">

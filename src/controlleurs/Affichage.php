@@ -16,12 +16,6 @@ use mywishlist\vue\VueParticipant;
 class Affichage
 {
 
-    public function itemsListe($noliste){
-        echo "====Test: Lister les items d'une liste===="."<br>";
-        $res = \mywishlist\models\Liste::where("no","=",$noliste);
-        echo $res->titre;
-        echo "=============================="."<br>";
-    }
 
     /**
      * Méthode affichant un item
@@ -53,7 +47,7 @@ class Affichage
         $liste_de_souhait = \mywishlist\models\Liste::where('no', '=', $idlisteSouhait)->first();
         $resultat['liste'] = $liste_de_souhait;
 
-        $commentaires = \mywishlist\models\Commentaire::all();
+        $commentaires = \mywishlist\models\Commentaire::where('no','=',$idlisteSouhait)->get();
         if(is_null($commentaires)){
             $resultat['commentaires'] = -1;
         }else{
@@ -68,7 +62,7 @@ class Affichage
             $resultat['items'][]=$item;
         }
         $vue = new VueParticipant($resultat,"LIST_ITEMS");
-        return $vue->render();
+        $vue->render();
     }
     /**
      * affiche la liste des createur

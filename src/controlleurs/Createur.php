@@ -29,11 +29,10 @@ class Createur
         //On récupére l'item et on update le nom de l'image
         $item = \mywishlist\models\Item::where('id','=',$idItem)->first();
         $item->id = $idItem;
-        $path = $_SERVER["DOCUMENT_ROOT"];
 
 
             //On déplace le fichier dans le répertoire définitif avec un nom différent pour éviter les caractére spéciaux
-          move_uploaded_file($file['tmp_name'], "$path/img/".$nomDufichierDossierPermanent );
+          move_uploaded_file($file['tmp_name'], SITE_ROOT."/img/".$nomDufichierDossierPermanent );
         if(!is_null($item->img)){
             //L'item à déja une image et on souhaite juste la mettre à jour
             $this->supprimerFichierImage($item->img);
@@ -48,9 +47,10 @@ class Createur
      * @return $noms
      */
     public function uploadImage($file){
-        $path = $_SERVER["DOCUMENT_ROOT"];
+        $path = \Slim\Slim::getInstance()->request()->getRootUri();
         $noms[]=$generationNom= ($this->recupererNbImageDossier()+1).strrchr($file['name'],'.');
-        move_uploaded_file($file['tmp_name'], "$path/img/".$generationNom);
+        $path = str_replace("/index.php","",$path);
+        move_uploaded_file($file['tmp_name'],SITE_ROOT."/img/".$generationNom);
         return $noms;
     }
 
@@ -60,8 +60,9 @@ class Createur
      *      Le nombre de fichier trouver dans le répertoire /img
      */
     private function recupererNbImageDossier(){
-        $path = $_SERVER["DOCUMENT_ROOT"];
-        return count(glob("$path/img/*.*"));
+        //$path = $_SERVER["DOCUMENT_ROOT"];
+        $path = \Slim\Slim::getInstance()->request()->getRootUri();
+        return count(glob(SITE_ROOT."/img/*.*"));
     }
 
     /**
@@ -70,8 +71,8 @@ class Createur
      *      Nom de l'image à supprimer
      */
     private function supprimerFichierImage($nomImage){
-        if(file_exists('/img/'.$nomImage)){
-            unlink('/img/'.$nomImage);
+        if(file_exists(SITE_ROOT.'/img/'.$nomImage)){
+            unlink(SITE_ROOT.'/img/'.$nomImage);
         }
     }
 
@@ -183,13 +184,18 @@ class Createur
      * @param $urlp
      * @param $tarifp
      */
-    public function creerUnItem($liste_idp, $nomp, $descrp, $imgp=null, $tarifp)
+    public function creerUnItem($liste_idp, $nomp, $descrp, $imgp, $tarifp)
     {
         $item = new \mywishlist\models\Item();
         //Upload de l'image
         if(!is_null($imgp)){
             $nomImage=$this->uploadImage($imgp);
             $item->img = $nomImage[0];
+
+
+        }else{
+            $nomImage="list_icon.png";
+            $item->img = $nomImage;
 
         }
         $item->liste_id = $liste_idp;
